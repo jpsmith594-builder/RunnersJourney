@@ -48,5 +48,16 @@ as SVG layers (canopy, vines, ground) tinted by season theme.
 
 ## Setup
 1. Create a Supabase project, run `supabase/schema.sql` in the SQL editor
-2. `flutter create .` then add `supabase_flutter`, `image_picker`, `flutter_svg`
-3. Provide `SUPABASE_URL` and `SUPABASE_ANON_KEY` via `--dart-define` (never commit keys)
+   (if you ran an earlier version, run `supabase/002_profile_trigger.sql` once)
+2. In the repo folder run `flutter create . --project-name runners_journey --org com.runnersjourney`
+   to generate the `android/` and `ios/` folders (existing `lib/` and `pubspec.yaml` are kept)
+3. `flutter pub get`
+4. Copy `env.example.json` to `env.json` and fill in your Supabase URL and anon/publishable key
+   (`env.json` is gitignored)
+5. `flutter run --dart-define-from-file=env.json`
+
+## Status
+- [x] Auth (email + password) and race add / edit / delete / list
+- [ ] Jungle trail journey screen
+- [ ] Photos
+- [ ] Seasonal theme (season logic is in `lib/core/season.dart`)
