@@ -8,8 +8,8 @@ import '../map/places.dart';
 import 'profile.dart';
 import 'profile_store.dart';
 
-/// Create or edit the runner profile: name, club, home town, favourite
-/// distance and profile photo.
+/// Create or edit the runner profile: name, age, gender, club, home town,
+/// favourite distance and profile photo.
 class EditProfileScreen extends StatefulWidget {
   final ProfileStore store;
   const EditProfileScreen({super.key, required this.store});
@@ -26,8 +26,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       TextEditingController(text: widget.store.profile.displayName ?? '');
   late final _club =
       TextEditingController(text: widget.store.profile.club ?? '');
+  late final _age =
+      TextEditingController(text: widget.store.profile.age?.toString() ?? '');
   TextEditingController? _home; // owned by the Autocomplete widget
   String? _favourite;
+  Gender? _gender;
 
   XFile? _picked;
   Uint8List? _preview;
@@ -37,12 +40,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     _favourite = widget.store.profile.favouriteDistance;
+    _gender = widget.store.profile.gender;
   }
 
   @override
   void dispose() {
     _name.dispose();
     _club.dispose();
+    _age.dispose();
     super.dispose();
   }
 
@@ -76,11 +81,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return t.isEmpty ? null : t;
   }
 
+  String? _validateAge(String? v) {
+    final t = (v ?? '').trim();
+    if (t.isEmpty) return null; // optional
+    final n = int.tryParse(t);
+    if (n == null || n < 10 || n > 100) return 'Enter an age between 10 and 100';
+    return null;
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     final typedHome = _clean(_home?.text);
     final home = placeByName(typedHome)?.name ?? typedHome;
+    final age = int.tryParse(_age.text.trim());
     try {
       await widget.store.save(
         RunnerProfile(
@@ -89,6 +103,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           homeTown: home,
           favouriteDistance: _favourite,
           avatarPath: widget.store.profile.avatarPath,
+          gender: _gender,
+          birthYear: age == null ? null : DateTime.now().year - age,
         ),
         newAvatar: _picked,
       );
@@ -96,7 +112,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     } catch (e) {
       if (mounted) setState(() => _saving = false);
       _toast('Could not save your profile: $e\n'
-          'If this mentions a missing column or bucket, run supabase/003_profile_card.sql.');
+          'If this mentions a missing column or bucket, run '
+          'supabase/003_profile_card.sql and supabase/004_gender_age.sql.');
     }
   }
 
@@ -153,6 +170,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   border: OutlineInputBorder()),
               validator: (v) =>
                   (v == null || v.trim().isEmpty) ? 'Required' : null,
+            ),
+            gap,
+            TextFormField(
+              controller: _age,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Age (optional)',
+                prefixIcon: Icon(Icons.cake_outlined),
+                border: OutlineInputBorder(),
+              ),
+              validator: _validateAge,
+            ),
+            gap,
+            Text('Gender', style: Theme.of(context).textTheme.labelLarge),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                for (final g in Gender.values)
+                  ChoiceChip(
+                    label: Text(g.label),
+                    selected: _gender == g,
+                    onSelected: (on) => setState(() => _gender = on ? g : null),
+                  ),
+              ],
             ),
             gap,
             TextFormField(

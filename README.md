@@ -23,16 +23,17 @@ for the race card, and see your own football-style runner card.
   - The map's colour grade follows the season (southern hemisphere by default)
   - Races with no known town are listed as "N not on map" until you pick a town
 - **Races tab**: plain list, newest first
-- **Profile** (menu, top right): name, running club, home town, favourite distance,
-  profile photo. Shows your **runner card**: rating, photo, races, km, towns and
+- **Profile** (menu, top right): name, age, gender, running club, home town,
+  favourite distance, profile photo. Shows your **runner card**: rating, photo, races, km, towns and
   personal bests (5K / 10K / 21K / 42K). Card tier (bronze, silver, gold, elite) comes
   from the rating: 45 + 2 per finished race + 1 per 15 km + 1 per town
 
 ## Setup
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
-   `supabase/002_profile_trigger.sql` and `supabase/003_profile_card.sql`
-   (003 adds the profile columns and the private `avatars` photo bucket)
+   `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
+   `supabase/004_gender_age.sql` (003 adds the profile columns and the private `avatars`
+   photo bucket; 004 adds gender and age)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
    it overwrites with `git restore <file>` and delete `test/widget_test.dart`)

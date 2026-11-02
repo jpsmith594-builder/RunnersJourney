@@ -45,6 +45,8 @@ class ProfileStore extends ChangeNotifier {
       homeTown: p.homeTown,
       favouriteDistance: p.favouriteDistance,
       avatarPath: path,
+      gender: p.gender,
+      birthYear: p.birthYear,
     ));
     await load();
   }

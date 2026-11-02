@@ -47,7 +47,9 @@ class ProfileScreen extends StatelessWidget {
           final stats = computeStats(raceStore.races);
           final incomplete = p.avatarPath == null ||
               (p.club ?? '').isEmpty ||
-              p.favouriteDistance == null;
+              p.favouriteDistance == null ||
+              p.age == null ||
+              p.gender == null;
           final small = Theme.of(context).textTheme.bodySmall;
 
           return Center(
@@ -65,6 +67,8 @@ class ProfileScreen extends StatelessWidget {
                       club: p.club,
                       homeTown: p.homeTown,
                       favouriteDistance: p.favouriteDistance,
+                      genderShort: p.gender?.short,
+                      age: p.age,
                       avatarUrl: profileStore.avatarUrl,
                       stats: stats,
                     ),

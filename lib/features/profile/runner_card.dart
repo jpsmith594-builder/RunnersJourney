@@ -106,6 +106,8 @@ class RunnerCard extends StatelessWidget {
   final String? homeTown;
   final String? favouriteDistance;
   final String? avatarUrl;
+  final String? genderShort; // 'M', 'F', 'NB'
+  final int? age;
   final RunnerStats stats;
 
   const RunnerCard({
@@ -116,6 +118,8 @@ class RunnerCard extends StatelessWidget {
     this.homeTown,
     this.favouriteDistance,
     this.avatarUrl,
+    this.genderShort,
+    this.age,
   });
 
   String get _initials {
@@ -173,6 +177,15 @@ class RunnerCard extends StatelessWidget {
                         SizedBox(height: 8 * u),
                         Text('\u{1F1FF}\u{1F1E6}',
                             style: TextStyle(fontSize: 26 * u, height: 1.0)),
+                        if (age != null || genderShort != null) ...[
+                          SizedBox(height: 8 * u),
+                          Text(
+                              [
+                                if (genderShort != null) genderShort!,
+                                if (age != null) '$age',
+                              ].join(' \u00B7 '),
+                              style: ink(12)),
+                        ],
                         SizedBox(height: 8 * u),
                         Text(p.label,
                             style: ink(10, w: FontWeight.w800)
