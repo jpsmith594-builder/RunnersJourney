@@ -58,6 +58,6 @@ as SVG layers (canopy, vines, ground) tinted by season theme.
 
 ## Status
 - [x] Auth (email + password) and race add / edit / delete / list
-- [ ] Jungle trail journey screen
+- [x] Jungle trail journey screen (hover / tap / long-press a POI for its race card)
 - [ ] Photos
-- [ ] Seasonal theme (season logic is in `lib/core/season.dart`)
+- [x] Seasonal theme v1: palette + particles by date and hemisphere (`lib/core/season.dart`, `season_theme.dart`)

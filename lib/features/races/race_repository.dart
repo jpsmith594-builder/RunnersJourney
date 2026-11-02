@@ -24,4 +24,16 @@ class RaceRepository {
   Future<void> delete(String id) async {
     await _db.from('races').delete().eq('id', id);
   }
+
+  /// True when the runner is in the southern hemisphere (default).
+  Future<bool> isSouthern() async {
+    final uid = _db.auth.currentUser?.id;
+    if (uid == null) return true;
+    final row = await _db
+        .from('profiles')
+        .select('hemisphere')
+        .eq('id', uid)
+        .maybeSingle();
+    return (row?['hemisphere'] as String? ?? 'south') == 'south';
+  }
 }
