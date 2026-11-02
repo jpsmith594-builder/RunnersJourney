@@ -1,0 +1,96 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../races/race.dart';
+
+/// Small summary card shown when a race pin is tapped (or hovered on desktop).
+class RaceCard extends StatelessWidget {
+  final Race race;
+  final VoidCallback onEdit;
+  final VoidCallback onClose;
+
+  const RaceCard({
+    super.key,
+    required this.race,
+    required this.onEdit,
+    required this.onClose,
+  });
+
+  String get _statusLabel {
+    switch (race.status) {
+      case RaceStatus.completed:
+        return 'Completed';
+      case RaceStatus.dnf:
+        return 'Did not finish';
+      case RaceStatus.dns:
+        return 'Did not start';
+      case RaceStatus.planned:
+        return 'Planned';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Theme.of(context).textTheme;
+    final done = race.status == RaceStatus.completed;
+    final stats = <String>[
+      if (race.distanceKm != null) '${race.distanceKm} km',
+      if (done && race.finishTimeSeconds != null) race.formattedTime,
+      if (done && race.overallPosition != null)
+        'Overall ${race.overallPosition}',
+      if (done && race.ageGroupPosition != null)
+        'Age group ${race.ageGroupPosition}',
+    ];
+    return Card(
+      elevation: 6,
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 10, 8, 6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    race.name,
+                    style:
+                        t.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                InkWell(
+                  onTap: onClose,
+                  child: const Padding(
+                    padding: EdgeInsets.all(4),
+                    child: Icon(Icons.close, size: 18),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              [
+                DateFormat.yMMMd().format(race.date),
+                if (race.locationName != null) race.locationName!,
+              ].join(' · '),
+              style: t.bodySmall,
+            ),
+            const SizedBox(height: 6),
+            Text(_statusLabel,
+                style: t.labelMedium?.copyWith(fontWeight: FontWeight.w600)),
+            if (stats.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(stats.join(' · '), style: t.bodyMedium),
+            ],
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(onPressed: onEdit, child: const Text('Edit')),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

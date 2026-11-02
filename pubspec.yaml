@@ -1,5 +1,5 @@
 name: runners_journey
-description: A runner's life diary - races as points of interest on a jungle trail.
+description: A runner's life diary - races pinned on an illustrated map of South Africa.
 publish_to: "none"
 version: 0.1.0+1
 
@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   supabase_flutter: ^2.8.0
   intl: ^0.19.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +20,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/south_africa_map.jpg

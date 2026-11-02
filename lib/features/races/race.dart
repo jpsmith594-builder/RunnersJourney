@@ -10,6 +10,8 @@ class Race {
   final int? overallPosition;
   final int? ageGroupPosition;
   final String? locationName;
+  final double? lat;
+  final double? lng;
   final String? notes;
 
   const Race({
@@ -22,6 +24,8 @@ class Race {
     this.overallPosition,
     this.ageGroupPosition,
     this.locationName,
+    this.lat,
+    this.lng,
     this.notes,
   });
 
@@ -39,6 +43,8 @@ class Race {
       overallPosition: m['overall_position'] as int?,
       ageGroupPosition: m['age_group_position'] as int?,
       locationName: m['location_name'] as String?,
+      lat: (m['lat'] as num?)?.toDouble(),
+      lng: (m['lng'] as num?)?.toDouble(),
       notes: m['notes'] as String?,
     );
   }
@@ -57,6 +63,8 @@ class Race {
       'overall_position': overallPosition,
       'age_group_position': ageGroupPosition,
       'location_name': locationName,
+      'lat': lat,
+      'lng': lng,
       'notes': notes,
     };
   }

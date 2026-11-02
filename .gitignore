@@ -11,6 +11,9 @@ build/
 .flutter-plugins-dependencies
 pubspec.lock
 
+# Generated preview from tools/gen_places.py (large)
+tools/preview.png
+
 # Local secrets - never commit
 env.json
 .env

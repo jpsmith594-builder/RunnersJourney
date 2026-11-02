@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../map/places.dart';
 import 'race.dart';
 import 'race_repository.dart';
 
 class RaceFormScreen extends StatefulWidget {
   final Race? race;
-  const RaceFormScreen({super.key, this.race});
+
+  /// Pre-selected town (used when adding a race from the map).
+  final Place? initialPlace;
+  const RaceFormScreen({super.key, this.race, this.initialPlace});
 
   @override
   State<RaceFormScreen> createState() => _RaceFormScreenState();
@@ -27,18 +31,24 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
       text: widget.race?.overallPosition?.toString() ?? '');
   late final _ageGroup = TextEditingController(
       text: widget.race?.ageGroupPosition?.toString() ?? '');
-  late final _location =
-      TextEditingController(text: widget.race?.locationName ?? '');
   late final _notes = TextEditingController(text: widget.race?.notes ?? '');
 
   late DateTime _date = widget.race?.date ?? DateTime.now();
   late RaceStatus _status = widget.race?.status ??
       (DateTime.now().isAfter(_date) ? RaceStatus.completed : RaceStatus.planned);
   bool _saving = false;
+  Place? _place;
+  TextEditingController? _loc;
+
+  @override
+  void initState() {
+    super.initState();
+    _place = widget.initialPlace ?? placeByName(widget.race?.locationName);
+  }
 
   @override
   void dispose() {
-    for (final c in [_name, _distance, _time, _position, _ageGroup, _location, _notes]) {
+    for (final c in [_name, _distance, _time, _position, _ageGroup, _notes]) {
       c.dispose();
     }
     super.dispose();
@@ -65,6 +75,8 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
     setState(() => _saving = true);
     String? clean(TextEditingController c) =>
         c.text.trim().isEmpty ? null : c.text.trim();
+    final typed = (_loc?.text ?? '').trim();
+    final place = placeByName(typed);
     final race = Race(
       id: widget.race?.id,
       name: _name.text.trim(),
@@ -74,7 +86,9 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
       finishTimeSeconds: parseDuration(_time.text),
       overallPosition: int.tryParse(_position.text.trim()),
       ageGroupPosition: int.tryParse(_ageGroup.text.trim()),
-      locationName: clean(_location),
+      locationName: place?.name ?? (typed.isEmpty ? null : typed),
+      lat: place?.lat,
+      lng: place?.lng,
       notes: clean(_notes),
     );
     try {
@@ -188,11 +202,31 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               ],
             ),
             gap,
-            TextFormField(
-              controller: _location,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                  labelText: 'Location', border: OutlineInputBorder()),
+            Autocomplete<Place>(
+              initialValue: TextEditingValue(
+                  text: widget.race?.locationName ??
+                      widget.initialPlace?.name ??
+                      ''),
+              displayStringForOption: (p) => p.name,
+              optionsBuilder: (v) => searchPlaces(v.text),
+              onSelected: (p) => setState(() => _place = p),
+              fieldViewBuilder: (context, controller, focusNode, onSubmit) {
+                _loc = controller;
+                return TextFormField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  textCapitalization: TextCapitalization.words,
+                  onChanged: (t) => setState(() => _place = placeByName(t)),
+                  decoration: InputDecoration(
+                    labelText: 'Town or city',
+                    prefixIcon: const Icon(Icons.place_outlined),
+                    border: const OutlineInputBorder(),
+                    helperText: _place == null
+                        ? 'Pick a town from the list to show this race on the map'
+                        : '${_place!.name}, ${_place!.province}',
+                  ),
+                );
+              },
             ),
             gap,
             TextFormField(

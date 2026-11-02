@@ -1,63 +1,78 @@
-# Trailkeeper (working title)
+# Runner's Journey
 
-A runner's life diary: races become points of interest along an illustrated jungle trail.
+A runner's life diary. Races are pinned on an illustrated map of South Africa,
+at the city or town where they were run. Zoom in to see smaller towns, tap a pin
+for the race card, and see your own football-style runner card.
 
-## Decisions
-- Flutter (Android + iOS, one codebase)
-- Supabase: Auth, Postgres, Storage (photos)
-- GitHub: source + CI
-- Illustrated trail map (not a real map), manual race entry for v1
-- Separate app from Cadence; data model kept simple so it could plug in later
+## Stack
+- Flutter (Android first, iOS later from the same code)
+- Supabase: Auth, Postgres, Storage (profile photos)
+- GitHub for source
 
-## Core features (v1)
-1. Sign up / log in (Supabase Auth)
-2. Add a race: name, date, distance, time, positions, location, notes; status planned/completed
-3. Journey screen: scrollable jungle trail, races as POIs in date order
-   - Completed stretch of the trail highlighted; planned stretch dimmed/dashed
-   - Tap or hover/long-press a POI -> race card (name, date, distance, time, position, a photo)
-   - Mobile has no hover: long-press or tap shows the card; hover works on web/desktop
-4. Photos per race (upload to Storage bucket `race-photos`)
-5. Seasonal theme: palette + foliage/particles (leaves, rain, blossom, snow) chosen from
-   the current date and the runner's hemisphere (from profile location)
-
-## Season logic
-Month -> season, flipped for the southern hemisphere. Theme tokens per season
-(sky gradient, canopy colour, particle type). Optional later: weather API for live rain/sun.
-
-## Architecture
-lib/
-  main.dart
-  core/ (supabase client, theme, season service)
-  features/
-    auth/
-    races/ (model, repository, add/edit form)
-    journey/ (trail painter, POI widget, race card overlay)
-    photos/ (picker, upload, gallery)
-
-Trail rendering: CustomPainter draws a winding path; POI positions computed from race order
-(equal spacing, gentle sine wobble), drawn with Flutter animations. Illustrated assets
-as SVG layers (canopy, vines, ground) tinted by season theme.
-
-## Milestones
-1. Repo + Flutter scaffold + Supabase project + run `supabase/schema.sql`
-2. Auth + race CRUD
-3. Journey trail + POIs + race card
-4. Photos
-5. Seasonal theme
-6. Polish, store builds (Android first, iOS needs a Mac + Apple developer account)
+## Features
+- Email sign-up / sign-in
+- Add, edit, delete races: name, date, status (planned / completed / DNF / DNS),
+  distance, finish time, positions, town, notes
+- **Journey tab**: the illustrated South Africa map
+  - Races sit on their town. Pinch, scroll, or use the +/- buttons to zoom
+  - Major cities always show; regional towns and small towns appear as you zoom in
+  - Several races in one town show as a numbered pin; tap it or zoom in and the
+    races fan out around the town
+  - Tap (or hover on desktop / web) a pin for the race card, then Edit
+  - Tap a town name and choose "Add race here"
+  - The map's colour grade follows the season (southern hemisphere by default)
+  - Races with no known town are listed as "N not on map" until you pick a town
+- **Races tab**: plain list, newest first
+- **Profile** (menu, top right): name, running club, home town, favourite distance,
+  profile photo. Shows your **runner card**: rating, photo, races, km, towns and
+  personal bests (5K / 10K / 21K / 42K). Card tier (bronze, silver, gold, elite) comes
+  from the rating: 45 + 2 per finished race + 1 per 15 km + 1 per town
 
 ## Setup
-1. Create a Supabase project, run `supabase/schema.sql` in the SQL editor
-   (if you ran an earlier version, run `supabase/002_profile_trigger.sql` once)
-2. In the repo folder run `flutter create . --project-name runners_journey --org com.runnersjourney`
-   to generate the `android/` and `ios/` folders (existing `lib/` and `pubspec.yaml` are kept)
+1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
+   If you set up an earlier version, run these once instead:
+   `supabase/002_profile_trigger.sql` and `supabase/003_profile_card.sql`
+   (003 adds the profile columns and the private `avatars` photo bucket)
+2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
+   (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
+   it overwrites with `git restore <file>` and delete `test/widget_test.dart`)
 3. `flutter pub get`
-4. Copy `env.example.json` to `env.json` and fill in your Supabase URL and anon/publishable key
-   (`env.json` is gitignored)
+4. Copy `env.example.json` to `env.json` and fill in your Supabase URL and anon/publishable
+   key (`env.json` is gitignored)
 5. `flutter run --dart-define-from-file=env.json`
 
-## Status
-- [x] Auth (email + password) and race add / edit / delete / list
-- [x] Jungle trail journey screen (hover / tap / long-press a POI for its race card)
-- [ ] Photos
-- [x] Seasonal theme v1: palette + particles by date and hemisphere (`lib/core/season.dart`, `season_theme.dart`)
+## The map
+The artwork (`assets/images/south_africa_map.jpg`) is an illustration, not a real
+projection, so towns are placed by hand-tuned positions rather than GPS. They are
+generated by `tools/gen_places.py` into `lib/features/map/places_data.dart`:
+- add or move a town in the script, then run `python3 tools/gen_places.py --preview`
+- `--preview` writes `tools/preview.png` (gitignored) so you can check every dot lands on land
+
+The map works best in landscape. A higher-resolution copy of the artwork will look
+sharper when zoomed in; keep the same proportions (1672 x 941) or update the constants
+in `lib/features/map/map_view.dart` and `tools/gen_places.py`.
+
+## Layout
+```
+lib/
+  main.dart, core/ (config, season)
+  features/
+    auth/      login and auth gate
+    home/      tabs, menu, add-race button
+    map/       map view, places, clustering, race card, season colour grade
+    races/     model, repository, store, list, add/edit form
+    profile/   profile model/store/repository, edit screen, runner card, stats
+supabase/      schema.sql and migrations
+tools/         gen_places.py
+```
+
+## Roadmap
+- [x] Auth and race add / edit / delete / list
+- [x] South Africa map with zoom, town labels by zoom level, clusters
+- [x] Seasonal colour grade
+- [x] Profile and runner card
+- [ ] Photos on a race
+- [ ] Route lines between consecutive races (completed solid, planned dashed)
+- [ ] Share the runner card as an image
+- [ ] iOS build (needs a Mac and Apple developer account; add camera and photo
+  library permission text to `ios/Runner/Info.plist` for `image_picker`)
