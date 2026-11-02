@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:runners_journey/features/map/map_geometry.dart';
 import 'package:runners_journey/features/map/places.dart';

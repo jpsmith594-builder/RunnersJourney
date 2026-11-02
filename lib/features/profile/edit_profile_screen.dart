@@ -103,11 +103,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     const gap = SizedBox(height: 14);
-    final ImageProvider? photo = _preview != null
-        ? MemoryImage(_preview!)
-        : (widget.store.avatarUrl != null
-            ? NetworkImage(widget.store.avatarUrl!)
-            : null);
+    ImageProvider? photo;
+    if (_preview != null) {
+      photo = MemoryImage(_preview!);
+    } else if (widget.store.avatarUrl != null) {
+      photo = NetworkImage(widget.store.avatarUrl!);
+    }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Runner profile')),
