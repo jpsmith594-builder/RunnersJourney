@@ -30,6 +30,9 @@ for the race card, and see your own football-style runner card.
 - **Friends** (menu): every runner has a friend code. Invite on WhatsApp (or copy the invite),
   or type a friend's code to send a request. Once accepted you can open each other's runner
   card and recent races; either side can remove the friendship at any time
+- **Photos**: add pictures to any race (gallery or camera) in the race form; they are
+  shrunk on upload, stored privately in Supabase Storage (`race-photos` bucket) and shown
+  as thumbnails on the map's race card
 - **Races tab**: plain list, newest first
 - **Profile** (menu, top right): name, age, gender, running club, home town,
   favourite distance, profile photo. Shows your **runner card**: rating, photo, races, km, towns and
@@ -86,7 +89,7 @@ tools/         gen_places.py
 - [x] Seasonal colour grade
 - [x] Profile and runner card
 - [x] Race bucket list
-- [ ] Photos on a race
+- [x] Photos on a race
 - [x] Route lines between consecutive races (completed solid, planned dashed)
 - [x] Friends with invite codes and WhatsApp invites
 - [ ] Share the runner card as an image

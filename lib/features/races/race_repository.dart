@@ -12,9 +12,15 @@ class RaceRepository {
         .toList();
   }
 
-  Future<void> add(Race race) async {
+  /// Adds a race and returns its new id.
+  Future<String> add(Race race) async {
     final uid = _db.auth.currentUser!.id;
-    await _db.from('races').insert({...race.toMap(), 'user_id': uid});
+    final row = await _db
+        .from('races')
+        .insert({...race.toMap(), 'user_id': uid})
+        .select('id')
+        .single();
+    return row['id'] as String;
   }
 
   Future<void> update(Race race) async {

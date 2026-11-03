@@ -584,12 +584,15 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       if (race != null) {
         final left = tip.dx - _cardWidth / 2;
         final maxLeft = math.max(8.0, _viewport.width - _cardWidth - 8);
-        var top = tip.dy - _pinH - _cardHeight - 6;
-        if (top < 8) top = tip.dy + 10;
+        // Above the pin when there is room (anchored by its bottom edge, so
+        // photos can make the card taller), otherwise just below it.
+        final above = tip.dy - _pinH - _cardHeight - 6 >= 8;
         final selectedRace = race;
         children.add(Positioned(
+          key: ValueKey('race-card-$_selectedId'),
           left: left.clamp(8.0, maxLeft).toDouble(),
-          top: top,
+          top: above ? null : tip.dy + 10,
+          bottom: above ? _viewport.height - (tip.dy - _pinH - 6) : null,
           width: _cardWidth,
           child: RaceCard(
             race: selectedRace,

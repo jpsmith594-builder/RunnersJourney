@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../photos/photo_widgets.dart';
 import '../races/race.dart';
 
 /// Small summary card shown when a race pin is tapped (or hovered on desktop).
@@ -85,6 +86,7 @@ class RaceCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(stats.join(' · '), style: t.bodyMedium),
             ],
+            if (race.id != null) RacePhotoStrip(raceId: race.id!),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(onPressed: onEdit, child: const Text('Edit')),

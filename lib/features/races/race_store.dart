@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../photos/photo_repository.dart';
 import 'race.dart';
 import 'race_repository.dart';
 
@@ -33,6 +34,11 @@ class RaceStore extends ChangeNotifier {
   }
 
   Future<void> delete(Race race) async {
+    try {
+      await PhotoRepository().deleteFilesOf(race.id!);
+    } catch (_) {
+      // Best effort: leftover files are harmless.
+    }
     await _repo.delete(race.id!);
     await load();
   }

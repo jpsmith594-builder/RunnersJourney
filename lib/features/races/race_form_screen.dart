@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:image_picker/image_picker.dart';
+
 import '../map/places.dart';
+import '../photos/photo_repository.dart';
+import '../photos/photo_widgets.dart';
 import 'race.dart';
 import 'race_repository.dart';
 
@@ -45,6 +49,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
   late RaceStatus _status = widget.race?.status ??
       (DateTime.now().isAfter(_date) ? RaceStatus.completed : RaceStatus.planned);
   bool _saving = false;
+  final List<XFile> _pendingPhotos = [];
   Place? _place;
   TextEditingController? _loc;
 
@@ -134,7 +139,21 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
     );
     try {
       if (race.id == null) {
-        await _repo.add(race);
+        final newId = await _repo.add(race);
+        // Photos picked before the race existed upload now.
+        var failed = 0;
+        for (final f in _pendingPhotos) {
+          try {
+            await PhotoRepository().add(newId, f);
+          } catch (_) {
+            failed++;
+          }
+        }
+        if (failed > 0 && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                  '$failed photo(s) did not upload. Open the race to add them again.')));
+        }
       } else {
         await _repo.update(race);
       }
@@ -282,6 +301,12 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
                   ),
                 );
               },
+            ),
+            gap,
+            PhotosEditor(
+              raceId: widget.race?.id,
+              pending: _pendingPhotos,
+              onPendingChanged: () => setState(() {}),
             ),
             gap,
             TextFormField(
