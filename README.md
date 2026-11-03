@@ -26,6 +26,11 @@ for the race card, and see your own football-style runner card.
   picture and opens the phone's share sheet (WhatsApp, Instagram, save to gallery...)
 - **Race bucket list** (menu): races you want to do one day, each with a tickbox. Open ones
   show as grey pins on the map (tap one to tick it off there); ticked ones leave the map
+- **Race calendar** (menu) and race search: a starter list of well-known South African races
+  (Comrades, Two Oceans, Cape Town Marathon, Soweto...) with usual timing. Add one to your plan or
+  bucket list in a tap, or just start typing a race name in the race form and the town and
+  distance fill in. The list lives in `lib/features/calendar/race_event.dart`; dates change every
+  year so check the official site
 - **My results** (menu): a table of completed races. Filter by distance (5K, 10K, 21K, 42K...)
   and year; sort by date, time, pace, distance or name (tap a column header or use the
   sort box), ascending or descending

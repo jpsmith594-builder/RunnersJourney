@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../bucket/bucket_item.dart';
 import '../bucket/bucket_list_screen.dart';
 import '../bucket/bucket_store.dart';
+import '../calendar/calendar_screen.dart';
+import '../calendar/race_event.dart';
 import '../friends/friends_screen.dart';
 import '../friends/friends_store.dart';
 import '../map/map_view.dart';
@@ -58,6 +61,35 @@ class _HomeScreenState extends State<HomeScreen> {
     if (changed == true) _store.load();
   }
 
+  void _openCalendar() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CalendarScreen(
+          onPlan: (e) async {
+            final changed = await Navigator.of(context).push<bool>(
+              MaterialPageRoute(builder: (_) => RaceFormScreen(prefill: e)),
+            );
+            if (changed == true) _store.load();
+          },
+          onBucket: (e) async {
+            final messenger = ScaffoldMessenger.of(context);
+            try {
+              await _bucket.add(BucketItem(
+                  name: e.name, locationName: e.town, distanceKm: e.distanceKm));
+              messenger
+                ..clearSnackBars()
+                ..showSnackBar(
+                    SnackBar(content: Text('${e.name} added to your bucket list')));
+            } catch (err) {
+              messenger.showSnackBar(
+                  SnackBar(content: Text('Could not add to bucket list: $err')));
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   void _openFriends() {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -102,6 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
               switch (value) {
                 case 'profile':
                   _openProfile();
+                case 'calendar':
+                  _openCalendar();
                 case 'results':
                   _openResults();
                 case 'friends':
@@ -123,6 +157,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.badge_outlined),
                   title: Text('Profile'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'calendar',
+                child: ListTile(
+                  leading: Icon(Icons.event_outlined),
+                  title: Text('Race calendar'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

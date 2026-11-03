@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../calendar/race_event.dart';
 import '../map/places.dart';
 import 'bucket_item.dart';
 import 'bucket_store.dart';
@@ -19,6 +20,7 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
   late final _name = TextEditingController(text: widget.item?.name);
   late final _distance =
       TextEditingController(text: widget.item?.distanceKm?.toString() ?? '');
+  final _nameFocus = FocusNode();
   Place? _place;
   TextEditingController? _loc;
   bool _saving = false;
@@ -31,6 +33,7 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
 
   @override
   void dispose() {
+    _nameFocus.dispose();
     _name.dispose();
     _distance.dispose();
     super.dispose();
@@ -76,13 +79,62 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            TextFormField(
-              controller: _name,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                  labelText: 'Race name', border: OutlineInputBorder()),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Required' : null,
+            RawAutocomplete<RaceEvent>(
+              textEditingController: _name,
+              focusNode: _nameFocus,
+              displayStringForOption: (e) => e.name,
+              optionsBuilder: (v) =>
+                  widget.item == null ? searchEvents(v.text) : const [],
+              onSelected: (e) {
+                if (_distance.text.trim().isEmpty) {
+                  _distance.text = e.distanceKm.toString();
+                }
+                final town = e.town;
+                if (town != null && (_loc?.text ?? '').trim().isEmpty) {
+                  _loc?.text = town;
+                  setState(() => _place = placeByName(town));
+                }
+              },
+              fieldViewBuilder: (context, controller, focusNode, onSubmit) =>
+                  TextFormField(
+                controller: controller,
+                focusNode: focusNode,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                    labelText: 'Race name',
+                    helperText: 'Start typing to search the race calendar',
+                    border: OutlineInputBorder()),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Required' : null,
+              ),
+              optionsViewBuilder: (context, onSelected, options) => Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: ConstrainedBox(
+                    constraints:
+                        const BoxConstraints(maxHeight: 260, maxWidth: 420),
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      children: [
+                        for (final e in options)
+                          ListTile(
+                            dense: true,
+                            title: Text(e.name),
+                            subtitle: Text([
+                              if (e.town != null) e.town!,
+                              e.distanceLabel,
+                              e.when,
+                            ].join(' \u00B7 ')),
+                            onTap: () => onSelected(e),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
             gap,
             Autocomplete<Place>(

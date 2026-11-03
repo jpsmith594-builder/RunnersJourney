@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import 'package:image_picker/image_picker.dart';
 
+import '../calendar/race_event.dart';
 import '../map/places.dart';
 import '../photos/photo_repository.dart';
 import '../photos/photo_widgets.dart';
@@ -14,7 +15,12 @@ class RaceFormScreen extends StatefulWidget {
 
   /// Pre-selected town (used when adding a race from the map).
   final Place? initialPlace;
-  const RaceFormScreen({super.key, this.race, this.initialPlace});
+
+  /// A calendar race to start from (name, town and distance are filled in and
+  /// the race is set to "planned").
+  final RaceEvent? prefill;
+  const RaceFormScreen(
+      {super.key, this.race, this.initialPlace, this.prefill});
 
   @override
   State<RaceFormScreen> createState() => _RaceFormScreenState();
@@ -24,9 +30,14 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _repo = RaceRepository();
 
-  late final _name = TextEditingController(text: widget.race?.name);
+  final _nameFocus = FocusNode();
+  late final _name =
+      TextEditingController(text: widget.race?.name ?? widget.prefill?.name);
   late final _distance = TextEditingController(
-      text: widget.race?.distanceKm?.toString() ?? '');
+      text: widget.race?.distanceKm?.toString() ??
+          (widget.prefill == null
+              ? ''
+              : widget.prefill!.distanceKm.toString()));
   late final _hours = TextEditingController(
       text: widget.race?.finishTimeSeconds == null
           ? ''
@@ -45,9 +56,15 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
       text: widget.race?.ageGroupPosition?.toString() ?? '');
   late final _notes = TextEditingController(text: widget.race?.notes ?? '');
 
-  late DateTime _date = widget.race?.date ?? DateTime.now();
+  late DateTime _date = widget.race?.date ??
+      widget.prefill?.nextDate() ??
+      DateTime.now();
   late RaceStatus _status = widget.race?.status ??
-      (DateTime.now().isAfter(_date) ? RaceStatus.completed : RaceStatus.planned);
+      (widget.prefill != null
+          ? RaceStatus.planned
+          : (DateTime.now().isAfter(_date)
+              ? RaceStatus.completed
+              : RaceStatus.planned));
   bool _saving = false;
   final List<XFile> _pendingPhotos = [];
   Place? _place;
@@ -56,11 +73,14 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
   @override
   void initState() {
     super.initState();
-    _place = widget.initialPlace ?? placeByName(widget.race?.locationName);
+    _place = widget.initialPlace ??
+        placeByName(widget.race?.locationName) ??
+        placeByName(widget.prefill?.town);
   }
 
   @override
   void dispose() {
+    _nameFocus.dispose();
     for (final c in [_name, _distance, _hours, _mins, _secs, _position, _ageGroup, _notes]) {
       c.dispose();
     }
@@ -178,13 +198,70 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            TextFormField(
-              controller: _name,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                  labelText: 'Race name', border: OutlineInputBorder()),
-              validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Required' : null,
+            RawAutocomplete<RaceEvent>(
+              textEditingController: _name,
+              focusNode: _nameFocus,
+              displayStringForOption: (e) => e.name,
+              optionsBuilder: (v) =>
+                  widget.race == null ? searchEvents(v.text) : const [],
+              onSelected: (e) {
+                // Fill in what we know, without overwriting what is typed.
+                if (_distance.text.trim().isEmpty) {
+                  _distance.text = e.distanceKm.toString();
+                }
+                final town = e.town;
+                if (town != null && (_loc?.text ?? '').trim().isEmpty) {
+                  _loc?.text = town;
+                  setState(() => _place = placeByName(town));
+                }
+                final d = e.nextDate();
+                if (d != null && widget.race == null) {
+                  setState(() {
+                    _date = d;
+                    _status = RaceStatus.planned;
+                  });
+                }
+              },
+              fieldViewBuilder: (context, controller, focusNode, onSubmit) =>
+                  TextFormField(
+                controller: controller,
+                focusNode: focusNode,
+                textCapitalization: TextCapitalization.words,
+                decoration: const InputDecoration(
+                    labelText: 'Race name',
+                    helperText: 'Start typing to search the race calendar',
+                    border: OutlineInputBorder()),
+                validator: (v) =>
+                    (v == null || v.trim().isEmpty) ? 'Required' : null,
+              ),
+              optionsViewBuilder: (context, onSelected, options) => Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(8),
+                  child: ConstrainedBox(
+                    constraints:
+                        const BoxConstraints(maxHeight: 260, maxWidth: 420),
+                    child: ListView(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      children: [
+                        for (final e in options)
+                          ListTile(
+                            dense: true,
+                            title: Text(e.name),
+                            subtitle: Text([
+                              if (e.town != null) e.town!,
+                              e.distanceLabel,
+                              e.when,
+                            ].join(' \u00B7 ')),
+                            onTap: () => onSelected(e),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
             gap,
             InkWell(
@@ -280,6 +357,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               initialValue: TextEditingValue(
                   text: widget.race?.locationName ??
                       widget.initialPlace?.name ??
+                      widget.prefill?.town ??
                       ''),
               displayStringForOption: (p) => p.name,
               optionsBuilder: (v) => searchPlaces(v.text),
