@@ -51,25 +51,140 @@ class _ShieldClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
 
-class _ShieldBorder extends CustomPainter {
+/// Soft glow under the card.
+class _ShieldGlow extends CustomPainter {
   final Color color;
-  final double unit;
-  const _ShieldBorder(this.color, this.unit);
+  const _ShieldGlow(this.color);
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.drawShadow(_shield(size), color, 14, true);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ShieldGlow old) => old.color != color;
+}
+
+/// Metallic double frame: a thick gradient rim, a thin bright line inside it
+/// and a dark outer edge, with gems at the corners.
+class _ShieldFrame extends CustomPainter {
+  final _Palette p;
+  final double unit;
+  const _ShieldFrame(this.p, this.unit);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final outer = _shield(size);
+
+    // Rim
     canvas.drawPath(
-      _shield(size),
+      outer,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 3 * unit
-        ..color = color,
+        ..strokeWidth = 12 * unit
+        ..shader = SweepGradient(
+          center: Alignment.center,
+          colors: [
+            p.top,
+            p.accent,
+            Colors.white,
+            p.bottom,
+            p.accent,
+            p.top,
+          ],
+          stops: const [0.0, 0.2, 0.38, 0.6, 0.82, 1.0],
+        ).createShader(rect),
+    );
+    // Dark outer edge
+    canvas.drawPath(
+      outer,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5 * unit
+        ..color = p.ink.withValues(alpha: 0.75),
+    );
+    // Bright inner line, set in from the edge
+    final inset = 9 * unit;
+    final inner = _shield(Size(size.width - 2 * inset, size.height - 2 * inset))
+        .shift(Offset(inset, inset));
+    canvas.drawPath(
+      inner,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6 * unit
+        ..color = Colors.white.withValues(alpha: 0.85),
+    );
+    canvas.drawPath(
+      inner,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8 * unit
+        ..color = p.ink.withValues(alpha: 0.35),
+    );
+
+    // Gems at the top corners and the bottom point
+    final r = size.width * 0.09;
+    for (final c in [
+      Offset(r * 0.55, r * 0.55),
+      Offset(size.width - r * 0.55, r * 0.55),
+      Offset(size.width / 2, size.height - 4 * unit),
+    ]) {
+      _gem(canvas, c, 5.5 * unit);
+    }
+  }
+
+  void _gem(Canvas canvas, Offset c, double r) {
+    canvas.drawCircle(c, r + 1.5 * unit, Paint()..color = p.ink.withValues(alpha: 0.8));
+    canvas.drawCircle(
+      c,
+      r,
+      Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.4, -0.4),
+          colors: [Colors.white, p.accent, p.ink],
+          stops: const [0.0, 0.45, 1.0],
+        ).createShader(Rect.fromCircle(center: c, radius: r)),
     );
   }
 
   @override
-  bool shouldRepaint(covariant _ShieldBorder old) =>
-      old.color != color || old.unit != unit;
+  bool shouldRepaint(covariant _ShieldFrame old) =>
+      old.p != p || old.unit != unit;
+}
+
+/// Tiny four-point sparkles scattered over the card.
+class _Sparkles extends CustomPainter {
+  final Color color;
+  const _Sparkles(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const spots = [
+      [0.12, 0.30, 7.0],
+      [0.45, 0.10, 5.0],
+      [0.90, 0.40, 8.0],
+      [0.78, 0.62, 5.0],
+      [0.20, 0.72, 6.0],
+      [0.55, 0.50, 4.0],
+    ];
+    final paint = Paint()..color = color;
+    for (final s in spots) {
+      final c = Offset(size.width * s[0], size.height * s[1]);
+      final r = s[2] * size.width / 300;
+      final path = Path()
+        ..moveTo(c.dx, c.dy - r)
+        ..quadraticBezierTo(c.dx, c.dy, c.dx + r, c.dy)
+        ..quadraticBezierTo(c.dx, c.dy, c.dx, c.dy + r)
+        ..quadraticBezierTo(c.dx, c.dy, c.dx - r, c.dy)
+        ..quadraticBezierTo(c.dx, c.dy, c.dx, c.dy - r)
+        ..close();
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _Sparkles old) => old.color != color;
 }
 
 class _Stripes extends CustomPainter {
@@ -148,7 +263,8 @@ class RunnerCard extends StatelessWidget {
                 color: p.ink, fontSize: size * u, fontWeight: w, height: 1.0);
 
         return CustomPaint(
-          foregroundPainter: _ShieldBorder(p.accent, u),
+          painter: _ShieldGlow(p.accent),
+          foregroundPainter: _ShieldFrame(p, u),
           child: ClipPath(
             clipper: _ShieldClipper(),
             child: Container(
@@ -162,6 +278,29 @@ class RunnerCard extends StatelessWidget {
               child: Stack(
                 children: [
                   const Positioned.fill(child: CustomPaint(painter: _Stripes())),
+                  Positioned.fill(
+                      child: CustomPaint(
+                          painter: _Sparkles(
+                              Colors.white.withValues(alpha: 0.55)))),
+                  // Glossy sheen
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withValues(alpha: 0.0),
+                              Colors.white.withValues(alpha: 0.28),
+                              Colors.white.withValues(alpha: 0.0),
+                            ],
+                            stops: const [0.30, 0.45, 0.60],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   // Rating, distance, flag
                   Positioned(
                     left: 24 * u,
@@ -240,12 +379,6 @@ class RunnerCard extends StatelessWidget {
                         ],
                       ],
                     ),
-                  ),
-                  Positioned(
-                    left: 28 * u,
-                    right: 28 * u,
-                    top: 254 * u,
-                    child: Container(height: 2 * u, color: p.accent),
                   ),
                   // Headline numbers
                   Positioned(
