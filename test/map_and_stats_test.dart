@@ -22,13 +22,14 @@ Race _race(
     );
 
 void main() {
+  suburbTests();
   group('places', () {
-    test('names are unique and positions are inside the artwork', () {
+    test('names are unique and positions are inside South Africa', () {
       final names = <String>{};
       for (final p in kPlaces) {
         expect(names.add(p.name.toLowerCase()), isTrue, reason: p.name);
-        expect(p.fx, inInclusiveRange(0, 1), reason: p.name);
-        expect(p.fy, inInclusiveRange(0, 1), reason: p.name);
+        expect(p.lng, inInclusiveRange(14, 36), reason: p.name);
+        expect(p.lat, inInclusiveRange(-36, -21), reason: p.name);
         expect(p.tier, inInclusiveRange(1, 5), reason: p.name);
       }
     });
@@ -69,7 +70,7 @@ void main() {
 
       // Zoomed in: towns far apart on screen stay separate.
       clusters = clusterGroups(
-          r.groups, (p) => Offset(p.fx * 5000, p.fy * 3000), 28);
+          r.groups, (p) => Offset(p.lng * 300, -p.lat * 300), 28);
       expect(clusters.length, 3);
     });
 
@@ -121,6 +122,21 @@ void main() {
           CardTier.silver); // 61
       expect(const RunnerStats(completed: 15, totalKm: 0, towns: 0).tier,
           CardTier.gold); // 75
+    });
+  });
+}
+
+
+void suburbTests() {
+  group('cape town suburbs', () {
+    test('sit near Cape Town at deep tiers', () {
+      final ct = placeByName('Cape Town')!;
+      final sub = kPlaces.where((p) => p.tier >= 4).toList();
+      expect(sub.length, greaterThan(20));
+      for (final p in sub) {
+        expect((p.lng - ct.lng).abs(), lessThan(0.7), reason: p.name);
+        expect((p.lat - ct.lat).abs(), lessThan(0.6), reason: p.name);
+      }
     });
   });
 }

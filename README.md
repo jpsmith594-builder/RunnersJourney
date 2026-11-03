@@ -13,7 +13,7 @@ for the race card, and see your own football-style runner card.
 - Email sign-up / sign-in
 - Add, edit, delete races: name, date, status (planned / completed / DNF / DNS),
   distance, finish time, positions, town, notes
-- **Journey tab**: the portrait South Africa map
+- **Journey tab**: the real map of South Africa
   - Races sit on their town. Pinch, scroll, or use the +/- buttons to zoom
   - Major cities always show; regional towns and small towns appear as you zoom in
   - Several races in one town show as a numbered pin; tap it or zoom in and the
@@ -43,24 +43,19 @@ for the race card, and see your own football-style runner card.
 5. `flutter run --dart-define-from-file=env.json`
 
 ## The map
-A phone-shaped (9:19) map of South Africa drawn in code, so it can be redrawn sharper as
-you zoom: west coast on the left, east coast on the right, Cape Town at the bottom, the
-northern provinces at the top. It is a latitude/longitude grid stretched to 9:19, so it is
-a stylised map, taller than the real shape.
+A real, zoomable map of South Africa (flutter_map) with your pins, race cards, route lines
+and a "replay my journey" button on top. Zoom in to reveal towns and, deeper still, Cape
+Town suburbs. The map picture follows the season with a colour tint.
 
-- `tools/mapgeo.py` - the geography (coast, borders, rivers, mountains, biomes) and the
-  lat/lng projection
-- `tools/gen_map_art.py --all` - paints the artwork into `assets/map/` (a base picture,
-  a tile pyramid for the whole country up to ~2.5x zoom, and extra-sharp tiles for the
-  Cape Town metro up to ~28x zoom) and writes `lib/features/map/map_tiles.dart`
-  (`--preview out.png` / `--crop LEVEL COL ROW out.png` to look at it)
-- `tools/gen_places.py` - towns and Cape Town suburbs by real GPS, written to
-  `lib/features/map/places_data.dart` (`--preview` checks every dot lands on land)
-- The app (`tile_layer.dart`) picks the tile level that matches the zoom, so it stays crisp.
-  Outside Cape Town the artwork is sharp to about 2.5x zoom and softer beyond; more
-  detailed city windows can be added to `gen_map_art.py`.
-- Place tiers: 1 major city, 2 regional town, 3 small town, 4 Cape Town suburb,
-  5 Cape Town neighbourhood (deep zoom only)
+- Works out of the box with a free default map (OpenStreetMap / CARTO).
+- For a nicer outdoors / terrain look add a free key from https://cloud.maptiler.com
+  to `env.json` as `MAPTILER_KEY` (optionally `MAP_STYLE`: `outdoor-v2`, `topo-v2`,
+  `landscape`, `streets-v2`, `satellite`).
+- `tools/gen_places.py` holds the towns by real GPS and writes
+  `lib/features/map/places_data.dart`. Place tiers: 1 major city, 2 regional town,
+  3 small town, 4 Cape Town suburb, 5 Cape Town neighbourhood.
+- Route lines join your races by date: solid red between completed races, dashed green
+  once a planned race is involved.
 
 ## Layout
 ```
@@ -73,7 +68,7 @@ lib/
     races/     model, repository, store, list, add/edit form
     profile/   profile model/store/repository, edit screen, runner card, stats
 supabase/      schema.sql and migrations
-tools/         mapgeo.py, gen_map_art.py, gen_places.py
+tools/         gen_places.py
 ```
 
 ## Roadmap
@@ -82,7 +77,7 @@ tools/         mapgeo.py, gen_map_art.py, gen_places.py
 - [x] Seasonal colour grade
 - [x] Profile and runner card
 - [ ] Photos on a race
-- [ ] Route lines between consecutive races (completed solid, planned dashed)
+- [x] Route lines between consecutive races (completed solid, planned dashed)
 - [ ] Share the runner card as an image
 - [ ] iOS build (needs a Mac and Apple developer account; add camera and photo
   library permission text to `ios/Runner/Info.plist` for `image_picker`)

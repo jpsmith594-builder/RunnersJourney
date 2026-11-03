@@ -12,6 +12,8 @@ dependencies:
   supabase_flutter: ^2.8.0
   intl: ^0.19.0
   image_picker: ^1.1.2
+  flutter_map: ^8.2.2
+  latlong2: ^0.9.1
 
 dev_dependencies:
   flutter_test:
@@ -20,10 +22,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/map/base.jpg
-    - assets/map/tiles/2/
-    - assets/map/tiles/3/
-    - assets/map/cape/4/
-    - assets/map/cape/5/
-    - assets/map/cape/6/

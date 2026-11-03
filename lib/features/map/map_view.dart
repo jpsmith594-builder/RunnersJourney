@@ -1,8 +1,10 @@
 import 'dart:math' as math;
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
+import '../../core/config.dart';
 import '../../core/season.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
@@ -10,15 +12,15 @@ import 'map_geometry.dart';
 import 'places.dart';
 import 'race_card.dart';
 import 'season_filter.dart';
-import 'tile_layer.dart';
 
-const Color _oceanColor = Color(0xFF0E4A5E);
+const Color _oceanColor = Color(0xFFAAD3DF);
+const LatLng _saCentre = LatLng(-29.0, 24.5);
 
-/// The "Journey" tab: a phone-shaped (9:19) map of South Africa with races
-/// pinned to their towns. West coast on the left, east coast on the right, Cape
-/// Town at the bottom. Pinch / scroll to zoom; the artwork reloads sharper as
-/// you zoom. Towns appear as you zoom in (Cape Town suburbs at the deepest
-/// levels); several races in one town show as a numbered pin that fans out.
+/// The "Journey" tab: a real, zoomable map of South Africa with the runner's
+/// races pinned to their towns and joined by a route line (solid between
+/// completed races, dashed to planned ones). Towns appear as you zoom in
+/// (Cape Town suburbs at the deepest levels); several races in one town show as
+/// a numbered pin that fans out when you zoom in.
 class MapView extends StatefulWidget {
   final RaceStore store;
   final void Function(Race race) onEdit;
@@ -38,50 +40,42 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
-  static const double _maxScale = 28;
-  static const double _fanScale = 4.0; // zoom at which multi-race towns fan out
+  static const double _minZoom = 4.2;
+  static const double _maxZoom = 18;
+  static const double _fanZoom = 9.5; // zoom at which multi-race towns fan out
   static const double _clusterRadius = 28; // screen px
-  // Zoom (1 = map as wide as the screen) at which each place tier appears.
-  static const List<double> _tierScale = [1.0, 2.0, 3.5, 11.0, 20.0];
+  // Map zoom at which each place tier (1..5) appears.
+  static const List<double> _tierZoom = [4.0, 6.0, 7.5, 10.5, 12.0];
   static const double _cardWidth = 240;
   static const double _cardHeight = 170;
   static const double _pinW = 36;
   static const double _pinH = 44;
 
-  final TransformationController _tc = TransformationController();
+  final MapController _map = MapController();
+  final ValueNotifier<int> _tick = ValueNotifier<int>(0);
   late final AnimationController _anim = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 350),
+    duration: const Duration(milliseconds: 600),
   );
-  Float64List? _from;
-  Float64List? _to;
-
+  bool _ready = false;
+  bool _touring = false;
   Size _viewport = Size.zero;
-  double _contentW = 0;
-  double get _contentH => _contentW * kMapHeightOverWidth;
-  double get _minScale =>
-      math.max(1.0, _viewport.height / (_contentW * kMapHeightOverWidth));
   String? _selectedId;
 
   @override
-  void initState() {
-    super.initState();
-    _anim.addListener(_onTick);
-  }
-
-  @override
   void dispose() {
+    _touring = false;
     _anim.dispose();
-    _tc.dispose();
+    _tick.dispose();
+    _map.dispose();
     super.dispose();
   }
 
   // ---- geometry -----------------------------------------------------------
 
-  Offset _content(Place p) => Offset(p.fx * _contentW, p.fy * _contentH);
+  LatLng _latLng(Place p) => LatLng(p.lat, p.lng);
 
-  Offset _toScreen(Place p) =>
-      MatrixUtils.transformPoint(_tc.value, _content(p));
+  Offset _toScreen(Place p) => _map.camera.latLngToScreenOffset(_latLng(p));
 
   bool _onScreen(Offset s, {double margin = 50}) =>
       s.dx > -margin &&
@@ -89,65 +83,122 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       s.dx < _viewport.width + margin &&
       s.dy < _viewport.height + margin;
 
-  // ---- zoom / animation ---------------------------------------------------
+  // ---- camera -------------------------------------------------------------
 
-  Matrix4 _matrixFor(Offset content, double scale) {
-    final s = scale.clamp(_minScale, _maxScale).toDouble();
-    var tx = _viewport.width / 2 - s * content.dx;
-    var ty = _viewport.height / 2 - s * content.dy;
-    tx = tx.clamp(math.min(0.0, _viewport.width - s * _contentW), 0.0).toDouble();
-    ty = ty.clamp(math.min(0.0, _viewport.height - s * _contentH), 0.0).toDouble();
-    return Matrix4(s, 0, 0, 0, 0, s, 0, 0, 0, 0, 1, 0, tx, ty, 0, 1);
-  }
-
-  void _animateTo(Matrix4 end) {
-    _from = Float64List.fromList(_tc.value.storage);
-    _to = Float64List.fromList(end.storage);
-    _anim.forward(from: 0);
-  }
-
-  void _onTick() {
-    final f = _from;
-    final t = _to;
-    if (f == null || t == null) return;
-    final k = Curves.easeInOut.transform(_anim.value);
-    final m = Matrix4.zero();
-    for (var i = 0; i < 16; i++) {
-      m.storage[i] = f[i] + (t[i] - f[i]) * k;
+  /// Smoothly flies the camera to [centre] at [zoom].
+  Future<void> _flyTo(LatLng centre, double zoom) async {
+    if (!_ready) return;
+    final from = _map.camera.center;
+    final fromZoom = _map.camera.zoom;
+    final toZoom = zoom.clamp(_minZoom, _maxZoom).toDouble();
+    void tick() {
+      final k = Curves.easeInOut.transform(_anim.value);
+      _map.move(
+        LatLng(
+          from.latitude + (centre.latitude - from.latitude) * k,
+          from.longitude + (centre.longitude - from.longitude) * k,
+        ),
+        fromZoom + (toZoom - fromZoom) * k,
+      );
     }
-    _tc.value = m;
-  }
 
-  void _zoomBy(double factor) {
-    final center = Offset(_viewport.width / 2, _viewport.height / 2);
-    final scale = _tc.value.getMaxScaleOnAxis() * factor;
-    _animateTo(_matrixFor(_tc.toScene(center), scale));
-  }
-
-  /// Opening view: centred on the runner's races, or Cape Town at the bottom.
-  Matrix4 _initialMatrix(List<RaceGroup> groups) {
-    if (groups.isEmpty) {
-      return _matrixFor(Offset(_contentW / 2, _contentH), _minScale);
+    _anim.removeListener(tick);
+    _anim.addListener(tick);
+    try {
+      await _anim.forward(from: 0).orCancel;
+    } on TickerCanceled {
+      // interrupted by another move
+    } finally {
+      _anim.removeListener(tick);
     }
-    var sx = 0.0, sy = 0.0;
+  }
+
+  void _zoomBy(double delta) {
+    _flyTo(_map.camera.center, _map.camera.zoom + delta);
+  }
+
+  void _reset(List<RaceGroup> groups) {
+    final c = _startView(groups);
+    _flyTo(c.$1, c.$2);
+  }
+
+  /// Opening view: the runner's races, or the whole country.
+  (LatLng, double) _startView(List<RaceGroup> groups) {
+    if (groups.isEmpty) return (_saCentre, 4.9);
+    var minLat = 90.0, maxLat = -90.0, minLng = 180.0, maxLng = -180.0;
     for (final g in groups) {
-      final c = _content(g.place);
-      sx += c.dx;
-      sy += c.dy;
+      minLat = math.min(minLat, g.place.lat);
+      maxLat = math.max(maxLat, g.place.lat);
+      minLng = math.min(minLng, g.place.lng);
+      maxLng = math.max(maxLng, g.place.lng);
     }
-    final c = Offset(sx / groups.length, sy / groups.length);
-    return _matrixFor(c, _minScale);
+    final centre = LatLng((minLat + maxLat) / 2, (minLng + maxLng) / 2);
+    final span = math.max(maxLat - minLat, (maxLng - minLng) * 1.4);
+    final zoom = span < 0.05
+        ? 11.0
+        : (span > 12 ? 4.9 : (8.4 - math.log(span) / math.ln2 * 0.9));
+    return (centre, zoom.clamp(4.9, 11.0).toDouble());
   }
-
-  void _reset(List<RaceGroup> groups) => _animateTo(_initialMatrix(groups));
 
   void _zoomIntoCluster(MapCluster c) {
-    final scale = _tc.value.getMaxScaleOnAxis();
+    final zoom = _map.camera.zoom;
     final singleTown = c.groups.length == 1;
-    final target = singleTown
-        ? math.max(_fanScale + 0.6, scale * 2.0)
-        : scale * 2.2;
-    _animateTo(_matrixFor(_tc.toScene(c.center), target));
+    final target = singleTown ? math.max(_fanZoom + 0.5, zoom + 2) : zoom + 1.6;
+    _flyTo(_map.camera.screenOffsetToLatLng(c.center), target);
+  }
+
+  /// Replays the journey: flies from race to race in date order.
+  Future<void> _tour(GroupResult grouped) async {
+    if (_touring) {
+      setState(() => _touring = false);
+      return;
+    }
+    final stops = _chronological(widget.store.races);
+    if (stops.isEmpty) return;
+    setState(() => _touring = true);
+    for (final s in stops) {
+      if (!_touring || !mounted) break;
+      final id = s.$1.id ?? s.$1.name;
+      _select(null);
+      await _flyTo(_latLng(s.$2), 9.0);
+      if (!_touring || !mounted) break;
+      _select(id);
+      await Future<void>.delayed(const Duration(milliseconds: 1800));
+    }
+    if (mounted) setState(() => _touring = false);
+  }
+
+  /// Races that have a known town, oldest first.
+  List<(Race, Place)> _chronological(List<Race> races) {
+    final out = <(Race, Place)>[];
+    for (final r in races) {
+      final p = placeByName(r.locationName);
+      if (p != null) out.add((r, p));
+    }
+    out.sort((a, b) => a.$1.date.compareTo(b.$1.date));
+    return out;
+  }
+
+  List<Polyline> _routes(List<Race> races) {
+    final stops = _chronological(races);
+    final lines = <Polyline>[];
+    for (var i = 1; i < stops.length; i++) {
+      final a = stops[i - 1], b = stops[i];
+      if (a.$2.name == b.$2.name) continue;
+      final done = a.$1.status != RaceStatus.planned &&
+          b.$1.status != RaceStatus.planned;
+      lines.add(Polyline(
+        points: [_latLng(a.$2), _latLng(b.$2)],
+        strokeWidth: done ? 4 : 3,
+        color: done ? const Color(0xFFB3261E) : const Color(0xFF1B5E20),
+        borderStrokeWidth: 1.5,
+        borderColor: Colors.white,
+        pattern: done
+            ? const StrokePattern.solid()
+            : const StrokePattern.dashed(segments: [10, 8]),
+      ));
+    }
+    return lines;
   }
 
   // ---- interaction --------------------------------------------------------
@@ -172,6 +223,18 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
   // ---- build --------------------------------------------------------------
 
+  String get _tileUrl {
+    final key = AppConfig.mapTilerKey;
+    if (key.isEmpty) {
+      return 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+    }
+    return 'https://api.maptiler.com/maps/${AppConfig.mapStyle}/256/{z}/{x}/{y}.png?key=$key';
+  }
+
+  String get _attribution => AppConfig.mapTilerKey.isEmpty
+      ? '\u00A9 OpenStreetMap contributors \u00A9 CARTO'
+      : '\u00A9 MapTiler \u00A9 OpenStreetMap contributors';
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -193,45 +256,50 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
         final season = seasonFor(DateTime.now(), southern: store.southern);
         final grouped = groupRaces(store.races);
+        final start = _startView(grouped.groups);
 
         return LayoutBuilder(builder: (context, c) {
-          final vp = Size(c.maxWidth, c.maxHeight);
-          if (vp != _viewport) {
-            _viewport = vp;
-            _contentW = vp.width;
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted) _tc.value = _initialMatrix(grouped.groups);
-            });
-          }
-          final dpr = MediaQuery.devicePixelRatioOf(context);
+          _viewport = Size(c.maxWidth, c.maxHeight);
 
           return ClipRect(
             child: Stack(
               fit: StackFit.expand,
               children: [
-                const ColoredBox(color: _oceanColor),
-                InteractiveViewer(
-                  transformationController: _tc,
-                  constrained: false,
-                  minScale: _minScale,
-                  maxScale: _maxScale,
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _select(null),
-                    child: ColorFiltered(
-                      colorFilter: seasonFilter(season),
-                      child: MapTileLayer(
-                        controller: _tc,
-                        viewport: vp,
-                        contentW: _contentW,
-                        pixelRatio: dpr,
+                ColorFiltered(
+                  colorFilter: seasonFilter(season),
+                  child: FlutterMap(
+                    mapController: _map,
+                    options: MapOptions(
+                      initialCenter: start.$1,
+                      initialZoom: start.$2,
+                      minZoom: _minZoom,
+                      maxZoom: _maxZoom,
+                      backgroundColor: _oceanColor,
+                      cameraConstraint: CameraConstraint.containCenter(
+                        bounds: LatLngBounds(
+                            const LatLng(-37.5, 14.0), const LatLng(-20.5, 35.5)),
                       ),
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+                      ),
+                      onMapReady: () => setState(() => _ready = true),
+                      onPositionChanged: (_, __) => _tick.value++,
+                      onTap: (_, __) => _select(null),
                     ),
+                    children: [
+                      TileLayer(
+                        urlTemplate: _tileUrl,
+                        userAgentPackageName: 'com.runnersjourney.runners_journey',
+                        retinaMode: RetinaMode.isHighDensity(context),
+                        maxNativeZoom: 18,
+                      ),
+                      PolylineLayer(polylines: _routes(store.races)),
+                    ],
                   ),
                 ),
-                AnimatedBuilder(
-                  animation: _tc,
-                  builder: (context, _) => _overlay(grouped, store.races),
+                ValueListenableBuilder<int>(
+                  valueListenable: _tick,
+                  builder: (context, _, __) => _overlay(grouped, store.races),
                 ),
                 Positioned(
                   top: 8,
@@ -248,8 +316,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     right: 8,
                     child: ActionChip(
                       avatar: const Icon(Icons.location_off_outlined, size: 18),
-                      label: Text(
-                          '${grouped.unplaced.length} not on map'),
+                      label: Text('${grouped.unplaced.length} not on map'),
                       visualDensity: VisualDensity.compact,
                       onPressed: widget.onShowList,
                       tooltip:
@@ -257,28 +324,48 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     ),
                   ),
                 Positioned(
+                  right: 6,
+                  bottom: 2,
+                  child: IgnorePointer(
+                    child: Text(
+                      _attribution,
+                      style: const TextStyle(
+                          fontSize: 9,
+                          color: Colors.black54,
+                          backgroundColor: Color(0x99FFFFFF)),
+                    ),
+                  ),
+                ),
+                Positioned(
                   left: 12,
-                  bottom: 12,
+                  bottom: 16,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       FloatingActionButton.small(
                         heroTag: null,
+                        tooltip: _touring ? 'Stop journey' : 'Replay my journey',
+                        onPressed: () => _tour(grouped),
+                        child: Icon(_touring ? Icons.stop : Icons.play_arrow),
+                      ),
+                      const SizedBox(height: 8),
+                      FloatingActionButton.small(
+                        heroTag: null,
                         tooltip: 'Zoom in',
-                        onPressed: () => _zoomBy(1.8),
+                        onPressed: () => _zoomBy(1),
                         child: const Icon(Icons.add),
                       ),
                       const SizedBox(height: 8),
                       FloatingActionButton.small(
                         heroTag: null,
                         tooltip: 'Zoom out',
-                        onPressed: () => _zoomBy(1 / 1.8),
+                        onPressed: () => _zoomBy(-1),
                         child: const Icon(Icons.remove),
                       ),
                       const SizedBox(height: 8),
                       FloatingActionButton.small(
                         heroTag: null,
-                        tooltip: 'Show whole map',
+                        tooltip: 'Show my races',
                         onPressed: () => _reset(grouped.groups),
                         child: const Icon(Icons.zoom_out_map),
                       ),
@@ -296,48 +383,17 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   /// Markers and the race card, positioned in screen space so they stay a
   /// constant size while the map zooms underneath.
   Widget _overlay(GroupResult grouped, List<Race> allRaces) {
-    final scale = _tc.value.getMaxScaleOnAxis();
+    if (!_ready) return const SizedBox.shrink();
+    final scale = _map.camera.zoom;
     final clusters = clusterGroups(grouped.groups, _toScreen, _clusterRadius);
     final pinTips = <String, Offset>{};
     final children = <Widget>[];
-
-    // Ocean names fade away as you zoom in.
-    if (scale < 3) {
-      for (final o in _oceans) {
-        final s = _toScreen(o.place);
-        if (!_onScreen(s, margin: 20)) continue;
-        children.add(Positioned(
-          left: s.dx - 10,
-          top: s.dy - 60,
-          width: 20,
-          height: 120,
-          child: IgnorePointer(
-            child: Opacity(
-              opacity: (1 - (scale - 1) / 2).clamp(0.0, 1.0).toDouble(),
-              child: RotatedBox(
-                quarterTurns: o.turns,
-                child: Center(
-                  child: Text(o.label,
-                      maxLines: 1,
-                      style: const TextStyle(
-                          color: Color(0xCCFFFFFF),
-                          fontSize: 11,
-                          fontStyle: FontStyle.italic,
-                          letterSpacing: 3,
-                          fontWeight: FontWeight.w600)),
-                ),
-              ),
-            ),
-          ),
-        ));
-      }
-    }
 
     // Town dots for places without races, revealed by zoom level.
     final racePlaces = {for (final g in grouped.groups) g.place.name};
     for (final p in kPlaces) {
       if (racePlaces.contains(p.name)) continue;
-      if (scale < _tierScale[p.tier - 1]) continue;
+      if (scale < _tierZoom[p.tier - 1]) continue;
       final s = _toScreen(p);
       if (!_onScreen(s)) continue;
       children.add(_TownDot(place: p, at: s, onTap: () => _onTownTap(p)));
@@ -371,7 +427,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       final onlyGroup = cl.groups.length == 1 ? cl.groups.first : null;
       if (onlyGroup != null &&
           onlyGroup.races.length > 1 &&
-          scale >= _fanScale) {
+          scale >= _fanZoom) {
         // Zoomed in on a multi-race town: fan the races out around it.
         final centre = cl.center;
         pins.add(_CentreDot(at: centre));
@@ -628,17 +684,3 @@ class _TownDot extends StatelessWidget {
   }
 }
 
-/// Ocean captions printed on the map, as (label, position, quarter turns).
-class _Ocean {
-  final String label;
-  final Place place;
-  final int turns;
-  const _Ocean(this.label, this.place, this.turns);
-}
-
-const List<_Ocean> _oceans = [
-  _Ocean('ATLANTIC OCEAN',
-      Place('Atlantic', '', -31.0, 15.9, 1, 0.0368, 0.7), 3),
-  _Ocean('INDIAN OCEAN',
-      Place('Indian', '', -29.5, 33.6, 1, 0.9684, 0.5786), 1),
-];

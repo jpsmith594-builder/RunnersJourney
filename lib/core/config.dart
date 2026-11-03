@@ -4,6 +4,11 @@ class AppConfig {
   static const supabaseUrl = String.fromEnvironment('SUPABASE_URL');
   static const supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
 
+  /// Optional MapTiler key for a nicer map style; without it a free default map is used.
+  static const mapTilerKey = String.fromEnvironment('MAPTILER_KEY');
+  static const mapStyle =
+      String.fromEnvironment('MAP_STYLE', defaultValue: 'outdoor-v2');
+
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 }
