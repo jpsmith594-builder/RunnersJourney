@@ -22,6 +22,8 @@ for the race card, and see your own football-style runner card.
   - Tap a town name and choose "Add race here"
   - The map's colour grade follows the season (southern hemisphere by default)
   - Races with no known town are listed as "N not on map" until you pick a town
+- **Race bucket list** (menu): races you want to do one day, each with a tickbox. Open ones
+  show as grey pins on the map (tap one to tick it off there); ticked ones leave the map
 - **Races tab**: plain list, newest first
 - **Profile** (menu, top right): name, age, gender, running club, home town,
   favourite distance, profile photo. Shows your **runner card**: rating, photo, races, km, towns and
@@ -32,8 +34,8 @@ for the race card, and see your own football-style runner card.
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
    `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
-   `supabase/004_gender_age.sql` (003 adds the profile columns and the private `avatars`
-   photo bucket; 004 adds gender and age)
+   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql` (003 adds the profile columns and the private `avatars`
+   photo bucket; 004 adds gender and age, 005 adds the bucket list)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
    it overwrites with `git restore <file>` and delete `test/widget_test.dart`)
@@ -76,6 +78,7 @@ tools/         gen_places.py
 - [x] South Africa map with zoom, town labels by zoom level, clusters
 - [x] Seasonal colour grade
 - [x] Profile and runner card
+- [x] Race bucket list
 - [ ] Photos on a race
 - [x] Route lines between consecutive races (completed solid, planned dashed)
 - [ ] Share the runner card as an image

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../bucket/bucket_list_screen.dart';
+import '../bucket/bucket_store.dart';
 import '../map/map_view.dart';
 import '../map/places.dart';
 import '../profile/profile_screen.dart';
@@ -22,6 +24,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final RaceStore _store = RaceStore();
   final ProfileStore _profile = ProfileStore();
+  final BucketStore _bucket = BucketStore();
   int _tab = 0;
 
   @override
@@ -29,10 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _store.load();
     _profile.load();
+    _bucket.load();
   }
 
   @override
   void dispose() {
+    _bucket.dispose();
     _store.dispose();
     _profile.dispose();
     super.dispose();
@@ -45,6 +50,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     if (changed == true) _store.load();
+  }
+
+  void _openBucket() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => BucketListScreen(store: _bucket)),
+    );
   }
 
   void _openProfile() {
@@ -68,9 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
               switch (value) {
                 case 'profile':
                   _openProfile();
+                case 'bucket':
+                  _openBucket();
                 case 'refresh':
                   _store.load();
                   _profile.load();
+                  _bucket.load();
                 case 'signout':
                   Supabase.instance.client.auth.signOut();
               }
@@ -81,6 +95,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.badge_outlined),
                   title: Text('Profile'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'bucket',
+                child: ListTile(
+                  leading: Icon(Icons.checklist),
+                  title: Text('Race bucket list'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -107,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _tab == 0
           ? MapView(
               store: _store,
+              bucket: _bucket,
               onEdit: (race) => _openForm(race),
               onAddAtPlace: (place) => _openForm(null, place),
               onShowList: () => setState(() => _tab = 1),

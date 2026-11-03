@@ -6,6 +6,8 @@ import 'package:latlong2/latlong.dart' hide Path;
 
 import '../../core/config.dart';
 import '../../core/season.dart';
+import '../bucket/bucket_item.dart';
+import '../bucket/bucket_store.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
 import 'map_geometry.dart';
@@ -23,6 +25,7 @@ const LatLng _saCentre = LatLng(-29.0, 24.5);
 /// a numbered pin that fans out when you zoom in.
 class MapView extends StatefulWidget {
   final RaceStore store;
+  final BucketStore bucket;
   final void Function(Race race) onEdit;
   final void Function(Place place) onAddAtPlace;
   final VoidCallback onShowList;
@@ -30,6 +33,7 @@ class MapView extends StatefulWidget {
   const MapView({
     super.key,
     required this.store,
+    required this.bucket,
     required this.onEdit,
     required this.onAddAtPlace,
     required this.onShowList,
@@ -238,7 +242,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: widget.store,
+      listenable: Listenable.merge([widget.store, widget.bucket]),
       builder: (context, _) {
         final store = widget.store;
         if (store.loading) {
@@ -299,7 +303,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                 ),
                 ValueListenableBuilder<int>(
                   valueListenable: _tick,
-                  builder: (context, _, __) => _overlay(grouped, store.races),
+                  builder: (context, _, __) =>
+                      _overlay(grouped, store.races, widget.bucket.open),
                 ),
                 Positioned(
                   top: 8,
@@ -382,7 +387,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
   /// Markers and the race card, positioned in screen space so they stay a
   /// constant size while the map zooms underneath.
-  Widget _overlay(GroupResult grouped, List<Race> allRaces) {
+  Widget _overlay(
+      GroupResult grouped, List<Race> allRaces, List<BucketItem> bucket) {
     if (!_ready) return const SizedBox.shrink();
     final scale = _map.camera.zoom;
     final clusters = clusterGroups(grouped.groups, _toScreen, _clusterRadius);
@@ -390,7 +396,16 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     final children = <Widget>[];
 
     // Town dots for places without races, revealed by zoom level.
-    final racePlaces = {for (final g in grouped.groups) g.place.name};
+    // Bucket-list races, grouped by town (only those with a known town).
+    final bucketByPlace = <String, List<BucketItem>>{};
+    for (final b in bucket) {
+      final p = placeByName(b.locationName);
+      if (p != null) bucketByPlace.putIfAbsent(p.name, () => []).add(b);
+    }
+    final racePlaces = {
+      for (final g in grouped.groups) g.place.name,
+      ...bucketByPlace.keys,
+    };
     for (final p in kPlaces) {
       if (racePlaces.contains(p.name)) continue;
       if (scale < _tierZoom[p.tier - 1]) continue;
@@ -456,9 +471,99 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     }
     children.addAll(pins);
 
+    // Grey pins for bucket-list races still to do. Nudged sideways when the
+    // runner also has a race in the same town.
+    final raceTowns = {for (final g in grouped.groups) g.place.name};
+    bucketByPlace.forEach((town, list) {
+      final place = placeByName(town)!;
+      var tip = _toScreen(place);
+      if (!_onScreen(tip, margin: 120)) return;
+      if (raceTowns.contains(town)) tip = tip + const Offset(22, 0);
+      final id = 'bucket:$town';
+      pinTips[id] = tip;
+      children.add(_Pin(
+        tip: tip,
+        width: _pinW,
+        height: _pinH,
+        color: const Color(0xFF9E9E9E),
+        selected: id == _selectedId,
+        onTap: () => _select(id == _selectedId ? null : id),
+        onHover: () => _select(id),
+        child: list.length > 1
+            ? Text('${list.length}',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15))
+            : const Icon(Icons.flag_outlined, size: 18, color: Colors.white),
+      ));
+    });
+
     // Race card for the selected pin.
     final tip = _selectedId == null ? null : pinTips[_selectedId];
-    if (tip != null) {
+    if (tip != null && _selectedId!.startsWith('bucket:')) {
+      final town = _selectedId!.substring(7);
+      final items = bucketByPlace[town] ?? const <BucketItem>[];
+      final left = tip.dx - _cardWidth / 2;
+      final maxLeft = math.max(8.0, _viewport.width - _cardWidth - 8);
+      final cardH = 90.0 + items.length * 44;
+      var top = tip.dy - _pinH - cardH - 6;
+      if (top < 8) top = tip.dy + 10;
+      children.add(Positioned(
+        left: left.clamp(8.0, maxLeft).toDouble(),
+        top: top,
+        width: _cardWidth,
+        child: Card(
+          elevation: 6,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.flag_outlined, size: 18, color: Colors.grey),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text('Bucket list \u00B7 $town',
+                          style: const TextStyle(fontWeight: FontWeight.w700)),
+                    ),
+                    IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: const Icon(Icons.close, size: 18),
+                      onPressed: () => _select(null),
+                    ),
+                  ],
+                ),
+                for (final it in items)
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: it.done,
+                        visualDensity: VisualDensity.compact,
+                        onChanged: (v) {
+                          widget.bucket.setDone(it, v ?? true);
+                          _select(null);
+                        },
+                      ),
+                      Expanded(
+                        child: Text(
+                          it.distanceKm == null
+                              ? it.name
+                              : '${it.name} (${it.distanceKm} km)',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ));
+    } else if (tip != null) {
       Race? race;
       for (final r in allRaces) {
         if ((r.id ?? r.name) == _selectedId) race = r;
