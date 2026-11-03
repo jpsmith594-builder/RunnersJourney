@@ -6,9 +6,10 @@ import 'profile.dart';
 import 'profile_store.dart';
 import 'runner_card.dart';
 import 'runner_stats.dart';
+import 'share_card.dart';
 
-/// Shows the runner's football-style card with an Edit button.
-class ProfileScreen extends StatelessWidget {
+/// Shows the runner's football-style card with Share and Edit buttons.
+class ProfileScreen extends StatefulWidget {
   final ProfileStore profileStore;
   final RaceStore raceStore;
 
@@ -17,6 +18,28 @@ class ProfileScreen extends StatelessWidget {
     required this.profileStore,
     required this.raceStore,
   });
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final GlobalKey _cardKey = GlobalKey();
+  ProfileStore get profileStore => widget.profileStore;
+  RaceStore get raceStore => widget.raceStore;
+
+  void _share() {
+    final p = profileStore.profile;
+    final stats = computeStats(raceStore.races);
+    final name = (p.displayName ?? '').trim();
+    shareRunnerCard(
+      context,
+      _cardKey,
+      message: '${name.isEmpty ? 'My' : '$name\'s'} Runner\'s Journey card: '
+          'rating ${stats.rating}, ${stats.completed} races, '
+          '${stats.totalKm.round()} km.',
+    );
+  }
 
   void _edit(BuildContext context) {
     Navigator.of(context).push(
@@ -31,6 +54,11 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Runner card'),
         actions: [
+          IconButton(
+            tooltip: 'Share card',
+            icon: const Icon(Icons.ios_share),
+            onPressed: _share,
+          ),
           IconButton(
             tooltip: 'Edit profile',
             icon: const Icon(Icons.edit_outlined),
@@ -57,24 +85,33 @@ class ProfileScreen extends StatelessWidget {
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 340),
+                constraints: const BoxConstraints(maxWidth: 380),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    RunnerCard(
-                      name: (p.displayName ?? '').trim().isEmpty
-                          ? 'Runner'
-                          : p.displayName!.trim(),
-                      club: p.club,
-                      homeTown: p.homeTown,
-                      favouriteDistance: p.favouriteDistance,
-                      genderShort: p.gender?.short,
-                      age: p.age,
-                      avatarUrl: profileStore.avatarUrl,
-                      stats: stats,
+                    CardStage(
+                      boundaryKey: _cardKey,
+                      child: RunnerCard(
+                        name: (p.displayName ?? '').trim().isEmpty
+                            ? 'Runner'
+                            : p.displayName!.trim(),
+                        club: p.club,
+                        homeTown: p.homeTown,
+                        favouriteDistance: p.favouriteDistance,
+                        genderShort: p.gender?.short,
+                        age: p.age,
+                        avatarUrl: profileStore.avatarUrl,
+                        stats: stats,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     FilledButton.icon(
+                      onPressed: _share,
+                      icon: const Icon(Icons.ios_share),
+                      label: const Text('Share my card'),
+                    ),
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
                       onPressed: () => _edit(context),
                       icon: const Icon(Icons.edit_outlined),
                       label: Text(

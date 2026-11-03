@@ -22,6 +22,8 @@ for the race card, and see your own football-style runner card.
   - Tap a town name and choose "Add race here"
   - The map's colour grade follows the season (southern hemisphere by default)
   - Races with no known town are listed as "N not on map" until you pick a town
+- **Share your runner card**: the share button on the Profile screen turns the card into a
+  picture and opens the phone's share sheet (WhatsApp, Instagram, save to gallery...)
 - **Race bucket list** (menu): races you want to do one day, each with a tickbox. Open ones
   show as grey pins on the map (tap one to tick it off there); ticked ones leave the map
 - **My results** (menu): a table of completed races. Filter by distance (5K, 10K, 21K, 42K...)
@@ -92,6 +94,6 @@ tools/         gen_places.py
 - [x] Photos on a race
 - [x] Route lines between consecutive races (completed solid, planned dashed)
 - [x] Friends with invite codes and WhatsApp invites
-- [ ] Share the runner card as an image
+- [x] Share the runner card as an image
 - [ ] iOS build (needs a Mac and Apple developer account; add camera and photo
   library permission text to `ios/Runner/Info.plist` for `image_picker`)
