@@ -3,6 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../bucket/bucket_list_screen.dart';
 import '../bucket/bucket_store.dart';
+import '../friends/friends_screen.dart';
+import '../friends/friends_store.dart';
 import '../map/map_view.dart';
 import '../map/places.dart';
 import '../profile/profile_screen.dart';
@@ -10,6 +12,7 @@ import '../profile/profile_store.dart';
 import '../races/race.dart';
 import '../races/race_form_screen.dart';
 import '../races/race_list_screen.dart';
+import '../races/results_screen.dart';
 import '../races/race_store.dart';
 
 /// Main screen after login: Journey (map) and Races tabs, add-race button and
@@ -25,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final RaceStore _store = RaceStore();
   final ProfileStore _profile = ProfileStore();
   final BucketStore _bucket = BucketStore();
+  final FriendsStore _friends = FriendsStore();
   int _tab = 0;
 
   @override
@@ -33,10 +37,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _store.load();
     _profile.load();
     _bucket.load();
+    _friends.load();
   }
 
   @override
   void dispose() {
+    _friends.dispose();
     _bucket.dispose();
     _store.dispose();
     _profile.dispose();
@@ -50,6 +56,23 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
     if (changed == true) _store.load();
+  }
+
+  void _openFriends() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => FriendsScreen(
+          store: _friends,
+          myName: _profile.profile.displayName ?? '',
+        ),
+      ),
+    );
+  }
+
+  void _openResults() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ResultsScreen(store: _store)),
+    );
   }
 
   void _openBucket() {
@@ -79,12 +102,17 @@ class _HomeScreenState extends State<HomeScreen> {
               switch (value) {
                 case 'profile':
                   _openProfile();
+                case 'results':
+                  _openResults();
+                case 'friends':
+                  _openFriends();
                 case 'bucket':
                   _openBucket();
                 case 'refresh':
                   _store.load();
                   _profile.load();
                   _bucket.load();
+                  _friends.load();
                 case 'signout':
                   Supabase.instance.client.auth.signOut();
               }
@@ -95,6 +123,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.badge_outlined),
                   title: Text('Profile'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'results',
+                child: ListTile(
+                  leading: Icon(Icons.table_chart_outlined),
+                  title: Text('My results'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'friends',
+                child: ListTile(
+                  leading: Icon(Icons.group_outlined),
+                  title: Text('Friends'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

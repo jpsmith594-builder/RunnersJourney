@@ -63,6 +63,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   );
   bool _ready = false;
   bool _touring = false;
+  bool _showRoutes = false; // route lines make the map busy, so off by default
   Size _viewport = Size.zero;
   String? _selectedId;
 
@@ -297,7 +298,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                         retinaMode: RetinaMode.isHighDensity(context),
                         maxNativeZoom: 18,
                       ),
-                      PolylineLayer(polylines: _routes(store.races)),
+                      if (_showRoutes)
+                        PolylineLayer(polylines: _routes(store.races)),
                     ],
                   ),
                 ),
@@ -347,6 +349,17 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      FloatingActionButton.small(
+                        heroTag: null,
+                        tooltip:
+                            _showRoutes ? 'Hide route lines' : 'Show route lines',
+                        onPressed: () =>
+                            setState(() => _showRoutes = !_showRoutes),
+                        child: Icon(_showRoutes
+                            ? Icons.timeline
+                            : Icons.timeline_outlined),
+                      ),
+                      const SizedBox(height: 8),
                       FloatingActionButton.small(
                         heroTag: null,
                         tooltip: _touring ? 'Stop journey' : 'Replay my journey',

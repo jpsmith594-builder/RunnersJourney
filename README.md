@@ -24,6 +24,12 @@ for the race card, and see your own football-style runner card.
   - Races with no known town are listed as "N not on map" until you pick a town
 - **Race bucket list** (menu): races you want to do one day, each with a tickbox. Open ones
   show as grey pins on the map (tap one to tick it off there); ticked ones leave the map
+- **My results** (menu): a table of completed races. Filter by distance (5K, 10K, 21K, 42K...)
+  and year; sort by date, time, pace, distance or name (tap a column header or use the
+  sort box), ascending or descending
+- **Friends** (menu): every runner has a friend code. Invite on WhatsApp (or copy the invite),
+  or type a friend's code to send a request. Once accepted you can open each other's runner
+  card and recent races; either side can remove the friendship at any time
 - **Races tab**: plain list, newest first
 - **Profile** (menu, top right): name, age, gender, running club, home town,
   favourite distance, profile photo. Shows your **runner card**: rating, photo, races, km, towns and
@@ -34,8 +40,8 @@ for the race card, and see your own football-style runner card.
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
    `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
-   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql` (003 adds the profile columns and the private `avatars`
-   photo bucket; 004 adds gender and age, 005 adds the bucket list)
+   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql` (003 adds the profile columns and the private `avatars`
+   photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
    it overwrites with `git restore <file>` and delete `test/widget_test.dart`)
@@ -56,8 +62,9 @@ Town suburbs. The map picture follows the season with a colour tint.
 - `tools/gen_places.py` holds the towns by real GPS and writes
   `lib/features/map/places_data.dart`. Place tiers: 1 major city, 2 regional town,
   3 small town, 4 Cape Town suburb, 5 Cape Town neighbourhood.
-- Route lines join your races by date: solid red between completed races, dashed green
-  once a planned race is involved.
+- Route lines join your races by date (solid red between completed races, dashed green
+  once a planned race is involved). They are hidden by default; use the route button on
+  the map to show them.
 
 ## Layout
 ```
@@ -81,6 +88,7 @@ tools/         gen_places.py
 - [x] Race bucket list
 - [ ] Photos on a race
 - [x] Route lines between consecutive races (completed solid, planned dashed)
+- [x] Friends with invite codes and WhatsApp invites
 - [ ] Share the runner card as an image
 - [ ] iOS build (needs a Mac and Apple developer account; add camera and photo
   library permission text to `ios/Runner/Info.plist` for `image_picker`)
