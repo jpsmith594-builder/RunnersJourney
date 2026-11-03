@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../friends/reactions.dart';
 import '../photos/photo_widgets.dart';
 import '../races/race.dart';
 
@@ -87,6 +88,8 @@ class RaceCard extends StatelessWidget {
               Text(stats.join(' · '), style: t.bodyMedium),
             ],
             if (race.id != null) RacePhotoStrip(raceId: race.id!),
+            if (race.id != null)
+              ReactionsBar(raceId: race.id!, canReact: false),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(onPressed: onEdit, child: const Text('Edit')),

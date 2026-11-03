@@ -8,6 +8,7 @@ import '../profile/runner_stats.dart';
 import '../races/race.dart';
 import 'friend_entry.dart';
 import 'friends_repository.dart';
+import 'reactions.dart';
 
 /// A friend's runner card and their most recent races.
 class FriendCardScreen extends StatefulWidget {
@@ -103,17 +104,30 @@ class _FriendCardScreenState extends State<FriendCardScreen> {
                             child: Text('No completed races yet.')),
                       ),
                     for (final r in recent)
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
-                        leading: const Icon(Icons.flag, color: Colors.green),
-                        title: Text(r.name),
-                        subtitle: Text([
-                          DateFormat.yMMMd().format(r.date),
-                          if (r.distanceKm != null) '${r.distanceKm} km',
-                          if (r.finishTimeSeconds != null) r.formattedTime,
-                          if (r.pace != null) r.pace!,
-                        ].join(' · ')),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            dense: true,
+                            leading:
+                                const Icon(Icons.flag, color: Colors.green),
+                            title: Text(r.name),
+                            subtitle: Text([
+                              DateFormat.yMMMd().format(r.date),
+                              if (r.distanceKm != null) '${r.distanceKm} km',
+                              if (r.finishTimeSeconds != null) r.formattedTime,
+                              if (r.pace != null) r.pace!,
+                            ].join(' \u00B7 ')),
+                          ),
+                          if (r.id != null)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 4, bottom: 4),
+                              child:
+                                  ReactionsBar(raceId: r.id!, canReact: true),
+                            ),
+                        ],
                       ),
                   ],
                 ),

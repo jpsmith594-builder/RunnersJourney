@@ -31,6 +31,14 @@ for the race card, and see your own football-style runner card.
   bucket list in a tap, or just start typing a race name in the race form and the town and
   distance fill in. The list lives in `lib/features/calendar/race_event.dart`; dates change every
   year so check the official site
+- **Year in review** (menu): a shareable poster of your year: races, km, time racing, towns and
+  provinces, longest race, fastest pace, busiest month and personal bests
+- **Badges** (menu): 21 badges for races finished, distance, firsts (10K, half, marathon,
+  ultra), sub-60 10K / sub-2 half / sub-4 marathon, towns and provinces, Comrades, Two Oceans
+- **Leaderboard** (Friends screen): you and your friends ranked by km, races or towns, this year
+  or all time. Friends can cheer on each other's races with reactions
+- **Race reminder**: a banner above the map counts down to your next planned race (within 60
+  days). Real phone notifications need extra Android setup and are not added yet
 - **My results** (menu): a table of completed races. Filter by distance (5K, 10K, 21K, 42K...)
   and year; sort by date, time, pace, distance or name (tap a column header or use the
   sort box), ascending or descending
@@ -50,8 +58,8 @@ for the race card, and see your own football-style runner card.
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
    `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
-   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql` (003 adds the profile columns and the private `avatars`
-   photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends)
+   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql` (003 adds the profile columns and the private `avatars`
+   photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends, 007 adds reactions)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
    it overwrites with `git restore <file>` and delete `test/widget_test.dart`)

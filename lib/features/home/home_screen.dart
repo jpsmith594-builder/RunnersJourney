@@ -7,6 +7,9 @@ import '../bucket/bucket_store.dart';
 import '../calendar/calendar_screen.dart';
 import '../calendar/race_event.dart';
 import '../friends/friends_screen.dart';
+import '../stats/badges_screen.dart';
+import '../stats/year_review_screen.dart';
+import 'upcoming_banner.dart';
 import '../friends/friends_store.dart';
 import '../map/map_view.dart';
 import '../map/places.dart';
@@ -96,6 +99,24 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (_) => FriendsScreen(
           store: _friends,
           myName: _profile.profile.displayName ?? '',
+          myRaces: () => _store.races,
+        ),
+      ),
+    );
+  }
+
+  void _openBadges() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => BadgesScreen(store: _store)),
+    );
+  }
+
+  void _openReview() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => YearReviewScreen(
+          store: _store,
+          name: _profile.profile.displayName ?? '',
         ),
       ),
     );
@@ -136,6 +157,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   _openProfile();
                 case 'calendar':
                   _openCalendar();
+                case 'review':
+                  _openReview();
+                case 'badges':
+                  _openBadges();
                 case 'results':
                   _openResults();
                 case 'friends':
@@ -165,6 +190,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.event_outlined),
                   title: Text('Race calendar'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'review',
+                child: ListTile(
+                  leading: Icon(Icons.auto_awesome_outlined),
+                  title: Text('Year in review'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'badges',
+                child: ListTile(
+                  leading: Icon(Icons.workspace_premium_outlined),
+                  title: Text('Badges'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -212,19 +253,29 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: _tab == 0
-          ? MapView(
-              store: _store,
-              bucket: _bucket,
-              onEdit: (race) => _openForm(race),
-              onAddAtPlace: (place) => _openForm(null, place),
-              onShowList: () => setState(() => _tab = 1),
-            )
-          : ListenableBuilder(
-              listenable: _store,
-              builder: (context, _) =>
-                  RaceListView(store: _store, onEdit: (race) => _openForm(race)),
-            ),
+      body: Column(
+        children: [
+          ListenableBuilder(
+            listenable: _store,
+            builder: (context, _) => UpcomingBanner(races: _store.races),
+          ),
+          Expanded(
+            child: _tab == 0
+                ? MapView(
+                    store: _store,
+                    bucket: _bucket,
+                    onEdit: (race) => _openForm(race),
+                    onAddAtPlace: (place) => _openForm(null, place),
+                    onShowList: () => setState(() => _tab = 1),
+                  )
+                : ListenableBuilder(
+                    listenable: _store,
+                    builder: (context, _) => RaceListView(
+                        store: _store, onEdit: (race) => _openForm(race)),
+                  ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openForm(),
         icon: const Icon(Icons.add),

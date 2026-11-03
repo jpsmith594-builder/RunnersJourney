@@ -5,13 +5,20 @@ import 'package:url_launcher/url_launcher.dart';
 import 'friend_card_screen.dart';
 import 'friend_entry.dart';
 import 'friends_store.dart';
+import 'leaderboard_screen.dart';
+import '../races/race.dart';
 
 /// Add friends with a friend code, invite people by WhatsApp, answer requests
 /// and open a friend's runner card.
 class FriendsScreen extends StatefulWidget {
   final FriendsStore store;
   final String myName;
-  const FriendsScreen({super.key, required this.store, required this.myName});
+  final List<Race> Function() myRaces;
+  const FriendsScreen(
+      {super.key,
+      required this.store,
+      required this.myName,
+      required this.myRaces});
 
   @override
   State<FriendsScreen> createState() => _FriendsScreenState();
@@ -103,7 +110,22 @@ class _FriendsScreenState extends State<FriendsScreen> {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Friends')),
+      appBar: AppBar(
+        title: const Text('Friends'),
+        actions: [
+          IconButton(
+            tooltip: 'Leaderboard',
+            icon: const Icon(Icons.leaderboard_outlined),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) => LeaderboardScreen(
+                friends: widget.store.friends,
+                myName: widget.myName,
+                myRaces: widget.myRaces(),
+              ),
+            )),
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: widget.store,
         builder: (context, _) {
