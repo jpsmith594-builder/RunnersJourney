@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/flutter_map.dart' hide Path;
 import 'package:latlong2/latlong.dart';
 
 import '../../core/config.dart';
@@ -195,7 +195,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
         borderColor: Colors.white,
         pattern: done
             ? const StrokePattern.solid()
-            : const StrokePattern.dashed(segments: [10, 8]),
+            : StrokePattern.dashed(segments: const [10, 8]),
       ));
     }
     return lines;
@@ -224,7 +224,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   // ---- build --------------------------------------------------------------
 
   String get _tileUrl {
-    final key = AppConfig.mapTilerKey;
+    const key = AppConfig.mapTilerKey;
     if (key.isEmpty) {
       return 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
     }
