@@ -29,3 +29,4 @@ ios/.symlinks/
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 .DS_Store
+tools/preview*.png

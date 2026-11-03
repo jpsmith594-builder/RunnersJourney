@@ -10,14 +10,15 @@ import 'map_geometry.dart';
 import 'places.dart';
 import 'race_card.dart';
 import 'season_filter.dart';
+import 'tile_layer.dart';
 
-const String _mapAsset = 'assets/images/south_africa_map.jpg';
-const double _mapAspect = 1672 / 941;
 const Color _oceanColor = Color(0xFF0E4A5E);
 
-/// The "Journey" tab: the illustrated South Africa map with races pinned to
-/// their towns. Pinch / scroll to zoom. Towns appear as you zoom in; several
-/// races in one town show as a numbered pin that fans out when you zoom in.
+/// The "Journey" tab: a phone-shaped (9:19) map of South Africa with races
+/// pinned to their towns. West coast on the left, east coast on the right, Cape
+/// Town at the bottom. Pinch / scroll to zoom; the artwork reloads sharper as
+/// you zoom. Towns appear as you zoom in (Cape Town suburbs at the deepest
+/// levels); several races in one town show as a numbered pin that fans out.
 class MapView extends StatefulWidget {
   final RaceStore store;
   final void Function(Race race) onEdit;
@@ -37,10 +38,11 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
-  static const double _maxScale = 10;
-  static const double _fanScale = 3.0; // zoom at which multi-race towns fan out
+  static const double _maxScale = 28;
+  static const double _fanScale = 4.0; // zoom at which multi-race towns fan out
   static const double _clusterRadius = 28; // screen px
-  static const List<double> _tierScale = [1.0, 2.0, 3.2];
+  // Zoom (1 = map as wide as the screen) at which each place tier appears.
+  static const List<double> _tierScale = [1.0, 2.0, 3.5, 11.0, 20.0];
   static const double _cardWidth = 240;
   static const double _cardHeight = 170;
   static const double _pinW = 36;
@@ -55,7 +57,10 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   Float64List? _to;
 
   Size _viewport = Size.zero;
-  Rect _mapRect = Rect.zero;
+  double _contentW = 0;
+  double get _contentH => _contentW * kMapHeightOverWidth;
+  double get _minScale =>
+      math.max(1.0, _viewport.height / (_contentW * kMapHeightOverWidth));
   String? _selectedId;
 
   @override
@@ -73,20 +78,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
   // ---- geometry -----------------------------------------------------------
 
-  Rect _fit(Size v) {
-    var w = v.width;
-    var h = w / _mapAspect;
-    if (h > v.height) {
-      h = v.height;
-      w = h * _mapAspect;
-    }
-    return Rect.fromLTWH((v.width - w) / 2, (v.height - h) / 2, w, h);
-  }
-
-  Offset _content(Place p) => Offset(
-        _mapRect.left + p.fx * _mapRect.width,
-        _mapRect.top + p.fy * _mapRect.height,
-      );
+  Offset _content(Place p) => Offset(p.fx * _contentW, p.fy * _contentH);
 
   Offset _toScreen(Place p) =>
       MatrixUtils.transformPoint(_tc.value, _content(p));
@@ -100,11 +92,11 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   // ---- zoom / animation ---------------------------------------------------
 
   Matrix4 _matrixFor(Offset content, double scale) {
-    final s = scale.clamp(1.0, _maxScale).toDouble();
+    final s = scale.clamp(_minScale, _maxScale).toDouble();
     var tx = _viewport.width / 2 - s * content.dx;
     var ty = _viewport.height / 2 - s * content.dy;
-    tx = tx.clamp(_viewport.width - s * _viewport.width, 0.0).toDouble();
-    ty = ty.clamp(_viewport.height - s * _viewport.height, 0.0).toDouble();
+    tx = tx.clamp(math.min(0.0, _viewport.width - s * _contentW), 0.0).toDouble();
+    ty = ty.clamp(math.min(0.0, _viewport.height - s * _contentH), 0.0).toDouble();
     return Matrix4(s, 0, 0, 0, 0, s, 0, 0, 0, 0, 1, 0, tx, ty, 0, 1);
   }
 
@@ -132,7 +124,22 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     _animateTo(_matrixFor(_tc.toScene(center), scale));
   }
 
-  void _reset() => _animateTo(Matrix4.identity());
+  /// Opening view: centred on the runner's races, or Cape Town at the bottom.
+  Matrix4 _initialMatrix(List<RaceGroup> groups) {
+    if (groups.isEmpty) {
+      return _matrixFor(Offset(_contentW / 2, _contentH), _minScale);
+    }
+    var sx = 0.0, sy = 0.0;
+    for (final g in groups) {
+      final c = _content(g.place);
+      sx += c.dx;
+      sy += c.dy;
+    }
+    final c = Offset(sx / groups.length, sy / groups.length);
+    return _matrixFor(c, _minScale);
+  }
+
+  void _reset(List<RaceGroup> groups) => _animateTo(_initialMatrix(groups));
 
   void _zoomIntoCluster(MapCluster c) {
     final scale = _tc.value.getMaxScaleOnAxis();
@@ -190,15 +197,13 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
         return LayoutBuilder(builder: (context, c) {
           final vp = Size(c.maxWidth, c.maxHeight);
           if (vp != _viewport) {
-            final first = _viewport == Size.zero;
             _viewport = vp;
-            if (!first) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) _tc.value = Matrix4.identity();
-              });
-            }
+            _contentW = vp.width;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) _tc.value = _initialMatrix(grouped.groups);
+            });
           }
-          _mapRect = _fit(vp);
+          final dpr = MediaQuery.devicePixelRatioOf(context);
 
           return ClipRect(
             child: Stack(
@@ -207,29 +212,19 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                 const ColoredBox(color: _oceanColor),
                 InteractiveViewer(
                   transformationController: _tc,
-                  minScale: 1,
+                  constrained: false,
+                  minScale: _minScale,
                   maxScale: _maxScale,
-                  child: SizedBox(
-                    width: vp.width,
-                    height: vp.height,
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => _select(null),
-                      child: Stack(
-                        children: [
-                          Positioned.fromRect(
-                            rect: _mapRect,
-                            child: ColorFiltered(
-                              colorFilter: seasonFilter(season),
-                              child: Image.asset(
-                                _mapAsset,
-                                fit: BoxFit.fill,
-                                filterQuality: FilterQuality.medium,
-                                gaplessPlayback: true,
-                              ),
-                            ),
-                          ),
-                        ],
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => _select(null),
+                    child: ColorFiltered(
+                      colorFilter: seasonFilter(season),
+                      child: MapTileLayer(
+                        controller: _tc,
+                        viewport: vp,
+                        contentW: _contentW,
+                        pixelRatio: dpr,
                       ),
                     ),
                   ),
@@ -284,7 +279,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                       FloatingActionButton.small(
                         heroTag: null,
                         tooltip: 'Show whole map',
-                        onPressed: _reset,
+                        onPressed: () => _reset(grouped.groups),
                         child: const Icon(Icons.zoom_out_map),
                       ),
                     ],
@@ -306,10 +301,42 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     final pinTips = <String, Offset>{};
     final children = <Widget>[];
 
+    // Ocean names fade away as you zoom in.
+    if (scale < 3) {
+      for (final o in _oceans) {
+        final s = _toScreen(o.place);
+        if (!_onScreen(s, margin: 20)) continue;
+        children.add(Positioned(
+          left: s.dx - 10,
+          top: s.dy - 60,
+          width: 20,
+          height: 120,
+          child: IgnorePointer(
+            child: Opacity(
+              opacity: (1 - (scale - 1) / 2).clamp(0.0, 1.0).toDouble(),
+              child: RotatedBox(
+                quarterTurns: o.turns,
+                child: Center(
+                  child: Text(o.label,
+                      maxLines: 1,
+                      style: const TextStyle(
+                          color: Color(0xCCFFFFFF),
+                          fontSize: 11,
+                          fontStyle: FontStyle.italic,
+                          letterSpacing: 3,
+                          fontWeight: FontWeight.w600)),
+                ),
+              ),
+            ),
+          ),
+        ));
+      }
+    }
+
     // Town dots for places without races, revealed by zoom level.
     final racePlaces = {for (final g in grouped.groups) g.place.name};
     for (final p in kPlaces) {
-      if (p.illustrated || racePlaces.contains(p.name)) continue;
+      if (racePlaces.contains(p.name)) continue;
       if (scale < _tierScale[p.tier - 1]) continue;
       final s = _toScreen(p);
       if (!_onScreen(s)) continue;
@@ -587,10 +614,11 @@ class _TownDot extends StatelessWidget {
               ),
               child: Text(
                 place.name,
-                style: const TextStyle(
+                style: TextStyle(
                     color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600),
+                    fontSize: place.tier == 1 ? 13 : 11,
+                    fontWeight:
+                        place.tier == 1 ? FontWeight.w800 : FontWeight.w600),
               ),
             ),
           ],
@@ -599,3 +627,18 @@ class _TownDot extends StatelessWidget {
     );
   }
 }
+
+/// Ocean captions printed on the map, as (label, position, quarter turns).
+class _Ocean {
+  final String label;
+  final Place place;
+  final int turns;
+  const _Ocean(this.label, this.place, this.turns);
+}
+
+const List<_Ocean> _oceans = [
+  _Ocean('ATLANTIC OCEAN',
+      Place('Atlantic', '', -31.0, 15.9, 1, 0.0368, 0.7), 3),
+  _Ocean('INDIAN OCEAN',
+      Place('Indian', '', -29.5, 33.6, 1, 0.9684, 0.5786), 1),
+];

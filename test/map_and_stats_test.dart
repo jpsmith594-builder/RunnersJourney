@@ -29,7 +29,7 @@ void main() {
         expect(names.add(p.name.toLowerCase()), isTrue, reason: p.name);
         expect(p.fx, inInclusiveRange(0, 1), reason: p.name);
         expect(p.fy, inInclusiveRange(0, 1), reason: p.name);
-        expect(p.tier, inInclusiveRange(1, 3), reason: p.name);
+        expect(p.tier, inInclusiveRange(1, 5), reason: p.name);
       }
     });
 

@@ -21,4 +21,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/images/south_africa_map.jpg
+    - assets/map/base.jpg
+    - assets/map/tiles/2/
+    - assets/map/tiles/3/
+    - assets/map/cape/4/
+    - assets/map/cape/5/
+    - assets/map/cape/6/

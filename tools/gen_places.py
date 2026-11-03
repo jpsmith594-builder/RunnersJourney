@@ -1,25 +1,22 @@
 #!/usr/bin/env python3
 """Generates lib/features/map/places_data.dart.
 
-The artwork (assets/images/south_africa_map.jpg) is an illustration, not a real
-projection, so real lat/lng cannot be used directly. Instead:
+The map artwork is drawn from real latitude/longitude (tools/mapgeo.py), so every
+place lands exactly where its GPS position says.
 
-  * ANCHORS are towns/regions whose position on the artwork is known (the sign icons).
-  * Every other town is placed relative to nearby anchors: its real offset (in degrees)
-    from each anchor is converted to pixels and the anchors' estimates are blended
-    (inverse-distance weighting). Anchors are exact.
-  * OVERRIDES let you nudge any town by hand (pixel coordinates on the 1672x941 image).
+Tiers: 1 major city, 2 regional town, 3 small town, 4 Cape Town suburb,
+5 Cape Town neighbourhood (only visible at deep zoom).
 
 Run:  python3 tools/gen_places.py            -> writes the Dart file
-      python3 tools/gen_places.py --preview  -> also writes tools/preview.png to check placement
+      python3 tools/gen_places.py --preview  -> also writes tools/preview.png
 """
-import math
 import sys
 from pathlib import Path
 
-W, H = 1672, 941  # artwork size in pixels; positions are stored as fractions
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from mapgeo import proj
 
-# name, province, lat, lng, tier (1 major .. 3 small)
+# name, province, lat, lng, tier
 PLACES = [
     # Western Cape
     ("Cape Town", "Western Cape", -33.92, 18.42, 1),
@@ -103,109 +100,96 @@ PLACES = [
     ("Thohoyandou", "Limpopo", -22.95, 30.48, 3),
     ("Phalaborwa", "Limpopo", -23.94, 31.14, 3),
     ("Bela-Bela", "Limpopo", -24.88, 28.29, 3),
+    # Cape Town metro: tier 4 = major suburbs, tier 5 = neighbourhoods (deep zoom)
+    ("Sea Point", "Western Cape", -33.919, 18.385, 4),
+    ("Camps Bay", "Western Cape", -33.95, 18.378, 4),
+    ("Claremont", "Western Cape", -33.985, 18.466, 4),
+    ("Constantia", "Western Cape", -34.025, 18.42, 4),
+    ("Bellville", "Western Cape", -33.903, 18.629, 4),
+    ("Durbanville", "Western Cape", -33.833, 18.649, 4),
+    ("Khayelitsha", "Western Cape", -34.04, 18.678, 4),
+    ("Mitchells Plain", "Western Cape", -34.05, 18.62, 4),
+    ("Muizenberg", "Western Cape", -34.108, 18.47, 4),
+    ("Simon's Town", "Western Cape", -34.19, 18.433, 4),
+    ("Hout Bay", "Western Cape", -34.045, 18.36, 4),
+    ("Table View", "Western Cape", -33.825, 18.49, 4),
+    ("Century City", "Western Cape", -33.893, 18.51, 4),
+    ("Milnerton", "Western Cape", -33.87, 18.495, 4),
+    ("Fish Hoek", "Western Cape", -34.137, 18.43, 4),
+    ("Kommetjie", "Western Cape", -34.14, 18.33, 4),
+    ("Gordon's Bay", "Western Cape", -34.16, 18.87, 4),
+    ("Strand", "Western Cape", -34.115, 18.825, 4),
+    ("Blouberg", "Western Cape", -33.8, 18.47, 4),
+    ("Kuils River", "Western Cape", -33.93, 18.68, 4),
+    ("Woodstock", "Western Cape", -33.927, 18.447, 5),
+    ("Observatory", "Western Cape", -33.94, 18.472, 5),
+    ("Green Point", "Western Cape", -33.905, 18.405, 5),
+    ("V&A Waterfront", "Western Cape", -33.903, 18.421, 5),
+    ("Newlands", "Western Cape", -33.972, 18.455, 5),
+    ("Bishopscourt", "Western Cape", -34.0, 18.455, 5),
+    ("Tokai", "Western Cape", -34.06, 18.43, 5),
+    ("Noordhoek", "Western Cape", -34.1, 18.375, 5),
+    ("Kalk Bay", "Western Cape", -34.127, 18.449, 5),
+    ("Cape Point", "Western Cape", -34.355, 18.497, 5),
+    ("Parow", "Western Cape", -33.905, 18.598, 5),
+    ("Goodwood", "Western Cape", -33.907, 18.557, 5),
+    ("Brackenfell", "Western Cape", -33.88, 18.7, 5),
+    ("Kraaifontein", "Western Cape", -33.843, 18.72, 5),
+    ("Langa", "Western Cape", -33.945, 18.53, 5),
+    ("Gugulethu", "Western Cape", -33.985, 18.565, 5),
+    ("Athlone", "Western Cape", -33.965, 18.505, 5),
+    ("Rondebosch", "Western Cape", -33.96, 18.475, 5),
+    ("Wynberg", "Western Cape", -34.0, 18.47, 5),
+    ("Plumstead", "Western Cape", -34.03, 18.465, 5),
+    ("Lakeside", "Western Cape", -34.085, 18.47, 5),
+    ("Bo-Kaap", "Western Cape", -33.92, 18.415, 5),
+    ("Clifton", "Western Cape", -33.935, 18.378, 5),
+    ("Llandudno", "Western Cape", -34.01, 18.34, 5),
+    ("Scarborough", "Western Cape", -34.195, 18.375, 5),
+    ("Pinelands", "Western Cape", -33.94, 18.5, 5),
+    ("Tygerberg", "Western Cape", -33.88, 18.61, 5),
+    ("Rosebank", "Western Cape", -33.955, 18.475, 5),
+    ("Mowbray", "Western Cape", -33.945, 18.475, 5),
 ]
-
-# Known positions on the artwork (icon centre of each illustrated sign), in pixels.
-ANCHORS = {
-    "Cape Town": (822, 198),
-    "Pretoria": (1212, 181),
-    "Johannesburg": (1360, 257),
-    "Bloemfontein": (761, 444),
-    "Drakensberg Mountains": (1110, 386),
-    "Durban": (1413, 521),
-    "East London": (1266, 642),
-    "Gqeberha": (978, 700),
-    "George": (693, 666),
-    "Garden Route": (428, 640),
-    "West Coast": (254, 418),
-    "Namaqua Flower Route": (500, 318),
-}
-
-# Hand-tuned positions (pixels) for towns that the blending put in a poor spot.
-OVERRIDES = {
-    # Cape Town area
-    "Stellenbosch": (872, 252), "Paarl": (930, 236), "Somerset West": (842, 274),
-    "Franschhoek": (905, 276),
-    # South-west / Garden Route side
-    "Swellendam": (520, 520), "Oudtshoorn": (620, 590), "Knysna": (745, 625),
-    "Plettenberg Bay": (815, 642), "Jeffreys Bay": (900, 668),
-    "Beaufort West": (600, 505), "De Aar": (700, 505), "Sutherland": (560, 450),
-    # Northern Cape (west)
-    "Upington": (430, 395), "Kuruman": (600, 350),
-    # North-west
-    "Rustenburg": (1160, 240), "Mahikeng": (1060, 262), "Sun City": (1195, 215),
-    # Gauteng crowd around the Johannesburg / Pretoria signs
-    "Sandton": (1405, 236), "Soweto": (1320, 285), "Krugersdorp": (1300, 240),
-    "Benoni": (1415, 287), "Vereeniging": (1350, 322), "Centurion": (1237, 216),
-    # Mpumalanga / Limpopo squeezed onto the land at the top right
-    "Secunda": (1400, 332), "eMalahleni": (1470, 288), "Middelburg": (1500, 312),
-    "Mbombela": (1520, 265), "Hazyview": (1572, 238), "Sabie": (1500, 212),
-    "Polokwane": (1318, 150), "Bela-Bela": (1262, 215), "Tzaneen": (1445, 150),
-    "Phalaborwa": (1520, 172), "Thohoyandou": (1400, 122), "Mokopane": (1345, 180),
-    # Durban area
-    "Umhlanga": (1450, 492), "Ballito": (1495, 470), "Hillcrest": (1375, 498),
-    "Pietermaritzburg": (1340, 468), "Howick": (1300, 430),
-}
-
-PX_PER_DEG_X = 100.0
-PX_PER_DEG_Y = 115.0
-
-
-def blend(lat, lng):
-    num_x = num_y = den = 0.0
-    by_name = {p[0]: p for p in PLACES}
-    for name, (ax, ay) in ANCHORS.items():
-        _, _, alat, alng, _ = by_name[name]
-        dlat, dlng = lat - alat, lng - alng
-        d2 = dlat * dlat + dlng * dlng
-        if d2 < 1e-9:
-            return ax, ay
-        w = 1.0 / (d2 ** 1.5)
-        num_x += w * (ax + dlng * PX_PER_DEG_X)
-        num_y += w * (ay - dlat * PX_PER_DEG_Y)
-        den += w
-    return num_x / den, num_y / den
 
 
 def compute():
     out = []
     for name, prov, lat, lng, tier in PLACES:
-        if name in OVERRIDES:
-            x, y = OVERRIDES[name]
-        else:
-            x, y = blend(lat, lng)
-        x = min(max(x, 40), W - 40)
-        y = min(max(y, 40), H - 40)
-        out.append((name, prov, lat, lng, tier, x, y, name in ANCHORS))
+        fx, fy = proj(lat, lng)
+        out.append((name, prov, lat, lng, tier, fx, fy))
     return out
 
 
 def write_dart(places, path):
     lines = [
         "// GENERATED by tools/gen_places.py - edit that script, not this file.",
-        "// Positions are fractions (0..1) of the map artwork's width/height.",
+        "// Positions are fractions (0..1) of the map's width/height.",
         "import 'place.dart';",
         "",
         "const List<Place> kPlaces = [",
     ]
-    for name, prov, lat, lng, tier, x, y, ill in places:
+    for name, prov, lat, lng, tier, fx, fy in places:
+        n = name.replace("'", "\\'")
         lines.append(
-            f"  Place('{name}', '{prov}', {lat}, {lng}, {tier}, "
-            f"{x / W:.4f}, {y / H:.4f}, {'true' if ill else 'false'}),"
+            f"  Place('{n}', '{prov}', {lat}, {lng}, {tier}, {fx:.5f}, {fy:.5f}),"
         )
     lines.append("];")
     Path(path).write_text("\n".join(lines) + "\n")
 
 
-def preview(places, src, dst):
+def preview(places, dst):
     from PIL import Image, ImageDraw
-    im = Image.open(src).convert("RGB")
+    im = Image.open(Path(dst).parent.parent / "assets/map/base.jpg").convert("RGB")
+    W, H = im.size
     d = ImageDraw.Draw(im)
-    for name, prov, lat, lng, tier, x, y, ill in places:
-        col = (255, 0, 0) if ill else (255, 255, 0) if tier == 1 else (0, 255, 255) if tier == 2 else (255, 255, 255)
-        r = 7 if ill else 5
-        d.ellipse([x - r, y - r, x + r, y + r], fill=col, outline=(0, 0, 0))
-        d.text((x + 8, y - 5), name, fill=(255, 255, 255), stroke_width=2, stroke_fill=(0, 0, 0))
+    for name, prov, lat, lng, tier, fx, fy in places:
+        if tier > 3:
+            continue
+        x, y = fx * W, fy * H
+        col = (255, 255, 0) if tier == 1 else (0, 255, 255) if tier == 2 else (255, 255, 255)
+        d.ellipse([x - 4, y - 4, x + 4, y + 4], fill=col, outline=(0, 0, 0))
+        d.text((x + 6, y - 5), name, fill=(255, 255, 255), stroke_width=2, stroke_fill=(0, 0, 0))
     im.save(dst)
 
 
@@ -215,5 +199,5 @@ if __name__ == "__main__":
     write_dart(places, root / "lib/features/map/places_data.dart")
     print(f"wrote {len(places)} places")
     if "--preview" in sys.argv:
-        preview(places, root / "assets/images/south_africa_map.jpg", root / "tools/preview.png")
+        preview(places, root / "tools/preview.png")
         print("wrote tools/preview.png")
