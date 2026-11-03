@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../races/race_store.dart';
 import 'edit_profile_screen.dart';
+import 'profile.dart';
 import 'profile_store.dart';
 import 'runner_card.dart';
 import 'runner_stats.dart';
