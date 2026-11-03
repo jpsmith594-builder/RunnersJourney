@@ -3,6 +3,14 @@ import 'package:runners_journey/core/season.dart';
 import 'package:runners_journey/features/races/race.dart';
 
 void main() {
+  test('pace from distance and time', () {
+    expect(formatPace(10, 3000), '5:00 /km');
+    expect(formatPace(21.1, 6300), '4:59 /km');
+    expect(formatPace(null, 3000), isNull);
+    expect(formatPace(5, null), isNull);
+    expect(formatPace(0, 100), isNull);
+  });
+
   test('parseDuration handles h:mm:ss, mm:ss, minutes and bad input', () {
     expect(parseDuration('1:02:03'), 3723);
     expect(parseDuration('45:30'), 2730);

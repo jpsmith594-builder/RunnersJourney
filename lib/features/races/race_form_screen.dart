@@ -23,10 +23,18 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
   late final _name = TextEditingController(text: widget.race?.name);
   late final _distance = TextEditingController(
       text: widget.race?.distanceKm?.toString() ?? '');
-  late final _time = TextEditingController(
+  late final _hours = TextEditingController(
       text: widget.race?.finishTimeSeconds == null
           ? ''
-          : formatDuration(widget.race!.finishTimeSeconds));
+          : (widget.race!.finishTimeSeconds! ~/ 3600).toString());
+  late final _mins = TextEditingController(
+      text: widget.race?.finishTimeSeconds == null
+          ? ''
+          : ((widget.race!.finishTimeSeconds! % 3600) ~/ 60).toString());
+  late final _secs = TextEditingController(
+      text: widget.race?.finishTimeSeconds == null
+          ? ''
+          : (widget.race!.finishTimeSeconds! % 60).toString());
   late final _position = TextEditingController(
       text: widget.race?.overallPosition?.toString() ?? '');
   late final _ageGroup = TextEditingController(
@@ -48,7 +56,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
 
   @override
   void dispose() {
-    for (final c in [_name, _distance, _time, _position, _ageGroup, _notes]) {
+    for (final c in [_name, _distance, _hours, _mins, _secs, _position, _ageGroup, _notes]) {
       c.dispose();
     }
     super.dispose();
@@ -70,6 +78,39 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
     return ok ? null : 'Enter a number';
   }
 
+  /// Finish time from the three boxes, or null when all are empty.
+  int? get _finishSeconds {
+    final h = int.tryParse(_hours.text.trim()) ?? 0;
+    final m = int.tryParse(_mins.text.trim()) ?? 0;
+    final s = int.tryParse(_secs.text.trim()) ?? 0;
+    final total = h * 3600 + m * 60 + s;
+    return total > 0 ? total : null;
+  }
+
+  String? _timePart(String? v, {int max = 59}) {
+    if (v == null || v.trim().isEmpty) return null;
+    final n = int.tryParse(v.trim());
+    if (n == null || n < 0 || n > max) return '0-$max';
+    return null;
+  }
+
+  Widget _timeBox(TextEditingController c, String label, {int max = 59}) {
+    return Expanded(
+      child: TextFormField(
+        controller: c,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        ),
+        validator: (v) => _timePart(v, max: max),
+      ),
+    );
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
@@ -83,7 +124,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
       date: _date,
       status: _status,
       distanceKm: double.tryParse(_distance.text.trim()),
-      finishTimeSeconds: parseDuration(_time.text),
+      finishTimeSeconds: _finishSeconds,
       overallPosition: int.tryParse(_position.text.trim()),
       ageGroupPosition: int.tryParse(_ageGroup.text.trim()),
       locationName: place?.name ?? (typed.isEmpty ? null : typed),
@@ -163,17 +204,31 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               validator: (v) => _optionalNumber(v, decimal: true),
             ),
             gap,
-            TextFormField(
-              controller: _time,
-              keyboardType: TextInputType.datetime,
-              decoration: const InputDecoration(
-                  labelText: 'Finish time (h:mm:ss or mm:ss)',
-                  border: OutlineInputBorder()),
-              validator: (v) => (v != null &&
-                      v.trim().isNotEmpty &&
-                      parseDuration(v) == null)
-                  ? 'Use h:mm:ss or mm:ss'
-                  : null,
+            Text('Finish time', style: Theme.of(context).textTheme.labelLarge),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                _timeBox(_hours, 'Hours', max: 99),
+                const SizedBox(width: 8),
+                _timeBox(_mins, 'Mins'),
+                const SizedBox(width: 8),
+                _timeBox(_secs, 'Secs'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ListenableBuilder(
+              listenable: Listenable.merge([_distance, _hours, _mins, _secs]),
+              builder: (context, _) {
+                final pace =
+                    formatPace(double.tryParse(_distance.text.trim()), _finishSeconds);
+                return InputDecorator(
+                  decoration: const InputDecoration(
+                      labelText: 'Pace (calculated)',
+                      prefixIcon: Icon(Icons.speed),
+                      border: OutlineInputBorder()),
+                  child: Text(pace ?? 'Enter distance and time'),
+                );
+              },
             ),
             gap,
             Row(

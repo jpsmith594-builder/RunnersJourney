@@ -70,6 +70,18 @@ class Race {
   }
 
   String get formattedTime => formatDuration(finishTimeSeconds);
+
+  /// Average pace as "m:ss /km", or null without a distance and a time.
+  String? get pace => formatPace(distanceKm, finishTimeSeconds);
+}
+
+/// Pace in "m:ss /km" from a distance in km and a time in seconds.
+String? formatPace(double? km, int? seconds) {
+  if (km == null || seconds == null || km <= 0 || seconds <= 0) return null;
+  final perKm = (seconds / km).round();
+  final m = perKm ~/ 60;
+  final s = perKm % 60;
+  return '$m:${s.toString().padLeft(2, '0')} /km';
 }
 
 String formatDuration(int? seconds) {

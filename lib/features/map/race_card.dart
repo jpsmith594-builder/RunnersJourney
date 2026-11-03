@@ -36,6 +36,7 @@ class RaceCard extends StatelessWidget {
     final stats = <String>[
       if (race.distanceKm != null) '${race.distanceKm} km',
       if (done && race.finishTimeSeconds != null) race.formattedTime,
+      if (done && race.pace != null) race.pace!,
       if (done && race.overallPosition != null)
         'Overall ${race.overallPosition}',
       if (done && race.ageGroupPosition != null)

@@ -67,6 +67,7 @@ class RaceListView extends StatelessWidget {
           final details = [
             if (r.distanceKm != null) '${r.distanceKm} km',
             if (done && r.finishTimeSeconds != null) r.formattedTime,
+            if (done && r.pace != null) r.pace!,
             if (done && r.overallPosition != null) 'Pos ${r.overallPosition}',
           ].join(' · ');
           return ListTile(
