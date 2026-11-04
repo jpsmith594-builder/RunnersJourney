@@ -195,7 +195,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       lines.add(Polyline(
         points: [_latLng(a.$2), _latLng(b.$2)],
         strokeWidth: done ? 4 : 3,
-        color: done ? const Color(0xFFB3261E) : const Color(0xFFFF5A1F),
+        color: done ? const Color(0xFFE90052) : const Color(0xFF6B1B9A),
         borderStrokeWidth: 1.5,
         borderColor: Colors.white,
         pattern: done
@@ -470,7 +470,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
           tip: cl.center,
           width: _pinW + 6,
           height: _pinH + 6,
-          color: const Color(0xFFFF5A1F),
+          color: const Color(0xFFE90052),
           selected: false,
           onTap: () => _zoomIntoCluster(cl),
           onHover: null,
@@ -742,7 +742,7 @@ class _CentreDot extends StatelessWidget {
           width: 10,
           height: 10,
           decoration: BoxDecoration(
-            color: const Color(0xFFFF5A1F),
+            color: const Color(0xFFE90052),
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2),
           ),

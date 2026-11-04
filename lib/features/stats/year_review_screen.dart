@@ -135,7 +135,7 @@ class _Poster extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 5),
         child: Row(
           children: [
-            Icon(icon, size: 18, color: const Color(0xFFFFD54F)),
+            Icon(icon, size: 18, color: const Color(0xFF00FF85)),
             const SizedBox(width: 10),
             Expanded(
               child: Text(text,
@@ -154,10 +154,11 @@ class _Poster extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(22, 26, 22, 18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white, width: 2),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF2A2F6B), Color(0xFF0B1220)],
+          colors: [Color(0xFF6B1B9A), Color(0xFF37003C)],
         ),
       ),
       child: Column(
@@ -166,7 +167,7 @@ class _Poster extends StatelessWidget {
         children: [
           Text('${s.year}',
               style: const TextStyle(
-                  color: Color(0xFFFFD54F),
+                  color: Color(0xFF00FF85),
                   fontSize: 54,
                   fontWeight: FontWeight.w900,
                   height: 1)),

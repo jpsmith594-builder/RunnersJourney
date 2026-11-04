@@ -1,46 +1,62 @@
 import 'package:flutter/material.dart';
 
-/// The app's look: bright, bold and modern. A hot orange as the main colour
-/// with teal and violet as partners.
+/// The app's look: deep purple with electric green, cyan and magenta accents,
+/// white borders and bold white text on purple.
 class AppTheme {
-  static const Color orange = Color(0xFFFF5A1F);
-  static const Color teal = Color(0xFF00BFA6);
-  static const Color violet = Color(0xFF7B3FF2);
+  static const Color purple = Color(0xFF37003C);
+  static const Color purpleMid = Color(0xFF6B1B9A);
+  static const Color green = Color(0xFF00FF85);
+  static const Color cyan = Color(0xFF04F5FF);
+  static const Color magenta = Color(0xFFE90052);
 
   static ThemeData light() => _build(
         ColorScheme.fromSeed(
-          seedColor: orange,
+          seedColor: purpleMid,
           brightness: Brightness.light,
           dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
         ).copyWith(
-          primary: orange,
+          primary: purple,
           onPrimary: Colors.white,
-          secondary: teal,
+          primaryContainer: const Color(0xFFE9DDF5),
+          onPrimaryContainer: purple,
+          secondary: const Color(0xFF0A8CFF),
           onSecondary: Colors.white,
-          tertiary: violet,
+          tertiary: magenta,
           onTertiary: Colors.white,
-          surface: const Color(0xFFF7F8FF),
+          surface: const Color(0xFFF5F2FA),
         ),
+        accent: green,
+        onAccent: purple,
       );
 
   static ThemeData dark() => _build(
         ColorScheme.fromSeed(
-          seedColor: orange,
+          seedColor: purpleMid,
           brightness: Brightness.dark,
           dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
         ).copyWith(
-          primary: const Color(0xFFFF7A45),
-          onPrimary: const Color(0xFF2B0C00),
-          secondary: const Color(0xFF2EE6C8),
-          onSecondary: const Color(0xFF00201B),
-          tertiary: const Color(0xFFA37BFF),
-          onTertiary: const Color(0xFF1B0B45),
+          primary: const Color(0xFFD9B8FF),
+          onPrimary: purple,
+          primaryContainer: const Color(0xFF52125A),
+          onPrimaryContainer: Colors.white,
+          secondary: const Color(0xFF5CB8FF),
+          onSecondary: const Color(0xFF00213D),
+          tertiary: const Color(0xFFFF4D8D),
+          onTertiary: Colors.white,
+          surface: const Color(0xFF1C0022),
+          onSurface: Colors.white,
         ),
+        accent: green,
+        onAccent: purple,
       );
 
-  static ThemeData _build(ColorScheme scheme) {
+  static ThemeData _build(ColorScheme scheme,
+      {required Color accent, required Color onAccent}) {
     final base = ThemeData(useMaterial3: true, colorScheme: scheme);
     final t = base.textTheme;
+    final dark = scheme.brightness == Brightness.dark;
+    // Header colour: always the deep brand purple.
+    final header = dark ? const Color(0xFF2A0030) : purple;
     return base.copyWith(
       scaffoldBackgroundColor: scheme.surface,
       textTheme: t.copyWith(
@@ -50,45 +66,51 @@ class AppTheme {
         labelLarge: t.labelLarge?.copyWith(fontWeight: FontWeight.w700),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
+        backgroundColor: header,
+        foregroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: TextStyle(
-          color: scheme.onPrimary,
+        titleTextStyle: const TextStyle(
+          color: Colors.white,
           fontSize: 21,
           fontWeight: FontWeight.w800,
         ),
-        iconTheme: IconThemeData(color: scheme.onPrimary),
-        actionsIconTheme: IconThemeData(color: scheme.onPrimary),
+        iconTheme: const IconThemeData(color: Colors.white),
+        actionsIconTheme: const IconThemeData(color: Colors.white),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 68,
-        backgroundColor: scheme.surface,
-        indicatorColor: scheme.primary.withValues(alpha: 0.18),
+        height: 70,
+        backgroundColor: header,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: accent,
         labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
               fontSize: 12,
+              color: states.contains(WidgetState.selected)
+                  ? Colors.white
+                  : Colors.white70,
               fontWeight: states.contains(WidgetState.selected)
                   ? FontWeight.w800
                   : FontWeight.w600,
             )),
         iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(
-              color: states.contains(WidgetState.selected)
-                  ? scheme.primary
-                  : scheme.onSurfaceVariant,
+              color:
+                  states.contains(WidgetState.selected) ? onAccent : Colors.white70,
             )),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: scheme.secondary,
-        foregroundColor: scheme.onSecondary,
+        backgroundColor: accent,
+        foregroundColor: onAccent,
         elevation: 4,
+        shape: const StadiumBorder(side: BorderSide(color: Colors.white, width: 2)),
         extendedTextStyle:
             const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
+          backgroundColor: dark ? accent : purple,
+          foregroundColor: dark ? onAccent : Colors.white,
           shape: const StadiumBorder(),
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
           textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
@@ -96,31 +118,44 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
+          foregroundColor: dark ? Colors.white : purple,
           shape: const StadiumBorder(),
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-          side: BorderSide(color: scheme.primary, width: 1.6),
+          side: BorderSide(color: dark ? Colors.white : purple, width: 1.6),
           textStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
+          foregroundColor: dark ? Colors.white : purple,
           textStyle: const TextStyle(fontWeight: FontWeight.w800),
         ),
       ),
       chipTheme: ChipThemeData(
-        side: BorderSide.none,
-        selectedColor: scheme.primary.withValues(alpha: 0.2),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w700),
+        side: const BorderSide(color: Color(0x33000000)),
+        selectedColor: accent,
+        checkmarkColor: onAccent,
+        labelStyle: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: dark ? Colors.white : purple),
+        secondaryLabelStyle:
+            TextStyle(fontWeight: FontWeight.w800, color: onAccent),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        backgroundColor: header,
+        contentTextStyle: const TextStyle(color: Colors.white),
+        actionTextColor: accent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+          side: const BorderSide(color: Colors.white54),
+        ),
       ),
       listTileTheme: const ListTileThemeData(
         titleTextStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
       ),
-      progressIndicatorTheme:
-          ProgressIndicatorThemeData(color: scheme.primary),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: dark ? accent : purpleMid),
     );
   }
 }

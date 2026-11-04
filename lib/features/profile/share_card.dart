@@ -19,10 +19,11 @@ class CardStage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(22, 22, 22, 14),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white, width: 2),
           gradient: const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF1B2A4E), Color(0xFF0B1220)],
+            colors: [Color(0xFF6B1B9A), Color(0xFF37003C)],
           ),
         ),
         child: Column(

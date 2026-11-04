@@ -73,8 +73,9 @@ class BadgesScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white, width: 2),
                     gradient: LinearGradient(
-                      colors: [scheme.primary, scheme.tertiary],
+                      colors: const [Color(0xFF37003C), Color(0xFF6B1B9A), Color(0xFFE90052)],
                     ),
                   ),
                   child: Column(
@@ -102,7 +103,7 @@ class BadgesScreen extends StatelessWidget {
                           minHeight: 10,
                           backgroundColor: Colors.white24,
                           valueColor:
-                              const AlwaysStoppedAnimation(Color(0xFFFFE066)),
+                              const AlwaysStoppedAnimation(Color(0xFF00FF85)),
                         ),
                       ),
                     ],

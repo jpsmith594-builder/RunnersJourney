@@ -55,15 +55,14 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [scheme.primary, scheme.tertiary],
+            colors: const [Color(0xFF37003C), Color(0xFF6B1B9A), Color(0xFFE90052)],
+            stops: const [0.0, 0.6, 1.0],
           ),
         ),
         child: SafeArea(
@@ -86,13 +85,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 4),
                   const Text('Every race, pinned on your map',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.white70, fontSize: 15)),
+                      style: TextStyle(color: Color(0xFF00FF85), fontSize: 15, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 28),
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: Colors.white, width: 2),
                       boxShadow: const [
                         BoxShadow(
                             color: Color(0x33000000),
