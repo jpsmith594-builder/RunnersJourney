@@ -6,6 +6,8 @@ class AppTheme {
   static const Color purple = Color(0xFF37003C);
   static const Color purpleMid = Color(0xFF6B1B9A);
   static const Color green = Color(0xFF00FF85);
+  static const Color navy = Color(0xFF0A3FA8); // FPL-style dark blue
+  static const Color navyLight = Color(0xFF1D5BD6);
   static const Color cyan = Color(0xFF04F5FF);
   static const Color magenta = Color(0xFFE90052);
 
@@ -25,8 +27,8 @@ class AppTheme {
           onTertiary: Colors.white,
           surface: const Color(0xFFF5F2FA),
         ),
-        accent: green,
-        onAccent: purple,
+        accent: navy,
+        onAccent: Colors.white,
       );
 
   static ThemeData dark() => _build(
@@ -46,8 +48,8 @@ class AppTheme {
           surface: const Color(0xFF1C0022),
           onSurface: Colors.white,
         ),
-        accent: green,
-        onAccent: purple,
+        accent: navyLight,
+        onAccent: Colors.white,
       );
 
   static ThemeData _build(ColorScheme scheme,
@@ -145,7 +147,7 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
         backgroundColor: header,
         contentTextStyle: const TextStyle(color: Colors.white),
-        actionTextColor: accent,
+        actionTextColor: cyan,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
           side: const BorderSide(color: Colors.white54),
@@ -155,7 +157,7 @@ class AppTheme {
         titleTextStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-          color: dark ? accent : purpleMid),
+          color: dark ? cyan : purpleMid),
     );
   }
 }
