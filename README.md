@@ -59,8 +59,8 @@ for the race card, and see your own football-style runner card.
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
    `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
-   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql` (003 adds the profile columns and the private `avatars`
-   photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends, 007 adds reactions, 008 adds region and country to races and coordinates to the bucket list)
+   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql`, `supabase/009_subscriptions.sql` (003 adds the profile columns and the private `avatars`
+   photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends, 007 adds reactions, 008 adds region and country to races and coordinates to the bucket list, 009 adds subscriptions and the free-plan limits)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
    it overwrites with `git restore <file>` and delete `test/widget_test.dart`)
@@ -111,3 +111,27 @@ tools/         gen_places.py
 - [x] Share the runner card as an image
 - [ ] iOS build (needs a Mac and Apple developer account; add camera and photo
   library permission text to `ios/Runner/Info.plist` for `image_picker`)
+
+## Subscription (free plan and "Go unlimited")
+
+- **Free**: up to 5 finished races (completed, DNF or DNS), 1 photo per race. Planned races and the
+  bucket list are always free.
+- **Subscriber** (R30 a month or R250 a year): unlimited races, up to 10 photos per race.
+- **After cancelling**: when the paid period ends, a runner with more than 5 races keeps all of them,
+  but they are read-only (viewing and deleting still work) until they subscribe again or delete down to 5.
+- The limits are enforced in the database (`supabase/009_subscriptions.sql`), so the app cannot get
+  around them. The app shows a banner ("3 of 5 free races used") and a paywall (menu > Go unlimited).
+
+### Switching it on (one-off setup)
+
+1. **Google Play Console**: create a subscription with two base plans, monthly (R30) and yearly (R250).
+   Subscriptions need a Play developer account and the app uploaded to a testing track.
+2. **RevenueCat** (free until you earn over about $2.5k a month): create a project, add the Android app,
+   connect it to Google Play, create an entitlement called `pro`, an offering marked as *current* with a
+   monthly package and an annual package. Copy the public Android SDK key into `env.json` as `REVENUECAT_KEY`.
+3. **Webhook**: deploy `supabase/functions/revenuecat-webhook` (the commands are at the top of the file) and
+   point RevenueCat's webhook at it. It writes the `subscriptions` table that the limits read.
+4. If the Android build complains about the SDK version, set `minSdk = 24` in `android/app/build.gradle`.
+
+To test without paying, give yourself a subscription in the Supabase SQL editor (see the bottom of
+`supabase/009_subscriptions.sql`).

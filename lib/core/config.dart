@@ -9,6 +9,9 @@ class AppConfig {
   static const mapStyle =
       String.fromEnvironment('MAP_STYLE', defaultValue: 'outdoor-v2');
 
+  /// RevenueCat public SDK key (Android) for subscriptions. Optional while testing.
+  static const revenueCatKey = String.fromEnvironment('REVENUECAT_KEY');
+
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 }

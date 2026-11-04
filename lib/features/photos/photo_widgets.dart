@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../subscription/limits.dart';
 import 'photo_repository.dart';
 import 'race_photo.dart';
 
@@ -187,7 +188,9 @@ class _PhotosEditorState extends State<PhotosEditor> {
         await _reload();
       }
     } catch (e) {
-      _toast('Could not add photo: $e');
+      if (!mounted || !handleLimitError(context, e)) {
+        _toast('Could not add photo: $e');
+      }
     }
     if (mounted) setState(() => _busy = false);
   }

@@ -8,6 +8,7 @@ import '../map/place_field.dart';
 import '../map/places.dart';
 import '../photos/photo_repository.dart';
 import '../photos/photo_widgets.dart';
+import '../subscription/limits.dart';
 import 'race.dart';
 import 'race_repository.dart';
 
@@ -175,7 +176,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
         if (failed > 0 && mounted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-                  '$failed photo(s) did not upload. Open the race to add them again.')));
+                  '$failed photo(s) did not upload (the free plan holds 1 photo per race). Open the race to add them again.')));
         }
       } else {
         await _repo.update(race);
@@ -184,8 +185,10 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _saving = false);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Could not save: $e')));
+        if (!handleLimitError(context, e)) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Could not save: $e')));
+        }
       }
     }
   }

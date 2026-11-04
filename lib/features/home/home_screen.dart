@@ -20,6 +20,9 @@ import '../races/race_form_screen.dart';
 import '../races/race_list_screen.dart';
 import '../races/results_screen.dart';
 import '../races/race_store.dart';
+import '../subscription/limits.dart';
+import '../subscription/paywall_screen.dart';
+import '../subscription/subscription_store.dart';
 
 /// Main screen after login: Journey (map) and Races tabs, add-race button and
 /// a menu with Profile, Refresh and Sign out.
@@ -44,6 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _profile.load();
     _bucket.load();
     _friends.load();
+    subscription.init();
+  }
+
+  void _openPaywall() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const PaywallScreen()));
   }
 
   @override
@@ -172,7 +181,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   _profile.load();
                   _bucket.load();
                   _friends.load();
+                  subscription.refresh();
+                case 'plan':
+                  _openPaywall();
                 case 'signout':
+                  subscription.reset();
                   Supabase.instance.client.auth.signOut();
               }
             },
@@ -234,6 +247,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               PopupMenuItem(
+                value: 'plan',
+                child: ListTile(
+                  leading: Icon(Icons.workspace_premium_outlined),
+                  title: Text('Go unlimited'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
                 value: 'refresh',
                 child: ListTile(
                   leading: Icon(Icons.refresh),
@@ -256,8 +277,18 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           ListenableBuilder(
-            listenable: _store,
-            builder: (context, _) => UpcomingBanner(races: _store.races),
+            listenable: Listenable.merge([_store, subscription]),
+            builder: (context, _) {
+              final note = freePlanNotice(countedRaces(_store.races),
+                  subscribed: subscription.active);
+              return Column(
+                children: [
+                  if (note != null)
+                    FreePlanBanner(message: note, onTap: _openPaywall),
+                  UpcomingBanner(races: _store.races),
+                ],
+              );
+            },
           ),
           Expanded(
             child: _tab == 0
