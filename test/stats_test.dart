@@ -53,8 +53,8 @@ void main() {
     expect(crestTierOf('races50'), CrestTier.platinum);
     expect(crestTierOf('first'), CrestTier.bronze);
     expect(crestTierOf('sub2'), CrestTier.gold);
-    expect(crestTierOf('sub40'), CrestTier.diamond);
-    expect(CrestTier.diamond.stars, 5);
+    expect(crestTierOf('sub40'), CrestTier.titanium);
+    expect(CrestTier.titanium.stars, 5);
   });
 
   group('year review', () {

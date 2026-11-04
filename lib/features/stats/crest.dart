@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'badges.dart';
 
-enum CrestTier { bronze, silver, gold, platinum, diamond }
+enum CrestTier { bronze, silver, gold, platinum, titanium }
 
 extension CrestTierInfo on CrestTier {
   String get label {
@@ -17,15 +17,15 @@ extension CrestTierInfo on CrestTier {
         return 'GOLD';
       case CrestTier.platinum:
         return 'PLATINUM';
-      case CrestTier.diamond:
-        return 'DIAMOND';
+      case CrestTier.titanium:
+        return 'TITANIUM';
     }
   }
 
   /// Number of stars shown at the top of the crest.
   int get stars => index + 1;
 
-  /// Colours of the metal border: highlight, mid, shadow, back to light.
+  /// Four key colours of the metal: highlight, mid, shadow, light again.
   List<Color> get metal {
     switch (this) {
       case CrestTier.bronze:
@@ -44,9 +44,41 @@ extension CrestTierInfo on CrestTier {
         return const [
           Color(0xFFF7F2FF), Color(0xFF9FB4FF), Color(0xFF6A4DF0), Color(0xFFE2D6FF)
         ];
-      case CrestTier.diamond:
+      case CrestTier.titanium:
         return const [
-          Color(0xFFE9FFFF), Color(0xFF4DE0FF), Color(0xFF2A7BFF), Color(0xFFB8F3FF)
+          Color(0xFFE6ECF5), Color(0xFF7F8CA3), Color(0xFF2E3544), Color(0xFFB7C2D4)
+        ];
+    }
+  }
+
+  /// Seven colours that alternate light and dark, which makes a gradient
+  /// look like brushed metal.
+  List<Color> get brushed {
+    switch (this) {
+      case CrestTier.bronze:
+        return const [
+          Color(0xFFFFD1A1), Color(0xFFB8631F), Color(0xFFF2AE6C), Color(0xFF7A3E12),
+          Color(0xFFE59A55), Color(0xFF5E2D0B), Color(0xFFFFC48A)
+        ];
+      case CrestTier.silver:
+        return const [
+          Color(0xFFFFFFFF), Color(0xFF9AA6B5), Color(0xFFE9EEF4), Color(0xFF6B7684),
+          Color(0xFFD5DCE5), Color(0xFF58626F), Color(0xFFF7FAFD)
+        ];
+      case CrestTier.gold:
+        return const [
+          Color(0xFFFFF6B8), Color(0xFFE29E00), Color(0xFFFFE27A), Color(0xFF9A6200),
+          Color(0xFFFFD34D), Color(0xFF7A4B00), Color(0xFFFFEC9A)
+        ];
+      case CrestTier.platinum:
+        return const [
+          Color(0xFFFFFFFF), Color(0xFF8E9BFF), Color(0xFFE3DCFF), Color(0xFF5B45D6),
+          Color(0xFFC9BEFF), Color(0xFF3D2A9E), Color(0xFFF1EDFF)
+        ];
+      case CrestTier.titanium:
+        return const [
+          Color(0xFFF2F6FC), Color(0xFF5E6B82), Color(0xFFB9C4D6), Color(0xFF29303D),
+          Color(0xFF8D9AB0), Color(0xFF1A1F29), Color(0xFFDCE4F0)
         ];
     }
   }
@@ -58,7 +90,7 @@ CrestTier crestTierOf(String badgeId) {
     case 'sub40':
     case 'sub90':
     case 'sub3':
-      return CrestTier.diamond;
+      return CrestTier.titanium;
     case 'races50':
     case 'km1000':
     case 'ultra':
@@ -111,7 +143,7 @@ class Crest extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final h = size * 1.2;
-    final iconSize = size * 0.34;
+    final iconSize = size * 0.36;
     Widget crest = SizedBox(
       width: size,
       height: h,
@@ -129,14 +161,20 @@ class Crest extends StatelessWidget {
           Positioned(
             left: 0,
             right: 0,
-            top: h * 0.54 - iconSize / 2,
+            top: h * 0.50 - iconSize / 2,
             child: Center(
               child: Icon(
                 badge.icon,
                 size: iconSize,
                 color: Colors.white,
-                shadows: const [
-                  Shadow(color: Color(0x73000000), blurRadius: 5, offset: Offset(0, 2))
+                shadows: [
+                  Shadow(
+                      color: _lighten(badge.color, 0.6),
+                      blurRadius: size * 0.12),
+                  const Shadow(
+                      color: Color(0x99000000),
+                      blurRadius: 4,
+                      offset: Offset(0, 2)),
                 ],
               ),
             ),
@@ -157,7 +195,7 @@ class Crest extends StatelessWidget {
           crest,
           Positioned(
             right: size * 0.06,
-            bottom: h * 0.20,
+            bottom: h * 0.18,
             child: CircleAvatar(
               radius: size * 0.12,
               backgroundColor: Colors.black54,
@@ -177,21 +215,28 @@ class _CrestPainter extends CustomPainter {
   const _CrestPainter(
       {required this.color, required this.tier, required this.sparkle});
 
+  /// Angular shield with a notch at the top and a pointed base.
   Path _shield(Size s) {
     final w = s.width, h = s.height;
+    Offset o(double x, double y) => Offset(w * x, h * y);
     return Path()
-      ..moveTo(w * 0.08, h * 0.15)
-      ..quadraticBezierTo(w * 0.5, -h * 0.03, w * 0.92, h * 0.15)
-      ..lineTo(w * 0.92, h * 0.54)
-      ..cubicTo(w * 0.92, h * 0.78, w * 0.68, h * 0.90, w * 0.5, h * 0.985)
-      ..cubicTo(w * 0.32, h * 0.90, w * 0.08, h * 0.78, w * 0.08, h * 0.54)
+      ..moveTo(o(0.17, 0.04).dx, o(0.17, 0.04).dy)
+      ..lineTo(o(0.41, 0.04).dx, o(0.41, 0.04).dy)
+      ..lineTo(o(0.50, 0.105).dx, o(0.50, 0.105).dy)
+      ..lineTo(o(0.59, 0.04).dx, o(0.59, 0.04).dy)
+      ..lineTo(o(0.83, 0.04).dx, o(0.83, 0.04).dy)
+      ..lineTo(o(0.97, 0.18).dx, o(0.97, 0.18).dy)
+      ..lineTo(o(0.97, 0.58).dx, o(0.97, 0.58).dy)
+      ..lineTo(o(0.50, 0.99).dx, o(0.50, 0.99).dy)
+      ..lineTo(o(0.03, 0.58).dx, o(0.03, 0.58).dy)
+      ..lineTo(o(0.03, 0.18).dx, o(0.03, 0.18).dy)
       ..close();
   }
 
-  Path _scaled(Path p, Size s, double k) {
-    final cx = s.width / 2, cy = s.height * 0.52;
+  Path _scaled(Path p, Size s, double k, {double dy = 0}) {
+    final cx = s.width / 2, cy = s.height * 0.50;
     final m = Matrix4.identity()
-      ..translate(cx, cy)
+      ..translate(cx, cy + dy)
       ..scale(k, k)
       ..translate(-cx, -cy);
     return p.transform(m.storage);
@@ -212,6 +257,20 @@ class _CrestPainter extends CustomPainter {
     return p..close();
   }
 
+  Path _hexagon(Offset c, double r) {
+    final p = Path();
+    for (var i = 0; i < 6; i++) {
+      final a = -math.pi / 2 + i * math.pi / 3;
+      final pt = Offset(c.dx + r * math.cos(a), c.dy + r * math.sin(a));
+      if (i == 0) {
+        p.moveTo(pt.dx, pt.dy);
+      } else {
+        p.lineTo(pt.dx, pt.dy);
+      }
+    }
+    return p..close();
+  }
+
   Path _spark(Offset c, double r) => Path()
     ..moveTo(c.dx, c.dy - r)
     ..quadraticBezierTo(c.dx, c.dy, c.dx + r, c.dy)
@@ -220,107 +279,197 @@ class _CrestPainter extends CustomPainter {
     ..quadraticBezierTo(c.dx, c.dy, c.dx, c.dy - r)
     ..close();
 
+  /// Diagonal hairlines across the whole canvas; the caller clips them.
+  void _hatch(Canvas canvas, Size s, Color c, double spacing, double width) {
+    final p = Paint()
+      ..color = c
+      ..strokeWidth = width
+      ..style = PaintingStyle.stroke;
+    final d = s.height + s.width;
+    for (var x = -s.height; x < d; x += spacing) {
+      canvas.drawLine(Offset(x, s.height), Offset(x + s.height, 0), p);
+    }
+  }
+
   @override
   void paint(Canvas canvas, Size s) {
     final w = s.width, h = s.height;
     final rect = Offset.zero & s;
     final outer = _shield(s);
+    final bevel = _scaled(outer, s, 0.90);
+    final face = _scaled(outer, s, 0.82);
+    final ring = Path.combine(PathOperation.difference, outer, face);
+    final brushed = tier.brushed;
     final metal = tier.metal;
 
-    canvas.drawShadow(outer, Colors.black, 7, true);
+    // Soft coloured glow and drop shadow.
+    canvas.drawPath(
+      outer,
+      Paint()
+        ..color = color.withValues(alpha: 0.45)
+        ..maskFilter = MaskFilter.blur(BlurStyle.normal, w * 0.07),
+    );
+    canvas.drawShadow(outer, Colors.black, 6, true);
 
-    // Metal body of the crest (the border area), brushed with a diagonal gradient.
+    // Frame: brushed metal with fine hairlines.
     canvas.drawPath(
       outer,
       Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [metal[0], metal[1], metal[2], metal[3]],
-          stops: const [0.0, 0.35, 0.75, 1.0],
+          colors: brushed,
         ).createShader(rect),
     );
+    canvas.save();
+    canvas.clipPath(ring);
+    _hatch(canvas, s, Colors.black.withValues(alpha: 0.16), w * 0.032, w * 0.006);
+    _hatch(canvas, s, Colors.white.withValues(alpha: 0.30), w * 0.032, w * 0.004);
+    canvas.restore();
+
+    // Bevel: a second ring that is bright on the top left and dark on the
+    // bottom right, so the frame looks cut from solid metal.
+    canvas.drawPath(
+      bevel,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = w * 0.022
+        ..strokeJoin = StrokeJoin.miter
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: 0.95),
+            Colors.white.withValues(alpha: 0.95),
+            Colors.black.withValues(alpha: 0.55),
+            Colors.black.withValues(alpha: 0.55),
+          ],
+          stops: const [0.0, 0.5, 0.5, 1.0],
+        ).createShader(rect),
+    );
+    // Outer edge lines.
     canvas.drawPath(
       outer,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = w * 0.012
-        ..color = _darken(metal[2], 0.3),
+        ..strokeWidth = w * 0.014
+        ..strokeJoin = StrokeJoin.miter
+        ..color = _darken(metal[2], 0.45),
     );
 
-    // Coloured face inside the border.
-    final face = _scaled(outer, s, 0.80);
+    // Face: deep at the bottom, vivid and bright at the top.
     canvas.drawPath(
       face,
       Paint()
         ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [_lighten(color, 0.30), color, _darken(color, 0.38)],
-          stops: const [0.0, 0.5, 1.0],
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+          colors: [
+            _darken(color, 0.62),
+            _darken(color, 0.25),
+            color,
+            _lighten(color, 0.38),
+          ],
+          stops: const [0.0, 0.35, 0.72, 1.0],
         ).createShader(rect),
     );
-
-    // Soft chevron stripes on the face for a modern, crest-like texture.
     canvas.save();
     canvas.clipPath(face);
-    final stripe = Paint()..color = Colors.white.withValues(alpha: 0.10);
-    for (var i = 0; i < 4; i++) {
-      final y = h * (0.58 + i * 0.13);
+
+    // Light bloom behind the emblem.
+    final emblem = Offset(w / 2, h * 0.50);
+    canvas.drawCircle(
+      emblem,
+      w * 0.46,
+      Paint()
+        ..shader = RadialGradient(colors: [
+          _lighten(color, 0.55).withValues(alpha: 0.75),
+          _lighten(color, 0.55).withValues(alpha: 0.0),
+        ]).createShader(Rect.fromCircle(center: emblem, radius: w * 0.46)),
+    );
+    // Feint hairlines and chevrons on the face.
+    _hatch(canvas, s, Colors.white.withValues(alpha: 0.07), w * 0.05, w * 0.004);
+    final chev = Paint()..color = Colors.white.withValues(alpha: 0.13);
+    for (var i = 0; i < 3; i++) {
+      final y = h * (0.70 + i * 0.075);
       canvas.drawPath(
         Path()
           ..moveTo(0, y)
-          ..lineTo(w * 0.5, y + h * 0.10)
+          ..lineTo(w * 0.5, y + h * 0.13)
           ..lineTo(w, y)
-          ..lineTo(w, y + h * 0.05)
-          ..lineTo(w * 0.5, y + h * 0.15)
-          ..lineTo(0, y + h * 0.05)
+          ..lineTo(w, y + h * 0.025)
+          ..lineTo(w * 0.5, y + h * 0.155)
+          ..lineTo(0, y + h * 0.025)
           ..close(),
-        stripe,
+        chev,
       );
     }
     canvas.restore();
 
-    // Inner edge lines: a dark groove and a bright line.
+    // Face edge: a dark groove with a thin bright line just inside it.
     canvas.drawPath(
       face,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = w * 0.014
-        ..color = _darken(metal[2], 0.35),
+        ..strokeJoin = StrokeJoin.miter
+        ..color = _darken(metal[2], 0.5),
     );
     canvas.drawPath(
-      _scaled(outer, s, 0.74),
+      _scaled(outer, s, 0.785),
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = w * 0.008
-        ..color = Colors.white.withValues(alpha: 0.55),
+        ..strokeWidth = w * 0.007
+        ..strokeJoin = StrokeJoin.miter
+        ..color = metal[0].withValues(alpha: 0.85),
+    );
+
+    // Emblem plate: a metal-edged hexagon the icon sits on.
+    final plate = _hexagon(emblem, w * 0.285);
+    canvas.drawPath(plate, Paint()..color = Colors.black.withValues(alpha: 0.32));
+    canvas.drawPath(
+      plate,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = w * 0.022
+        ..strokeJoin = StrokeJoin.miter
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: brushed,
+        ).createShader(Rect.fromCircle(center: emblem, radius: w * 0.3)),
+    );
+    canvas.drawPath(
+      _hexagon(emblem, w * 0.25),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = w * 0.005
+        ..color = Colors.white.withValues(alpha: 0.4),
     );
 
     // Tier stars across the top of the face.
     final n = tier.stars;
-    final starR = w * 0.055;
+    final starR = w * 0.052;
     final gap = starR * 2.5;
     final startX = w / 2 - gap * (n - 1) / 2;
     for (var i = 0; i < n; i++) {
-      final c = Offset(startX + gap * i, h * 0.255 + (i - (n - 1) / 2).abs() * h * 0.012);
-      canvas.drawPath(
-          _star(c.translate(0, w * 0.01), starR),
-          Paint()..color = Colors.black.withValues(alpha: 0.25));
+      final c = Offset(startX + gap * i, h * 0.215);
+      canvas.drawPath(_star(c.translate(0, w * 0.012), starR),
+          Paint()..color = Colors.black.withValues(alpha: 0.35));
       canvas.drawPath(
         _star(c, starR),
         Paint()
           ..shader = const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFFFF7C2), Color(0xFFFFC21F)],
+            colors: [Color(0xFFFFFBD6), Color(0xFFFFC21F)],
           ).createShader(Rect.fromCircle(center: c, radius: starR)),
       );
     }
 
-    // Glossy shine across the upper left of the face.
+    // Light sweeps across the whole crest: one wide and faint, one thin and sharp.
     canvas.save();
-    canvas.clipPath(face);
+    canvas.clipPath(outer);
     canvas.drawRect(
       rect,
       Paint()
@@ -328,36 +477,62 @@ class _CrestPainter extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withValues(alpha: 0.50),
+            Colors.white.withValues(alpha: 0.0),
+            Colors.white.withValues(alpha: 0.30),
             Colors.white.withValues(alpha: 0.0),
           ],
-          stops: const [0.0, 0.5],
+          stops: const [0.18, 0.34, 0.50],
+        ).createShader(rect),
+    );
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: 0.0),
+            Colors.white.withValues(alpha: 0.55),
+            Colors.white.withValues(alpha: 0.0),
+          ],
+          stops: const [0.50, 0.545, 0.59],
         ).createShader(rect),
     );
     canvas.restore();
 
-    // Shine on the border: bright at the top left, fading away along the edge.
+    // Border shine: bright at the top left and fading along the edge.
     canvas.drawPath(
       outer,
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = w * 0.03
+        ..strokeJoin = StrokeJoin.miter
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white.withValues(alpha: 0.95),
+            Colors.white.withValues(alpha: 1.0),
             Colors.white.withValues(alpha: 0.0),
           ],
-          stops: const [0.0, 0.55],
+          stops: const [0.0, 0.5],
         ).createShader(rect),
     );
 
+    // Rivets at the corners of the frame.
+    for (final p in [
+      Offset(w * 0.105, h * 0.115),
+      Offset(w * 0.895, h * 0.115),
+    ]) {
+      canvas.drawCircle(p, w * 0.017, Paint()..color = _darken(metal[2], 0.4));
+      canvas.drawCircle(p.translate(-w * 0.003, -w * 0.003), w * 0.011,
+          Paint()..color = metal[0]);
+    }
+
     if (sparkle) {
       final p = Paint()..color = Colors.white;
-      canvas.drawPath(_spark(Offset(w * 0.95, h * 0.16), w * 0.075), p);
-      canvas.drawPath(_spark(Offset(w * 0.04, h * 0.50), w * 0.05), p);
-      canvas.drawPath(_spark(Offset(w * 0.86, h * 0.80), w * 0.04), p);
+      canvas.drawPath(_spark(Offset(w * 0.97, h * 0.10), w * 0.08), p);
+      canvas.drawPath(_spark(Offset(w * 0.03, h * 0.46), w * 0.05), p);
+      canvas.drawPath(_spark(Offset(w * 0.88, h * 0.80), w * 0.04), p);
     }
   }
 
