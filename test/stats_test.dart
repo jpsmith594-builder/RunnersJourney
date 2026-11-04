@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:runners_journey/features/home/upcoming_banner.dart';
 import 'package:runners_journey/features/races/race.dart';
 import 'package:runners_journey/features/stats/badges.dart';
-import 'package:runners_journey/features/stats/medal.dart';
+import 'package:runners_journey/features/stats/crest.dart';
 import 'package:runners_journey/features/stats/year_review.dart';
 
 Race race(String name, DateTime date,
@@ -38,6 +38,7 @@ void main() {
       expect(earned(l, 'first'), isTrue);
       expect(earned(l, 'first10k'), isTrue);
       expect(earned(l, 'sub60'), isTrue);
+      expect(earned(l, 'sub40'), isFalse); // 50:00 is not under 40
       expect(earned(l, 'ultra'), isTrue);
       expect(earned(l, 'comrades'), isTrue);
       expect(earned(l, 'firstmarathon'), isFalse); // planned does not count
@@ -46,12 +47,14 @@ void main() {
     });
   });
 
-  test('every badge has a medal tier', () {
+  test('every badge has a crest tier', () {
     final ids = computeBadges([]).map((b) => b.badge.id).toSet();
     expect(ids.length, computeBadges([]).length); // ids are unique
-    expect(tierOf('races50'), MedalTier.platinum);
-    expect(tierOf('first'), MedalTier.bronze);
-    expect(tierOf('sub2'), MedalTier.gold);
+    expect(crestTierOf('races50'), CrestTier.platinum);
+    expect(crestTierOf('first'), CrestTier.bronze);
+    expect(crestTierOf('sub2'), CrestTier.gold);
+    expect(crestTierOf('sub40'), CrestTier.diamond);
+    expect(CrestTier.diamond.stars, 5);
   });
 
   group('year review', () {

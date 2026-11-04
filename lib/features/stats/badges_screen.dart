@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../races/race_store.dart';
 import 'badges.dart';
-import 'medal.dart';
+import 'crest.dart';
 
-/// All badges as medals: earned ones shine, locked ones are grey with progress.
+/// All badges as crests: earned ones shine, locked ones are grey with progress.
 class BadgesScreen extends StatelessWidget {
   final RaceStore store;
   const BadgesScreen({super.key, required this.store});
 
   void _show(BuildContext context, BadgeResult b) {
-    final tier = tierOf(b.badge.id);
+    final tier = crestTierOf(b.badge.id);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -18,7 +18,7 @@ class BadgesScreen extends StatelessWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Medal(badge: b.badge, earned: b.earned, size: 150),
+            Crest(badge: b.badge, earned: b.earned, size: 150),
             const SizedBox(height: 12),
             Text(tier.label,
                 style: TextStyle(
@@ -81,7 +81,7 @@ class BadgesScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('${earned.length} of ${all.length} medals',
+                      Text('${earned.length} of ${all.length} badges',
                           style: const TextStyle(
                               color: Colors.white,
                               fontSize: 22,
@@ -89,9 +89,9 @@ class BadgesScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         earned.isEmpty
-                            ? 'Finish a race to win your first medal.'
+                            ? 'Finish a race to win your first badge.'
                             : earned.length == all.length
-                                ? 'You have won every medal. Legend!'
+                                ? 'You have every badge. Legend!'
                                 : '${locked.length} more to chase.',
                         style: const TextStyle(color: Colors.white70),
                       ),
@@ -134,7 +134,7 @@ class BadgesScreen extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              Medal(badge: b.badge, earned: b.earned, size: 78),
+                              Crest(badge: b.badge, earned: b.earned, size: 78),
                               const SizedBox(height: 4),
                               Text(
                                 b.badge.title,

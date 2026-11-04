@@ -105,6 +105,18 @@ List<BadgeResult> computeBadges(List<Race> races) {
         const RunnerBadge('sub4', 'Sub-4 marathon', 'Run a marathon in under 4 hours',
             Icons.timer, red),
         under(41.0, 43.0, 14400)),
+    BadgeResult(
+        const RunnerBadge('sub40', 'Sub-40 10K', 'Run a 10K in under 40 minutes',
+            Icons.bolt, red),
+        under(9.5, 10.5, 2400)),
+    BadgeResult(
+        const RunnerBadge('sub90', 'Sub-90 half', 'Run a half marathon in under 90 minutes',
+            Icons.bolt, red),
+        under(20.0, 22.0, 5400)),
+    BadgeResult(
+        const RunnerBadge('sub3', 'Sub-3 marathon', 'Run a marathon in under 3 hours',
+            Icons.bolt, red),
+        under(41.0, 43.0, 10800)),
     count(const RunnerBadge('towns5', 'Explorer', 'Race in 5 different towns',
         Icons.explore, blue), towns.length, 5),
     count(const RunnerBadge('towns10', 'Globetrotter', 'Race in 10 different towns',
