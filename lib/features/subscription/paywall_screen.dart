@@ -133,17 +133,23 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       const Icon(Icons.workspace_premium,
                           size: 72, color: AppTheme.cyan),
                       const SizedBox(height: 12),
-                      const Text('You are subscribed',
-                          style: TextStyle(
+                      Text(
+                          s.isAdmin
+                              ? 'Admin account'
+                              : (s.hasGift ? 'Premium account' : 'You are subscribed'),
+                          style: const TextStyle(
                               color: Colors.white,
                               fontSize: 24,
                               fontWeight: FontWeight.w800)),
                       const SizedBox(height: 8),
-                      const Text(
-                          'Unlimited races and up to 10 photos per race. Thank you for supporting the app!',
+                      Text(
+                          s.hasGift
+                              ? 'Unlimited races and up to 10 photos per race, included with your account.'
+                              : 'Unlimited races and up to 10 photos per race. Thank you for supporting the app!',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white70)),
+                          style: const TextStyle(color: Colors.white70)),
                       const SizedBox(height: 20),
+                      if (!s.hasGift)
                       OutlinedButton(
                         style: OutlinedButton.styleFrom(
                             foregroundColor: Colors.white,

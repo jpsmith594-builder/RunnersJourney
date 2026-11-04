@@ -14,6 +14,11 @@ import '../../core/config.dart';
 /// stale phone can never get around them. RevenueCat is only the checkout.
 class SubscriptionStore extends ChangeNotifier {
   bool active = false;
+
+  /// 'free', 'premium' or 'admin' (set by hand in the database).
+  String accountType = 'free';
+  bool get isAdmin => accountType == 'admin';
+  bool get hasGift => accountType == 'premium' || accountType == 'admin';
   bool busy = false;
   String? message;
   Package? monthly;
@@ -50,7 +55,13 @@ class SubscriptionStore extends ChangeNotifier {
         final raw = row['expires_at'] as String?;
         on = raw == null || DateTime.parse(raw).isAfter(DateTime.now());
       }
-      active = on;
+      final prof = await _db
+          .from('profiles')
+          .select('account_type')
+          .eq('id', uid)
+          .maybeSingle();
+      accountType = (prof?['account_type'] as String?) ?? 'free';
+      active = on || hasGift;
     } catch (_) {
       // Keep the last known state when offline.
     }
@@ -126,6 +137,7 @@ class SubscriptionStore extends ChangeNotifier {
 
   Future<void> reset() async {
     active = false;
+    accountType = 'free';
     monthly = null;
     yearly = null;
     message = null;

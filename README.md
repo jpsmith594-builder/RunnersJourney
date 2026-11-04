@@ -59,7 +59,7 @@ for the race card, and see your own football-style runner card.
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
    `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
-   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql`, `supabase/009_subscriptions.sql` (003 adds the profile columns and the private `avatars`
+   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql`, `supabase/009_subscriptions.sql`, `supabase/010_account_types.sql` (003 adds the profile columns and the private `avatars`
    photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends, 007 adds reactions, 008 adds region and country to races and coordinates to the bucket list, 009 adds subscriptions and the free-plan limits)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
@@ -156,3 +156,14 @@ By default Supabase sends the confirmation link to `http://localhost:3000`, whic
    ```
 
 Tapping the link in the email then opens the app and signs the runner in.
+
+## Account types
+
+`profiles.account_type` is `free` (default), `premium` (unlimited, given by hand) or `admin` (the creator, unlimited).
+Paid subscribers stay `free` here and get access from the `subscriptions` table. Runners cannot change their own
+type (a database trigger blocks it); you set it in the Supabase SQL editor:
+
+```sql
+update public.profiles set account_type = 'admin'
+where id = (select id from auth.users where email = 'YOUR-EMAIL');
+```
