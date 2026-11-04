@@ -33,7 +33,8 @@ for the race card, and see your own football-style runner card.
   year so check the official site
 - **Year in review** (menu): a shareable poster of your year: races, km, time racing, towns and
   provinces, longest race, fastest pace, busiest month and personal bests
-- **Badges** (menu): 21 badges for races finished, distance, firsts (10K, half, marathon,
+- **Badges** (menu): 21 shiny medals (bronze, silver, gold, platinum) on ribbons; locked ones are grey with progress.
+  Badges for races finished, distance, firsts (10K, half, marathon,
   ultra), sub-60 10K / sub-2 half / sub-4 marathon, towns and provinces, Comrades, Two Oceans
 - **Leaderboard** (Friends screen): you and your friends ranked by km, races or towns, this year
   or all time. Friends can cheer on each other's races with reactions

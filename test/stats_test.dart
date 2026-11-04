@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:runners_journey/features/home/upcoming_banner.dart';
 import 'package:runners_journey/features/races/race.dart';
 import 'package:runners_journey/features/stats/badges.dart';
+import 'package:runners_journey/features/stats/medal.dart';
 import 'package:runners_journey/features/stats/year_review.dart';
 
 Race race(String name, DateTime date,
@@ -43,6 +44,14 @@ void main() {
       expect(earned(l, 'prov3'), isFalse);
       expect(l.firstWhere((b) => b.badge.id == 'races5').progress, '2 / 5');
     });
+  });
+
+  test('every badge has a medal tier', () {
+    final ids = computeBadges([]).map((b) => b.badge.id).toSet();
+    expect(ids.length, computeBadges([]).length); // ids are unique
+    expect(tierOf('races50'), MedalTier.platinum);
+    expect(tierOf('first'), MedalTier.bronze);
+    expect(tierOf('sub2'), MedalTier.gold);
   });
 
   group('year review', () {

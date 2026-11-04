@@ -2,27 +2,52 @@ import 'package:flutter/material.dart';
 
 import '../races/race_store.dart';
 import 'badges.dart';
+import 'medal.dart';
 
-/// All badges: earned ones in colour, locked ones in grey with progress.
+/// All badges as medals: earned ones shine, locked ones are grey with progress.
 class BadgesScreen extends StatelessWidget {
   final RaceStore store;
   const BadgesScreen({super.key, required this.store});
 
   void _show(BuildContext context, BadgeResult b) {
+    final tier = tierOf(b.badge.id);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        icon: Icon(b.badge.icon,
-            size: 40, color: b.earned ? b.badge.color : Colors.grey),
-        title: Text(b.badge.title),
-        content: Text([
-          b.badge.description,
-          if (!b.earned && b.progress != null) 'Progress: ${b.progress}',
-          if (b.earned) 'Earned!',
-        ].join('\n\n')),
+        contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Medal(badge: b.badge, earned: b.earned, size: 150),
+            const SizedBox(height: 12),
+            Text(tier.label,
+                style: TextStyle(
+                    fontSize: 12,
+                    letterSpacing: 3,
+                    fontWeight: FontWeight.w800,
+                    color: b.earned ? tier.metal[2] : Colors.grey)),
+            const SizedBox(height: 4),
+            Text(b.badge.title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    fontSize: 22, fontWeight: FontWeight.w900)),
+            const SizedBox(height: 6),
+            Text(b.badge.description, textAlign: TextAlign.center),
+            const SizedBox(height: 10),
+            if (b.earned)
+              const Text('Earned!',
+                  style: TextStyle(
+                      color: Color(0xFF00B35C),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16))
+            else if (b.progress != null)
+              Text('Progress: ${b.progress}',
+                  style: const TextStyle(fontWeight: FontWeight.w700)),
+          ],
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('OK')),
+              onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
         ],
       ),
     );
@@ -30,54 +55,86 @@ class BadgesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Badges')),
       body: ListenableBuilder(
         listenable: store,
         builder: (context, _) {
           final all = computeBadges(store.races);
-          final earned = all.where((b) => b.earned).length;
-          return Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Text('$earned of ${all.length} earned',
-                    style: Theme.of(context).textTheme.titleMedium),
+          final earned = all.where((b) => b.earned).toList();
+          final locked = all.where((b) => !b.earned).toList();
+          final shown = [...earned, ...locked];
+          return CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    gradient: LinearGradient(
+                      colors: [scheme.primary, scheme.tertiary],
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${earned.length} of ${all.length} medals',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900)),
+                      const SizedBox(height: 4),
+                      Text(
+                        earned.isEmpty
+                            ? 'Finish a race to win your first medal.'
+                            : earned.length == all.length
+                                ? 'You have won every medal. Legend!'
+                                : '${locked.length} more to chase.',
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                      const SizedBox(height: 12),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: LinearProgressIndicator(
+                          value: all.isEmpty ? 0 : earned.length / all.length,
+                          minHeight: 10,
+                          backgroundColor: Colors.white24,
+                          valueColor:
+                              const AlwaysStoppedAnimation(Color(0xFFFFE066)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 3,
-                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 24),
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 0.85,
-                  children: [
-                    for (final b in all)
-                      InkWell(
-                        borderRadius: BorderRadius.circular(12),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 28),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    childAspectRatio: 0.66,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, i) {
+                      final b = shown[i];
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(16),
                         onTap: () => _show(context, b),
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.fromLTRB(4, 8, 4, 6),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                                color: b.earned
-                                    ? b.badge.color
-                                    : Colors.grey.shade400,
-                                width: b.earned ? 2 : 1),
-                            color: b.earned
-                                ? b.badge.color.withValues(alpha: 0.10)
-                                : Colors.grey.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(16),
+                            color: scheme.surfaceContainerHighest
+                                .withValues(alpha: b.earned ? 0.7 : 0.35),
                           ),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(b.badge.icon,
-                                  size: 34,
-                                  color: b.earned
-                                      ? b.badge.color
-                                      : Colors.grey.shade400),
-                              const SizedBox(height: 6),
+                              Medal(badge: b.badge, earned: b.earned, size: 78),
+                              const SizedBox(height: 4),
                               Text(
                                 b.badge.title,
                                 textAlign: TextAlign.center,
@@ -85,7 +142,7 @@ class BadgesScreen extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w800,
                                   color: b.earned ? null : Colors.grey,
                                 ),
                               ),
@@ -96,8 +153,10 @@ class BadgesScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                      ),
-                  ],
+                      );
+                    },
+                    childCount: shown.length,
+                  ),
                 ),
               ),
             ],

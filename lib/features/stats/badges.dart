@@ -54,11 +54,11 @@ List<BadgeResult> computeBadges(List<Race> races) {
     return BadgeResult(b, have >= need, '$fmt / ${need.toInt()}$unit');
   }
 
-  const gold = Color(0xFFC9962B);
-  const green = Color(0xFF2E7D32);
-  const blue = Color(0xFF1565C0);
-  const purple = Color(0xFF6A3FD0);
-  const red = Color(0xFFC62828);
+  const gold = Color(0xFFFFA000);
+  const green = Color(0xFF00B35C);
+  const blue = Color(0xFF1E6BFF);
+  const purple = Color(0xFF8A3FFC);
+  const red = Color(0xFFFF3D57);
 
   return [
     count(const RunnerBadge('first', 'First finish', 'Complete your first race',

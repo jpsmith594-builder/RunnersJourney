@@ -73,7 +73,7 @@ class RaceListView extends StatelessWidget {
           return ListTile(
             leading: Icon(
               done ? Icons.flag : Icons.flag_outlined,
-              color: done ? Colors.green : null,
+              color: done ? const Color(0xFF00B35C) : null,
             ),
             title: Text(r.name),
             subtitle: Text([
