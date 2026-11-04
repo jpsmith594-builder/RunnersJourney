@@ -1,4 +1,4 @@
-# Runner's Journey
+# My Running Journal
 
 A runner's life diary. Races are pinned on an illustrated map of South Africa,
 at the city or town where they were run. Zoom in to see smaller towns, tap a pin

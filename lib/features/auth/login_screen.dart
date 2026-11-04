@@ -77,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const Icon(Icons.directions_run,
                       size: 72, color: Colors.white),
                   const SizedBox(height: 8),
-                  const Text("Runner's Journey",
+                  const Text("My Running Journal",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           color: Colors.white,
