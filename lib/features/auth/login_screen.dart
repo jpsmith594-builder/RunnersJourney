@@ -32,7 +32,12 @@ class _LoginScreenState extends State<LoginScreen> {
     final auth = Supabase.instance.client.auth;
     try {
       if (_signUp) {
-        final res = await auth.signUp(email: email, password: password);
+        final res = await auth.signUp(
+          email: email,
+          password: password,
+          // The confirmation link opens the app instead of a web page.
+          emailRedirectTo: 'io.runnersjourney.app://login-callback/',
+        );
         if (res.session == null && mounted) {
           _toast('Check your email to confirm your account, then sign in.');
           setState(() => _signUp = false);

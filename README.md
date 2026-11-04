@@ -135,3 +135,24 @@ tools/         gen_places.py
 
 To test without paying, give yourself a subscription in the Supabase SQL editor (see the bottom of
 `supabase/009_subscriptions.sql`).
+
+## Email confirmation link (opens the app)
+
+By default Supabase sends the confirmation link to `http://localhost:3000`, which fails on a phone
+("this site can't be reached"). The app now asks for `io.runnersjourney.app://login-callback/` instead:
+
+1. Supabase > Authentication > URL Configuration: set **Site URL** to `io.runnersjourney.app://login-callback/`
+   and add the same value under **Redirect URLs**.
+2. In `android/app/src/main/AndroidManifest.xml`, inside the `<activity android:name=".MainActivity" ...>` tag
+   (next to the existing `<intent-filter>`), add:
+
+   ```xml
+   <intent-filter>
+     <action android:name="android.intent.action.VIEW" />
+     <category android:name="android.intent.category.DEFAULT" />
+     <category android:name="android.intent.category.BROWSABLE" />
+     <data android:scheme="io.runnersjourney.app" android:host="login-callback" />
+   </intent-filter>
+   ```
+
+Tapping the link in the email then opens the app and signs the runner in.
