@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../calendar/race_event.dart';
+import '../map/place_field.dart';
 import '../map/places.dart';
 import 'bucket_item.dart';
 import 'bucket_store.dart';
@@ -28,7 +29,7 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
   @override
   void initState() {
     super.initState();
-    _place = placeByName(widget.item?.locationName);
+    _place = widget.item == null ? null : placeForBucket(widget.item!);
   }
 
   @override
@@ -43,11 +44,15 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     final typed = (_loc?.text ?? '').trim();
-    final place = placeByName(typed);
+    final place = resolvePlace(typed, _place);
     final item = BucketItem(
       id: widget.item?.id,
       name: _name.text.trim(),
       locationName: place?.name ?? (typed.isEmpty ? null : typed),
+      lat: place?.lat,
+      lng: place?.lng,
+      region: place?.province,
+      country: place?.country,
       distanceKm: double.tryParse(_distance.text.trim()),
       done: widget.item?.done ?? false,
     );
@@ -137,29 +142,12 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
               ),
             ),
             gap,
-            Autocomplete<Place>(
-              initialValue:
-                  TextEditingValue(text: widget.item?.locationName ?? ''),
-              displayStringForOption: (p) => p.name,
-              optionsBuilder: (v) => searchPlaces(v.text),
-              onSelected: (p) => setState(() => _place = p),
-              fieldViewBuilder: (context, controller, focusNode, onSubmit) {
-                _loc = controller;
-                return TextFormField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  textCapitalization: TextCapitalization.words,
-                  onChanged: (t) => setState(() => _place = placeByName(t)),
-                  decoration: InputDecoration(
-                    labelText: 'Town or city',
-                    prefixIcon: const Icon(Icons.place_outlined),
-                    border: const OutlineInputBorder(),
-                    helperText: _place == null
-                        ? 'Pick a town from the list to pin it on the map'
-                        : '${_place!.name}, ${_place!.province}',
-                  ),
-                );
-              },
+            PlaceField(
+              initialText: widget.item?.locationName ?? '',
+              place: _place,
+              emptyHelper: 'Pick a town from the list to pin it on the map',
+              onController: (c) => _loc = c,
+              onPlace: (p) => setState(() => _place = p),
             ),
             gap,
             TextFormField(

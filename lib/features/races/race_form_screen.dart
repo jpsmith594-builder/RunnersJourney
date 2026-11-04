@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../calendar/race_event.dart';
+import '../map/place_field.dart';
 import '../map/places.dart';
 import '../photos/photo_repository.dart';
 import '../photos/photo_widgets.dart';
@@ -74,7 +75,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
   void initState() {
     super.initState();
     _place = widget.initialPlace ??
-        placeByName(widget.race?.locationName) ??
+        (widget.race == null ? null : placeForRace(widget.race!)) ??
         placeByName(widget.prefill?.town);
   }
 
@@ -142,7 +143,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
     String? clean(TextEditingController c) =>
         c.text.trim().isEmpty ? null : c.text.trim();
     final typed = (_loc?.text ?? '').trim();
-    final place = placeByName(typed);
+    final place = resolvePlace(typed, _place);
     final race = Race(
       id: widget.race?.id,
       name: _name.text.trim(),
@@ -155,6 +156,8 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
       locationName: place?.name ?? (typed.isEmpty ? null : typed),
       lat: place?.lat,
       lng: place?.lng,
+      region: place?.province,
+      country: place?.country,
       notes: clean(_notes),
     );
     try {
@@ -353,32 +356,14 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               ],
             ),
             gap,
-            Autocomplete<Place>(
-              initialValue: TextEditingValue(
-                  text: widget.race?.locationName ??
-                      widget.initialPlace?.name ??
-                      widget.prefill?.town ??
-                      ''),
-              displayStringForOption: (p) => p.name,
-              optionsBuilder: (v) => searchPlaces(v.text),
-              onSelected: (p) => setState(() => _place = p),
-              fieldViewBuilder: (context, controller, focusNode, onSubmit) {
-                _loc = controller;
-                return TextFormField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  textCapitalization: TextCapitalization.words,
-                  onChanged: (t) => setState(() => _place = placeByName(t)),
-                  decoration: InputDecoration(
-                    labelText: 'Town or city',
-                    prefixIcon: const Icon(Icons.place_outlined),
-                    border: const OutlineInputBorder(),
-                    helperText: _place == null
-                        ? 'Pick a town from the list to show this race on the map'
-                        : '${_place!.name}, ${_place!.province}',
-                  ),
-                );
-              },
+            PlaceField(
+              initialText: widget.race?.locationName ??
+                  widget.initialPlace?.name ??
+                  widget.prefill?.town ??
+                  '',
+              place: _place,
+              onController: (c) => _loc = c,
+              onPlace: (p) => setState(() => _place = p),
             ),
             gap,
             PhotosEditor(

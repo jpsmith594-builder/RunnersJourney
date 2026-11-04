@@ -1,6 +1,6 @@
 # My Running Journal
 
-A runner's life diary. Races are pinned on an illustrated map of South Africa,
+A runner's life diary. Races are pinned on a world map,
 at the city or town where they were run. Zoom in to see smaller towns, tap a pin
 for the race card, and see your own football-style runner card.
 
@@ -13,7 +13,7 @@ for the race card, and see your own football-style runner card.
 - Email sign-up / sign-in
 - Add, edit, delete races: name, date, status (planned / completed / DNF / DNS),
   distance, finish time, positions, town, notes
-- **Journey tab**: the real map of South Africa
+- **Journey tab**: the real world map. The town box searches any town in the world (needs the MapTiler key); South African towns also work without it
   - Races sit on their town. Pinch, scroll, or use the +/- buttons to zoom
   - Major cities always show; regional towns and small towns appear as you zoom in
   - Several races in one town show as a numbered pin; tap it or zoom in and the
@@ -35,7 +35,7 @@ for the race card, and see your own football-style runner card.
   provinces, longest race, fastest pace, busiest month and personal bests
 - **Badges** (menu): 24 crests (bronze, silver, gold, platinum, titanium) with brushed-metal frames, light sweeps and stars for difficulty; locked ones are grey with progress.
   Badges for races finished, distance, firsts (10K, half, marathon,
-  ultra), sub-60 10K / sub-2 half / sub-4 marathon, towns and provinces, Comrades, Two Oceans
+  ultra), sub-60 10K / sub-2 half / sub-4 marathon, towns, provinces/states, countries (Border crosser, Globetrotter), Comrades, Two Oceans
 - **Leaderboard** (Friends screen): you and your friends ranked by km, races or towns, this year
   or all time. Friends can cheer on each other's races with reactions
 - **Race reminder**: a banner above the map counts down to your next planned race (within 60
@@ -59,8 +59,8 @@ for the race card, and see your own football-style runner card.
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
    `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
-   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql` (003 adds the profile columns and the private `avatars`
-   photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends, 007 adds reactions)
+   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql` (003 adds the profile columns and the private `avatars`
+   photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends, 007 adds reactions, 008 adds region and country to races and coordinates to the bucket list)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
    it overwrites with `git restore <file>` and delete `test/widget_test.dart`)

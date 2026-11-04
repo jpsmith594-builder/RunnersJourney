@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../map/place_field.dart';
 import '../map/places.dart';
 import 'profile.dart';
 import 'profile_store.dart';
@@ -28,7 +29,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       TextEditingController(text: widget.store.profile.club ?? '');
   late final _age =
       TextEditingController(text: widget.store.profile.age?.toString() ?? '');
-  TextEditingController? _home; // owned by the Autocomplete widget
+  TextEditingController? _home; // owned by the PlaceField widget
+  Place? _homePlace;
   String? _favourite;
   Gender? _gender;
 
@@ -93,7 +95,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     final typedHome = _clean(_home?.text);
-    final home = placeByName(typedHome)?.name ?? typedHome;
+    final home = typedHome == null
+        ? null
+        : (resolvePlace(typedHome, _homePlace)?.name ?? typedHome);
     final age = int.tryParse(_age.text.trim());
     try {
       await widget.store.save(
@@ -206,24 +210,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   border: OutlineInputBorder()),
             ),
             gap,
-            Autocomplete<Place>(
-              initialValue:
-                  TextEditingValue(text: widget.store.profile.homeTown ?? ''),
-              displayStringForOption: (p) => p.name,
-              optionsBuilder: (v) => searchPlaces(v.text),
-              fieldViewBuilder: (context, controller, focusNode, onSubmit) {
-                _home = controller;
-                return TextFormField(
-                  controller: controller,
-                  focusNode: focusNode,
-                  textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
-                    labelText: 'Home town',
-                    prefixIcon: Icon(Icons.home_outlined),
-                    border: OutlineInputBorder(),
-                  ),
-                );
-              },
+            PlaceField(
+              initialText: widget.store.profile.homeTown ?? '',
+              place: _homePlace,
+              label: 'Home town',
+              icon: Icons.home_outlined,
+              emptyHelper: 'Optional',
+              onController: (c) => _home = c,
+              onPlace: (p) => setState(() => _homePlace = p),
             ),
             gap,
             Text('Favourite distance',

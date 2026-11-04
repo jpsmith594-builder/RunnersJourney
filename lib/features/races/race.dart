@@ -12,6 +12,8 @@ class Race {
   final String? locationName;
   final double? lat;
   final double? lng;
+  final String? region;
+  final String? country;
   final String? notes;
 
   const Race({
@@ -26,6 +28,8 @@ class Race {
     this.locationName,
     this.lat,
     this.lng,
+    this.region,
+    this.country,
     this.notes,
   });
 
@@ -45,6 +49,8 @@ class Race {
       locationName: m['location_name'] as String?,
       lat: (m['lat'] as num?)?.toDouble(),
       lng: (m['lng'] as num?)?.toDouble(),
+      region: m['region'] as String?,
+      country: m['country'] as String?,
       notes: m['notes'] as String?,
     );
   }
@@ -65,6 +71,8 @@ class Race {
       'location_name': locationName,
       'lat': lat,
       'lng': lng,
+      'region': region,
+      'country': country,
       'notes': notes,
     };
   }

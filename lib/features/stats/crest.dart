@@ -97,12 +97,14 @@ CrestTier crestTierOf(String badgeId) {
     case 'sub4':
     case 'comrades':
       return CrestTier.platinum;
+    case 'country5':
     case 'races25':
     case 'firstmarathon':
     case 'sub2':
     case 'prov5':
     case 'towns10':
       return CrestTier.gold;
+    case 'country2':
     case 'races10':
     case 'km500':
     case 'firsthalf':

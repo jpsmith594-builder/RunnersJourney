@@ -23,12 +23,12 @@ GroupResult groupRaces(List<Race> races) {
   final byPlace = <String, RaceGroup>{};
   final unplaced = <Race>[];
   for (final r in races) {
-    final p = placeByName(r.locationName);
+    final p = placeForRace(r);
     if (p == null) {
       unplaced.add(r);
       continue;
     }
-    byPlace.putIfAbsent(p.name, () => RaceGroup(p, [])).races.add(r);
+    byPlace.putIfAbsent(p.key, () => RaceGroup(p, [])).races.add(r);
   }
   return GroupResult(byPlace.values.toList(), unplaced);
 }

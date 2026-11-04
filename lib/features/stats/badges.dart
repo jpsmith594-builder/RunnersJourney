@@ -30,12 +30,16 @@ List<BadgeResult> computeBadges(List<Race> races) {
   final km = done.fold<double>(0, (s, r) => s + (r.distanceKm ?? 0));
   final towns = <String>{};
   final provinces = <String>{};
+  final countries = <String>{};
   for (final r in done) {
     final name = r.locationName?.trim();
     if (name != null && name.isNotEmpty) {
       towns.add(name.toLowerCase());
-      final p = placeByName(name)?.province;
-      if (p != null) provinces.add(p);
+      final p = placeForRace(r);
+      if (p != null) {
+        if (p.province.isNotEmpty) provinces.add('${p.country}|${p.province}');
+        if (p.country.isNotEmpty) countries.add(p.country);
+      }
     }
   }
 
@@ -119,12 +123,18 @@ List<BadgeResult> computeBadges(List<Race> races) {
         under(41.0, 43.0, 10800)),
     count(const RunnerBadge('towns5', 'Explorer', 'Race in 5 different towns',
         Icons.explore, blue), towns.length, 5),
-    count(const RunnerBadge('towns10', 'Globetrotter', 'Race in 10 different towns',
+    count(const RunnerBadge('towns10', 'Town hopper', 'Race in 10 different towns',
         Icons.public, purple), towns.length, 10),
-    count(const RunnerBadge('prov3', 'Road tripper', 'Race in 3 provinces',
+    count(const RunnerBadge('prov3', 'Road tripper', 'Race in 3 provinces or states',
         Icons.map, blue), provinces.length, 3),
-    count(const RunnerBadge('prov5', 'Nationwide', 'Race in 5 provinces',
+    count(const RunnerBadge('prov5', 'Nationwide', 'Race in 5 provinces or states',
         Icons.flag_circle, purple), provinces.length, 5),
+    count(const RunnerBadge('country2', 'Border crosser',
+        'Race in 2 different countries', Icons.flight_takeoff, blue),
+        countries.length, 2),
+    count(const RunnerBadge('country5', 'Globetrotter',
+        'Race in 5 different countries', Icons.public, purple),
+        countries.length, 5),
     BadgeResult(
         const RunnerBadge('comrades', 'Comrades finisher',
             'Finish the Comrades Marathon', Icons.workspace_premium, gold),

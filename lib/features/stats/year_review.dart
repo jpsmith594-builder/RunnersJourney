@@ -66,8 +66,10 @@ YearSummary summarize(List<Race> races, int year) {
     final name = r.locationName?.trim();
     if (name != null && name.isNotEmpty) {
       towns.add(name.toLowerCase());
-      final p = placeByName(name)?.province;
-      if (p != null) provinces.add(p);
+      final p = placeForRace(r);
+      if (p != null && p.province.isNotEmpty) {
+        provinces.add('${p.country}|${p.province}');
+      }
     }
     perMonth[r.date.month] = (perMonth[r.date.month] ?? 0) + 1;
     if (r.distanceKm != null &&

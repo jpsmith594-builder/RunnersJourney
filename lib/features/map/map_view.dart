@@ -44,7 +44,7 @@ class MapView extends StatefulWidget {
 }
 
 class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
-  static const double _minZoom = 4.2;
+  static const double _minZoom = 2.5;
   static const double _maxZoom = 18;
   static const double _fanZoom = 9.5; // zoom at which multi-race towns fan out
   static const double _clusterRadius = 28; // screen px
@@ -139,10 +139,9 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     }
     final centre = LatLng((minLat + maxLat) / 2, (minLng + maxLng) / 2);
     final span = math.max(maxLat - minLat, (maxLng - minLng) * 1.4);
-    final zoom = span < 0.05
-        ? 11.0
-        : (span > 12 ? 4.9 : (8.4 - math.log(span) / math.ln2 * 0.9));
-    return (centre, zoom.clamp(4.9, 11.0).toDouble());
+    final zoom =
+        span < 0.05 ? 11.0 : (8.4 - math.log(span) / math.ln2 * 0.9);
+    return (centre, zoom.clamp(2.8, 11.0).toDouble());
   }
 
   void _zoomIntoCluster(MapCluster c) {
@@ -177,7 +176,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   List<(Race, Place)> _chronological(List<Race> races) {
     final out = <(Race, Place)>[];
     for (final r in races) {
-      final p = placeByName(r.locationName);
+      final p = placeForRace(r);
       if (p != null) out.add((r, p));
     }
     out.sort((a, b) => a.$1.date.compareTo(b.$1.date));
@@ -189,7 +188,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     final lines = <Polyline>[];
     for (var i = 1; i < stops.length; i++) {
       final a = stops[i - 1], b = stops[i];
-      if (a.$2.name == b.$2.name) continue;
+      if (a.$2.key == b.$2.key) continue;
       final done = a.$1.status != RaceStatus.planned &&
           b.$1.status != RaceStatus.planned;
       lines.add(Polyline(
@@ -217,7 +216,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       ..clearSnackBars()
       ..showSnackBar(
         SnackBar(
-          content: Text('${p.name}, ${p.province}'),
+          content: Text('${p.name}, ${p.where}'),
           action: SnackBarAction(
             label: 'Add race here',
             onPressed: () => widget.onAddAtPlace(p),
@@ -280,10 +279,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                       minZoom: _minZoom,
                       maxZoom: _maxZoom,
                       backgroundColor: _oceanColor,
-                      cameraConstraint: CameraConstraint.containCenter(
-                        bounds: LatLngBounds(
-                            const LatLng(-37.5, 14.0), const LatLng(-20.5, 35.5)),
-                      ),
+                      cameraConstraint: const CameraConstraint.unconstrained(),
                       interactionOptions: const InteractionOptions(
                         flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
                       ),
@@ -411,16 +407,19 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     // Town dots for places without races, revealed by zoom level.
     // Bucket-list races, grouped by town (only those with a known town).
     final bucketByPlace = <String, List<BucketItem>>{};
+    final bucketPlaces = <String, Place>{};
     for (final b in bucket) {
-      final p = placeByName(b.locationName);
-      if (p != null) bucketByPlace.putIfAbsent(p.name, () => []).add(b);
+      final p = placeForBucket(b);
+      if (p == null) continue;
+      bucketByPlace.putIfAbsent(p.key, () => []).add(b);
+      bucketPlaces[p.key] = p;
     }
     final racePlaces = {
-      for (final g in grouped.groups) g.place.name,
+      for (final g in grouped.groups) g.place.key,
       ...bucketByPlace.keys,
     };
     for (final p in kPlaces) {
-      if (racePlaces.contains(p.name)) continue;
+      if (racePlaces.contains(p.key)) continue;
       if (scale < _tierZoom[p.tier - 1]) continue;
       final s = _toScreen(p);
       if (!_onScreen(s)) continue;
@@ -486,9 +485,9 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
     // Grey pins for bucket-list races still to do. Nudged sideways when the
     // runner also has a race in the same town.
-    final raceTowns = {for (final g in grouped.groups) g.place.name};
+    final raceTowns = {for (final g in grouped.groups) g.place.key};
     bucketByPlace.forEach((town, list) {
-      final place = placeByName(town)!;
+      final place = bucketPlaces[town]!;
       var tip = _toScreen(place);
       if (!_onScreen(tip, margin: 120)) return;
       if (raceTowns.contains(town)) tip = tip + const Offset(22, 0);
