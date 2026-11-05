@@ -12,6 +12,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _busy = false;
+  bool _showPassword = false;
   bool _signUp = false;
 
   @override
@@ -143,13 +144,24 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 12),
                         TextField(
                           controller: _password,
-                          obscureText: true,
+                          obscureText: !_showPassword,
                           autofillHints: const [AutofillHints.password],
                           onSubmitted: (_) => _submit(),
-                          decoration: const InputDecoration(
-                              labelText: 'Password',
-                              prefixIcon: Icon(Icons.lock_outline),
-                              border: OutlineInputBorder()),
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            border: const OutlineInputBorder(),
+                            suffixIcon: IconButton(
+                              tooltip: _showPassword
+                                  ? 'Hide password'
+                                  : 'Show password',
+                              icon: Icon(_showPassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined),
+                              onPressed: () =>
+                                  setState(() => _showPassword = !_showPassword),
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 20),
                         SizedBox(

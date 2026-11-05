@@ -21,6 +21,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   final _pw = TextEditingController();
   final _again = TextEditingController();
   bool _busy = false;
+  bool _show = false;
 
   @override
   void dispose() {
@@ -67,16 +68,24 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
           const SizedBox(height: 16),
           TextField(
             controller: _pw,
-            obscureText: true,
-            decoration: const InputDecoration(
-                labelText: 'New password',
-                prefixIcon: Icon(Icons.lock_outline),
-                border: OutlineInputBorder()),
+            obscureText: !_show,
+            decoration: InputDecoration(
+              labelText: 'New password',
+              prefixIcon: const Icon(Icons.lock_outline),
+              border: const OutlineInputBorder(),
+              suffixIcon: IconButton(
+                tooltip: _show ? 'Hide password' : 'Show password',
+                icon: Icon(_show
+                    ? Icons.visibility_off_outlined
+                    : Icons.visibility_outlined),
+                onPressed: () => setState(() => _show = !_show),
+              ),
+            ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _again,
-            obscureText: true,
+            obscureText: !_show,
             onSubmitted: (_) => _save(),
             decoration: const InputDecoration(
                 labelText: 'Repeat new password',
