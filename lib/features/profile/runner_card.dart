@@ -15,15 +15,24 @@ class _Palette {
 
 _Palette _paletteFor(CardTier t) {
   switch (t) {
-    case CardTier.bronze:
+    case CardTier.novice:
       return const _Palette(Color(0xFFE6AE7C), Color(0xFF8A5A2B),
-          Color(0xFF3B2410), Color(0xFF5A3A1B), 'BRONZE');
-    case CardTier.silver:
+          Color(0xFF3B2410), Color(0xFF5A3A1B), 'NOVICE');
+    case CardTier.rookie:
+      return const _Palette(Color(0xFFF2B08E), Color(0xFFB35A36),
+          Color(0xFF3F1C0D), Color(0xFF7A3A1D), 'ROOKIE');
+    case CardTier.club:
       return const _Palette(Color(0xFFF4F6F8), Color(0xFF9AA5B1),
-          Color(0xFF22303C), Color(0xFF55616E), 'SILVER');
-    case CardTier.gold:
+          Color(0xFF22303C), Color(0xFF55616E), 'CLUB RUNNER');
+    case CardTier.competitor:
       return const _Palette(Color(0xFFFCE58F), Color(0xFFC9962B),
-          Color(0xFF3A2A05), Color(0xFF8A650F), 'GOLD');
+          Color(0xFF3A2A05), Color(0xFF8A650F), 'COMPETITOR');
+    case CardTier.veteran:
+      return const _Palette(Color(0xFFD9F3F1), Color(0xFF4F9C9C),
+          Color(0xFF0E3030), Color(0xFF1F6B6B), 'VETERAN');
+    case CardTier.master:
+      return const _Palette(Color(0xFF4D7CE0), Color(0xFF0A2A6B),
+          Colors.white, Color(0xFF7FE3FF), 'MASTER');
     case CardTier.elite:
       return const _Palette(Color(0xFF2A2F6B), Color(0xFF6A3FD0),
           Colors.white, Color(0xFFFFD54F), 'ELITE');
@@ -308,7 +317,7 @@ class RunnerCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('${stats.rating}', style: ink(58, w: FontWeight.w900)),
+                        Text('${stats.rating}', style: ink(50, w: FontWeight.w900)),
                         SizedBox(height: 4 * u),
                         Text(favouriteDistance ?? 'RUN', style: ink(18)),
                         SizedBox(height: 8 * u),

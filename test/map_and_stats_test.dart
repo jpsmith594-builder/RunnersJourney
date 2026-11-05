@@ -105,23 +105,73 @@ void main() {
     });
 
     test('rating and tier grow with experience and are capped', () {
-      expect(computeStats([]).rating, 45);
-      expect(computeStats([]).tier, CardTier.bronze);
+      expect(computeStats([]).rating, 0);
+      expect(computeStats([]).tier, CardTier.novice);
 
-      final many = [
-        for (var i = 0; i < 40; i++)
-          _race('r$i', town: 'Paarl', km: 21.1, seconds: 7000),
+      const tiers = [
+        (79, CardTier.novice),
+        (80, CardTier.rookie),
+        (180, CardTier.club),
+        (300, CardTier.competitor),
+        (450, CardTier.veteran),
+        (650, CardTier.master),
+        (850, CardTier.elite),
       ];
-      final s = computeStats(many);
-      expect(s.rating, 99);
-      expect(s.tier, CardTier.elite);
+      for (final (rating, tier) in tiers) {
+        final s = _withRating(rating);
+        expect(s.rating, rating);
+        expect(s.tier, tier, reason: '$rating');
+      }
+    });
 
-      expect(const RunnerStats(completed: 7, totalKm: 0, towns: 0).tier,
-          CardTier.bronze); // 59
-      expect(const RunnerStats(completed: 8, totalKm: 0, towns: 0).tier,
-          CardTier.silver); // 61
-      expect(const RunnerStats(completed: 15, totalKm: 0, towns: 0).tier,
-          CardTier.gold); // 75
+    test('each part is capped', () {
+      const s = RunnerStats(
+          completed: 500,
+          totalKm: 99999,
+          towns: 500,
+          golds: 500,
+          countries: 500,
+          improvement: 9999);
+      expect(s.rating, 1000);
+      expect(s.pointsToNext, isNull);
+      expect(_withRating(100).pointsToNext, 80);
+    });
+
+    test('a busy first year does not reach Elite', () {
+      final races = [
+        for (var i = 0; i < 30; i++)
+          Race(
+            id: '$i',
+            name: 'r$i',
+            date: DateTime(2025, 1 + i % 12, 1 + i % 28),
+            status: RaceStatus.completed,
+            distanceKm: 10.0,
+            finishTimeSeconds: 3600 - i * 20,
+            locationName: 'Town ${i % 15}',
+            country: i % 3 == 0 ? 'South Africa' : (i % 3 == 1 ? 'Kenya' : 'Namibia'),
+            medal: i < 10 ? 'gold' : null,
+          ),
+      ];
+      final s = computeStats(races);
+      expect(s.rating, lessThan(650));
+      expect(s.tier.index, lessThan(CardTier.master.index));
+    });
+
+    test('improvement rewards getting faster than your own past', () {
+      Race r(int year, int seconds) => Race(
+            id: '$year-$seconds',
+            name: 'r',
+            date: DateTime(year, 5, 1),
+            status: RaceStatus.completed,
+            distanceKm: 10.0,
+            finishTimeSeconds: seconds,
+          );
+      // One 10K only: nothing to compare with.
+      expect(computeStats([r(2023, 3600)]).improvement, 0);
+      // 20% faster in a later season: 40 for the gain + 10 for the new season.
+      expect(computeStats([r(2023, 3600), r(2024, 2880)]).improvement, 50);
+      // Getting slower earns nothing.
+      expect(computeStats([r(2023, 3000), r(2024, 3300)]).improvement, 0);
     });
   });
 }
@@ -139,4 +189,29 @@ void suburbTests() {
       }
     });
   });
+}
+
+RunnerStats _withRating(int rating) {
+  // Improvement alone can reach 250, so use medals/towns/etc. in steps.
+  var left = rating;
+  int take(int per, int cap) {
+    final n = (left ~/ per).clamp(0, cap ~/ per);
+    left -= n * per;
+    return n;
+  }
+
+  final completed = take(6, 250);
+  final towns = take(4, 100);
+  final countries = take(10, 80);
+  final golds = take(10, 120);
+  final km = take(1, 200) * 8.0;
+  final improvement = left.clamp(0, 250);
+  return RunnerStats(
+    completed: completed,
+    totalKm: km,
+    towns: towns,
+    countries: countries,
+    golds: golds,
+    improvement: improvement,
+  );
 }

@@ -198,3 +198,12 @@ Menu > **Journey album** pages through finished races like an old photo album: a
 (photos stuck on with tape, name, date, town, distance, time, pace, position and medal), and a closing page with
 totals. Swipe to turn pages, tap the play button to turn them automatically, tap a photo to open it full screen,
 share the current page as a picture, and use the filter to pick a year or show only races with photos.
+
+## Runner card rating
+
+The card shows a rating from 0 to 1000 and one of seven categories: Novice (0), Rookie (80), Club runner (180),
+Competitor (300), Veteran (450), Master (650) and Elite (850). Points come from finished races (6 each, up to 250),
+distance (1 per 8 km, up to 200), towns (4 each, up to 100), medals (gold 10, silver 6, bronze 4, up to 120),
+countries (10 each, up to 80) and improvement (up to 250). Improvement compares you with your own past, so it is
+fair to every pace: up to 40 points per distance (5, 10, 21, 42 km) for how much your best beats your first time,
+plus 10 points each time a season's best at a distance beats all earlier seasons. Elite takes years.
