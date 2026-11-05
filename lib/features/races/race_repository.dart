@@ -6,7 +6,15 @@ class RaceRepository {
   final SupabaseClient _db = Supabase.instance.client;
 
   Future<List<Race>> list() async {
-    final rows = await _db.from('races').select().order('race_date');
+    // Friends are allowed to read each other's races, so always ask for the
+    // signed-in runner's own rows only.
+    final uid = _db.auth.currentUser?.id;
+    if (uid == null) return [];
+    final rows = await _db
+        .from('races')
+        .select()
+        .eq('user_id', uid)
+        .order('race_date');
     return (rows as List)
         .map((r) => Race.fromMap(r as Map<String, dynamic>))
         .toList();
