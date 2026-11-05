@@ -21,8 +21,11 @@ class RaceFormScreen extends StatefulWidget {
   /// A calendar race to start from (name, town and distance are filled in and
   /// the race is set to "planned").
   final RaceEvent? prefill;
+
+  /// A race name to start with (e.g. what was searched for in the calendar).
+  final String? initialName;
   const RaceFormScreen(
-      {super.key, this.race, this.initialPlace, this.prefill});
+      {super.key, this.race, this.initialPlace, this.prefill, this.initialName});
 
   @override
   State<RaceFormScreen> createState() => _RaceFormScreenState();
@@ -33,8 +36,8 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
   final _repo = RaceRepository();
 
   final _nameFocus = FocusNode();
-  late final _name =
-      TextEditingController(text: widget.race?.name ?? widget.prefill?.name);
+  late final _name = TextEditingController(
+      text: widget.race?.name ?? widget.prefill?.name ?? widget.initialName);
   late final _distance = TextEditingController(
       text: widget.race?.distanceKm?.toString() ??
           (widget.prefill == null

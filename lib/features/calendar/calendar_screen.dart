@@ -10,7 +10,7 @@ class CalendarScreen extends StatefulWidget {
   final void Function(RaceEvent event) onBucket;
 
   /// Opens a blank race form for a race that is not in the list.
-  final VoidCallback onAddOwn;
+  final void Function(String? name) onAddOwn;
 
   const CalendarScreen({
     super.key,
@@ -29,19 +29,24 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget _notListed() => SoftCard(
         margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        onTap: widget.onAddOwn,
-        child: const Row(
+        onTap: () => widget.onAddOwn(_query.trim().isEmpty ? null : _query.trim()),
+        child: Row(
           children: [
-            IconBubble(
+            const IconBubble(
                 icon: Icons.add_location_alt_outlined,
                 color: Color(0xFF6B1B9A),
                 size: 38),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Expanded(
-              child: Text('Add a race that is not listed',
-                  style: TextStyle(fontWeight: FontWeight.w800)),
+              child: Text(
+                  _query.trim().isEmpty
+                      ? 'Add a race that is not listed'
+                      : 'Add "${_query.trim()}" as a new race',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.w800)),
             ),
-            Icon(Icons.chevron_right),
+            const Icon(Icons.chevron_right),
           ],
         ),
       );
@@ -87,7 +92,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     child: Padding(
                       padding: EdgeInsets.all(24),
                       child: Text(
-                          'No races match your search. Use "Add a race that is not listed" above to add it yourself.',
+                          'No races match your search. Tap the button above to add it as a new race.',
                           textAlign: TextAlign.center),
                     ),
                   )
