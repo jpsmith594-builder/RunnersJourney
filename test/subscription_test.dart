@@ -27,13 +27,13 @@ void main() {
   });
 
   test('database limit errors are recognised', () {
-    expect(limitKind(PostgrestException(message: 'free_limit')),
+    expect(limitKind(const PostgrestException(message: 'free_limit')),
         'free_limit');
-    expect(limitKind(PostgrestException(message: 'read_only')),
+    expect(limitKind(const PostgrestException(message: 'read_only')),
         'read_only');
-    expect(limitKind(PostgrestException(message: 'photo_limit')),
+    expect(limitKind(const PostgrestException(message: 'photo_limit')),
         'photo_limit');
-    expect(limitKind(PostgrestException(message: 'something else')),
+    expect(limitKind(const PostgrestException(message: 'something else')),
         isNull);
   });
 }

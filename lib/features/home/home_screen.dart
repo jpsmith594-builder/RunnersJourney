@@ -5,7 +5,6 @@ import '../bucket/bucket_item.dart';
 import '../bucket/bucket_list_screen.dart';
 import '../bucket/bucket_store.dart';
 import '../calendar/calendar_screen.dart';
-import '../calendar/race_event.dart';
 import '../friends/friends_screen.dart';
 import '../stats/badges_screen.dart';
 import '../stats/year_review_screen.dart';

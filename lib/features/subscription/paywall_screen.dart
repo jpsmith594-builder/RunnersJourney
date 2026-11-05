@@ -184,9 +184,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         fontSize: 30,
                         fontWeight: FontWeight.w900)),
                 const SizedBox(height: 4),
-                Text(
+                const Text(
                     'The free plan keeps $freeRaceLimit finished races. Planned races and the bucket list are always free.',
-                    style: const TextStyle(color: Colors.white70)),
+                    style: TextStyle(color: Colors.white70)),
                 const SizedBox(height: 16),
                 _benefit(Icons.all_inclusive, 'Unlimited races in your journey'),
                 _benefit(Icons.photo_library_outlined,

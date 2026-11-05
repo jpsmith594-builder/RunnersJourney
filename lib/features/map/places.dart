@@ -1,6 +1,5 @@
 import '../bucket/bucket_item.dart';
 import '../races/race.dart';
-import 'geo_search.dart';
 import 'place.dart';
 import 'places_data.dart';
 

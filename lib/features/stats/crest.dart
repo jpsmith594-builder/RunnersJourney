@@ -280,17 +280,17 @@ class _CrestPainter extends CustomPainter {
 
   static Path _xf(Path p, double x, double y, double k, {double rot = 0}) {
     final m = Matrix4.identity()
-      ..translate(x, y)
+      ..translateByDouble(x, y, 0, 1)
       ..rotateZ(rot)
-      ..scale(k, k);
+      ..scaleByDouble(k, k, 1, 1);
     return p.transform(m.storage);
   }
 
   Path _grow(Path p, double k) {
     final m = Matrix4.identity()
-      ..translate(50.0, 62.0)
-      ..scale(k, k)
-      ..translate(-50.0, -62.0);
+      ..translateByDouble(50.0, 62.0, 0, 1)
+      ..scaleByDouble(k, k, 1, 1)
+      ..translateByDouble(-50.0, -62.0, 0, 1);
     return p.transform(m.storage);
   }
 
