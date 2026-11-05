@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     shareRunnerCard(
       context,
       _cardKey,
-      message: '${name.isEmpty ? 'My' : '$name\'s'} Runner\'s Journey card: '
+      message: '${name.isEmpty ? 'My' : '$name\'s'} My Running Journal card: '
           'rating ${stats.rating}, ${stats.completed} races, '
           '${stats.totalKm.round()} km.',
     );
@@ -109,6 +109,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onPressed: _share,
                       icon: const Icon(Icons.ios_share),
                       label: const Text('Share my card'),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Story-size picture for Instagram, Facebook, WhatsApp Status, TikTok and more',
+                      style: small,
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     OutlinedButton.icon(

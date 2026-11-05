@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// Puts a runner card on a dark "stage" with the app name underneath. This is
-/// what gets turned into the picture that is shared.
+/// Puts a runner card on a tall 9:16 "story" stage with the app name. This is
+/// what gets turned into the picture that is shared, so it fits Instagram and
+/// Facebook Stories, WhatsApp Status and TikTok without cropping.
 class CardStage extends StatelessWidget {
   final GlobalKey boundaryKey;
   final Widget child;
@@ -13,34 +14,44 @@ class CardStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const brand = TextStyle(
+      color: Colors.white70,
+      fontSize: 12,
+      letterSpacing: 3,
+      fontWeight: FontWeight.w800,
+    );
     return RepaintBoundary(
       key: boundaryKey,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(22, 22, 22, 14),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white, width: 2),
-          gradient: const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF6B1B9A), Color(0xFF37003C)],
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            child,
-            const SizedBox(height: 12),
-            const Text(
-              'RUNNER\'S JOURNEY',
-              style: TextStyle(
-                color: Colors.white60,
-                fontSize: 11,
-                letterSpacing: 3,
-                fontWeight: FontWeight.w700,
-              ),
+      child: AspectRatio(
+        aspectRatio: 9 / 16,
+        child: Container(
+          padding: const EdgeInsets.all(22),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white, width: 2),
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF6B1B9A), Color(0xFF37003C), Color(0xFF1A0020)],
+              stops: [0.0, 0.65, 1.0],
             ),
-          ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('MY RUNNING JOURNAL', style: brand),
+              const SizedBox(height: 18),
+              child,
+              const SizedBox(height: 18),
+              const Text('EVERY RACE. EVERY TOWN.',
+                  style: TextStyle(
+                    color: Colors.white38,
+                    fontSize: 10,
+                    letterSpacing: 3,
+                    fontWeight: FontWeight.w700,
+                  )),
+            ],
+          ),
         ),
       ),
     );
@@ -48,7 +59,7 @@ class CardStage extends StatelessWidget {
 }
 
 /// Renders the card inside [boundaryKey] as a PNG and opens the phone's share
-/// sheet (WhatsApp, Instagram, Messages, Save to gallery and so on).
+/// sheet (Instagram, Facebook, WhatsApp, TikTok, Messages, Save to gallery...).
 Future<void> shareRunnerCard(
   BuildContext context,
   GlobalKey boundaryKey, {
@@ -63,7 +74,9 @@ Future<void> shareRunnerCard(
     }
     // Make sure the latest frame (and the photo) has been painted.
     await Future<void>.delayed(const Duration(milliseconds: 50));
-    final image = await boundary.toImage(pixelRatio: 3);
+    // 1080 pixels wide, the size story apps expect (1080 x 1920).
+    final image = await boundary.toImage(
+        pixelRatio: 1080 / boundary.size.width);
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
     if (data == null) throw 'Could not draw the card';
     final bytes = data.buffer.asUint8List();

@@ -207,7 +207,7 @@ class _Poster extends StatelessWidget {
                 '${e.key} best: ${formatDuration(e.value)}'),
           const SizedBox(height: 14),
           const Center(
-            child: Text('RUNNER\'S JOURNEY',
+            child: Text('MY RUNNING JOURNAL',
                 style: TextStyle(
                     color: Colors.white54,
                     fontSize: 11,

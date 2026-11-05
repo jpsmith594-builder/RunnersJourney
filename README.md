@@ -185,3 +185,9 @@ kilometres per year (horizontal bars). They are drawn by hand (no chart package)
   files, then calls `delete_my_account()` (`supabase/012_delete_account.sql`), which deletes the auth user and
   everything that cascades from it. Google Play also wants a web page that explains how to delete an account;
   that goes with the privacy policy.
+
+## Sharing the runner card
+
+The card is drawn on a tall 9:16 "story" stage and shared as a 1080 x 1920 PNG through the phone's share sheet,
+so it fits Instagram and Facebook Stories, WhatsApp Status and TikTok. Direct per-app buttons were left out on
+purpose: they need a Meta developer app, a restricted storage permission and TikTok approval.
