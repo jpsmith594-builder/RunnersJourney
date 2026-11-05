@@ -77,6 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => CalendarScreen(
+          onAddOwn: () async {
+            final changed = await Navigator.of(context).push<bool>(
+              MaterialPageRoute(builder: (_) => RaceFormScreen()),
+            );
+            if (changed == true) _store.load();
+          },
           onPlan: (e) async {
             final changed = await Navigator.of(context).push<bool>(
               MaterialPageRoute(builder: (_) => RaceFormScreen(prefill: e)),
@@ -210,7 +216,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 value: 'calendar',
                 child: ListTile(
                   leading: Icon(Icons.event_outlined),
-                  title: Text('Race calendar'),
+                  title: Text('South African races'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

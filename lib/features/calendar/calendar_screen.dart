@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/tiles.dart';
 import 'race_event.dart';
 
 /// Browse well-known South African races and add them to the plan or the
@@ -8,10 +9,14 @@ class CalendarScreen extends StatefulWidget {
   final void Function(RaceEvent event) onPlan;
   final void Function(RaceEvent event) onBucket;
 
+  /// Opens a blank race form for a race that is not in the list.
+  final VoidCallback onAddOwn;
+
   const CalendarScreen({
     super.key,
     required this.onPlan,
     required this.onBucket,
+    required this.onAddOwn,
   });
 
   @override
@@ -20,6 +25,26 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   String _query = '';
+
+  Widget _notListed() => SoftCard(
+        margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        onTap: widget.onAddOwn,
+        child: const Row(
+          children: [
+            IconBubble(
+                icon: Icons.add_location_alt_outlined,
+                color: Color(0xFF6B1B9A),
+                size: 38),
+            SizedBox(width: 12),
+            Expanded(
+              child: Text('Add a race that is not listed',
+                  style: TextStyle(fontWeight: FontWeight.w800)),
+            ),
+            Icon(Icons.chevron_right),
+          ],
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +58,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
         .toList();
     final t = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Race calendar')),
+      appBar: AppBar(title: const Text('South African races')),
       body: Column(
         children: [
           Padding(
@@ -50,14 +75,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: Text(
-              'A starter list of well-known races with their usual timing. '
-              'Dates change every year, so check the official site.',
+              'Well-known South African races with their usual timing. More countries are '
+              'coming soon. Dates change every year, so check the official site.',
               style: t.bodySmall,
             ),
           ),
+          _notListed(),
           Expanded(
             child: events.isEmpty
-                ? const Center(child: Text('No races match your search.'))
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Text(
+                          'No races match your search. Use "Add a race that is not listed" above to add it yourself.',
+                          textAlign: TextAlign.center),
+                    ),
+                  )
                 : ListView.separated(
                     itemCount: events.length,
                     separatorBuilder: (_, __) => const Divider(height: 1),
