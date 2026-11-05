@@ -62,14 +62,11 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     duration: const Duration(milliseconds: 600),
   );
   bool _ready = false;
-  bool _touring = false;
-  bool _showRoutes = false; // route lines make the map busy, so off by default
   Size _viewport = Size.zero;
   String? _selectedId;
 
   @override
   void dispose() {
-    _touring = false;
     _anim.dispose();
     _tick.dispose();
     _map.dispose();
@@ -149,60 +146,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     final singleTown = c.groups.length == 1;
     final target = singleTown ? math.max(_fanZoom + 0.5, zoom + 2) : zoom + 1.6;
     _flyTo(_map.camera.screenOffsetToLatLng(c.center), target);
-  }
-
-  /// Replays the journey: flies from race to race in date order.
-  Future<void> _tour(GroupResult grouped) async {
-    if (_touring) {
-      setState(() => _touring = false);
-      return;
-    }
-    final stops = _chronological(widget.store.races);
-    if (stops.isEmpty) return;
-    setState(() => _touring = true);
-    for (final s in stops) {
-      if (!_touring || !mounted) break;
-      final id = s.$1.id ?? s.$1.name;
-      _select(null);
-      await _flyTo(_latLng(s.$2), 9.0);
-      if (!_touring || !mounted) break;
-      _select(id);
-      await Future<void>.delayed(const Duration(milliseconds: 1800));
-    }
-    if (mounted) setState(() => _touring = false);
-  }
-
-  /// Races that have a known town, oldest first.
-  List<(Race, Place)> _chronological(List<Race> races) {
-    final out = <(Race, Place)>[];
-    for (final r in races) {
-      final p = placeForRace(r);
-      if (p != null) out.add((r, p));
-    }
-    out.sort((a, b) => a.$1.date.compareTo(b.$1.date));
-    return out;
-  }
-
-  List<Polyline> _routes(List<Race> races) {
-    final stops = _chronological(races);
-    final lines = <Polyline>[];
-    for (var i = 1; i < stops.length; i++) {
-      final a = stops[i - 1], b = stops[i];
-      if (a.$2.key == b.$2.key) continue;
-      final done = a.$1.status != RaceStatus.planned &&
-          b.$1.status != RaceStatus.planned;
-      lines.add(Polyline(
-        points: [_latLng(a.$2), _latLng(b.$2)],
-        strokeWidth: done ? 4 : 3,
-        color: done ? const Color(0xFFE90052) : const Color(0xFF6B1B9A),
-        borderStrokeWidth: 1.5,
-        borderColor: Colors.white,
-        pattern: done
-            ? const StrokePattern.solid()
-            : StrokePattern.dashed(segments: const [10, 8]),
-      ));
-    }
-    return lines;
   }
 
   // ---- interaction --------------------------------------------------------
@@ -294,8 +237,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                         retinaMode: RetinaMode.isHighDensity(context),
                         maxNativeZoom: 18,
                       ),
-                      if (_showRoutes)
-                        PolylineLayer(polylines: _routes(store.races)),
                     ],
                   ),
                 ),
@@ -345,24 +286,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      FloatingActionButton.small(
-                        heroTag: null,
-                        tooltip:
-                            _showRoutes ? 'Hide route lines' : 'Show route lines',
-                        onPressed: () =>
-                            setState(() => _showRoutes = !_showRoutes),
-                        child: Icon(_showRoutes
-                            ? Icons.timeline
-                            : Icons.timeline_outlined),
-                      ),
-                      const SizedBox(height: 8),
-                      FloatingActionButton.small(
-                        heroTag: null,
-                        tooltip: _touring ? 'Stop journey' : 'Replay my journey',
-                        onPressed: () => _tour(grouped),
-                        child: Icon(_touring ? Icons.stop : Icons.play_arrow),
-                      ),
-                      const SizedBox(height: 8),
                       FloatingActionButton.small(
                         heroTag: null,
                         tooltip: 'Zoom in',

@@ -7,6 +7,7 @@ import '../bucket/bucket_store.dart';
 import '../calendar/calendar_screen.dart';
 import '../friends/friends_screen.dart';
 import '../stats/badges_screen.dart';
+import '../stats/charts_screen.dart';
 import '../stats/year_review_screen.dart';
 import 'upcoming_banner.dart';
 import '../friends/friends_store.dart';
@@ -113,6 +114,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openCharts() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => ChartsScreen(store: _store)),
+    );
+  }
+
   void _openBadges() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => BadgesScreen(store: _store)),
@@ -169,6 +176,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   _openReview();
                 case 'badges':
                   _openBadges();
+                case 'charts':
+                  _openCharts();
                 case 'results':
                   _openResults();
                 case 'friends':
@@ -218,6 +227,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.workspace_premium_outlined),
                   title: Text('Badges'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'charts',
+                child: ListTile(
+                  leading: Icon(Icons.insights),
+                  title: Text('Charts'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

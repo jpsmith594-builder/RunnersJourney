@@ -70,8 +70,7 @@ for the race card, and see your own football-style runner card.
 5. `flutter run --dart-define-from-file=env.json`
 
 ## The map
-A real, zoomable map of South Africa (flutter_map) with your pins, race cards, route lines
-and a "replay my journey" button on top. Zoom in to reveal towns and, deeper still, Cape
+A real, zoomable world map (flutter_map) with your pins and race cards. Zoom in to reveal towns and, deeper still, Cape
 Town suburbs. The map picture follows the season with a colour tint.
 
 - Works out of the box with a free default map (OpenStreetMap / CARTO).
@@ -81,9 +80,6 @@ Town suburbs. The map picture follows the season with a colour tint.
 - `tools/gen_places.py` holds the towns by real GPS and writes
   `lib/features/map/places_data.dart`. Place tiers: 1 major city, 2 regional town,
   3 small town, 4 Cape Town suburb, 5 Cape Town neighbourhood.
-- Route lines join your races by date (solid red between completed races, dashed green
-  once a planned race is involved). They are hidden by default; use the route button on
-  the map to show them.
 
 ## Layout
 ```
@@ -174,3 +170,8 @@ Samsung Health style: a soft grey canvas with big rounded white cards (`lib/core
 `IconBubble`, `StatTile`, `RingProgress`, `SectionTitle`), light app bars with bold titles, and a white
 navigation bar. The Races tab opens with summary tiles (races run, distance, time racing, next race) above
 a card per race. The Badges screen leads with a progress ring.
+
+## Charts (menu)
+
+Four chart cards: races per year (bars), badges by tier (donut), average pace per year (line) and
+kilometres per year (horizontal bars). They are drawn by hand (no chart package) in `charts_screen.dart`.

@@ -66,17 +66,19 @@ class RaceListView extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-            child: GridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 1.35,
+            child: GridView(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                mainAxisExtent: 146,
+              ),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               children: [
                 StatTile(
                   icon: Icons.flag,
-                  color: AppTheme.navyLight,
+                  color: AppTheme.runGreen(Theme.of(context).brightness),
                   label: 'Races run',
                   value: '${sum.finished}',
                   note: sum.thisYear > 0 ? '${sum.thisYear} this year' : null,
@@ -125,7 +127,10 @@ class RaceListView extends StatelessWidget {
     final muted =
         Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7);
     final (icon, color) = switch (r.status) {
-      RaceStatus.completed => (Icons.flag, AppTheme.navyLight),
+      RaceStatus.completed => (
+          Icons.flag,
+          AppTheme.runGreen(Theme.of(context).brightness)
+        ),
       RaceStatus.planned => (Icons.flag_outlined, const Color(0xFFFF9F0A)),
       RaceStatus.dnf => (Icons.block, const Color(0xFFE5484D)),
       RaceStatus.dns => (Icons.remove_circle_outline, Colors.grey),

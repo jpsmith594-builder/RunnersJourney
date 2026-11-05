@@ -12,6 +12,11 @@ class AppTheme {
   static const Color magenta = Color(0xFFE90052);
 
   /// Soft grey canvas the white cards sit on (Samsung Health style).
+  /// A fresh green for finished races: bright on dark, deeper on light.
+  static Color runGreen(Brightness b) => b == Brightness.dark
+      ? const Color(0xFF4ADE80)
+      : const Color(0xFF16A34A);
+
   static const Color canvasLight = Color(0xFFF2F3F8);
   static const Color canvasDark = Color(0xFF0B0B10);
   static const Color cardDark = Color(0xFF1C1C24);
