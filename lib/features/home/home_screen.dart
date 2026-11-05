@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (_) => CalendarScreen(
           onAddOwn: () async {
             final changed = await Navigator.of(context).push<bool>(
-              MaterialPageRoute(builder: (_) => RaceFormScreen()),
+              MaterialPageRoute(builder: (_) => const RaceFormScreen()),
             );
             if (changed == true) _store.load();
           },
