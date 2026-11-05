@@ -59,7 +59,7 @@ for the race card, and see your own football-style runner card.
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
    `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
-   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql`, `supabase/009_subscriptions.sql`, `supabase/010_account_types.sql` (003 adds the profile columns and the private `avatars`
+   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql`, `supabase/009_subscriptions.sql`, `supabase/010_account_types.sql`, `supabase/011_medals.sql` (003 adds the profile columns and the private `avatars`
    photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends, 007 adds reactions, 008 adds region and country to races and coordinates to the bucket list, 009 adds subscriptions and the free-plan limits)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
@@ -173,5 +173,5 @@ a card per race. The Badges screen leads with a progress ring.
 
 ## Charts (menu)
 
-Four chart cards: races per year (bars), badges by tier (donut), average pace per year (line) and
+Four chart cards: races per year (bars), medals collected (donut: gold, silver, bronze, set on each finished race), average pace per year (line) and
 kilometres per year (horizontal bars). They are drawn by hand (no chart package) in `charts_screen.dart`.

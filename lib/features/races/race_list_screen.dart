@@ -135,11 +135,16 @@ class RaceListView extends StatelessWidget {
       RaceStatus.dnf => (Icons.block, const Color(0xFFE5484D)),
       RaceStatus.dns => (Icons.remove_circle_outline, Colors.grey),
     };
-    final chips = [
-      if (r.distanceKm != null) '${r.distanceKm} km',
-      if (done && r.finishTimeSeconds != null) r.formattedTime,
-      if (done && r.pace != null) r.pace!,
-      if (done && r.overallPosition != null) 'Pos ${r.overallPosition}',
+    final chips = <(String, Color)>[
+      if (r.distanceKm != null) ('${r.distanceKm} km', color),
+      if (done && r.finishTimeSeconds != null) (r.formattedTime, color),
+      if (done && r.pace != null) (r.pace!, color),
+      if (done && r.overallPosition != null) ('Pos ${r.overallPosition}', color),
+      if (done && r.medal != null)
+        (
+          '${r.medal![0].toUpperCase()}${r.medal!.substring(1)} medal',
+          medalColor(r.medal!)
+        ),
     ];
     return SoftCard(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -171,19 +176,19 @@ class RaceListView extends StatelessWidget {
                     spacing: 6,
                     runSpacing: 6,
                     children: [
-                      for (final c in chips)
+                      for (final (text, c) in chips)
                         Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                            color: color.withValues(alpha: 0.12),
+                            color: c.withValues(alpha: 0.14),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Text(c,
+                          child: Text(text,
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: color)),
+                                  color: c)),
                         ),
                     ],
                   ),
@@ -199,6 +204,18 @@ class RaceListView extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Metal colour of a gold, silver or bronze medal.
+Color medalColor(String medal) {
+  switch (medal) {
+    case 'gold':
+      return const Color(0xFFFFB400);
+    case 'silver':
+      return const Color(0xFF9AA5B4);
+    default:
+      return const Color(0xFFCD7F32);
   }
 }
 

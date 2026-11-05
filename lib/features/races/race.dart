@@ -14,6 +14,9 @@ class Race {
   final double? lng;
   final String? region;
   final String? country;
+
+  /// 'gold', 'silver' or 'bronze' when the runner collected a medal.
+  final String? medal;
   final String? notes;
 
   const Race({
@@ -30,6 +33,7 @@ class Race {
     this.lng,
     this.region,
     this.country,
+    this.medal,
     this.notes,
   });
 
@@ -51,6 +55,7 @@ class Race {
       lng: (m['lng'] as num?)?.toDouble(),
       region: m['region'] as String?,
       country: m['country'] as String?,
+      medal: m['medal'] as String?,
       notes: m['notes'] as String?,
     );
   }
@@ -73,6 +78,7 @@ class Race {
       'lng': lng,
       'region': region,
       'country': country,
+      'medal': medal,
       'notes': notes,
     };
   }

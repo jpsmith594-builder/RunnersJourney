@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme.dart';
 import '../../core/tiles.dart';
 import '../races/race.dart';
+import '../races/race_list_screen.dart' show medalColor;
 import '../races/race_store.dart';
-import 'badges.dart';
-import 'crest.dart';
 
 /// Numbers behind the four charts. Only completed races count.
 class ChartStats {
@@ -17,11 +16,11 @@ class ChartStats {
   /// Average pace per year in seconds per km (total time / total distance).
   final Map<int, double> paceSecPerKm;
 
-  /// Badges earned, by crest tier.
-  final Map<CrestTier, int> badgesByTier;
+  /// Medals collected at races: 'gold', 'silver', 'bronze'.
+  final Map<String, int> medals;
 
   const ChartStats(
-      this.racesPerYear, this.kmPerYear, this.paceSecPerKm, this.badgesByTier);
+      this.racesPerYear, this.kmPerYear, this.paceSecPerKm, this.medals);
 
   factory ChartStats.from(List<Race> races) {
     final count = <int, int>{};
@@ -42,13 +41,14 @@ class ChartStats {
     final pace = {
       for (final y in secs.keys) y: secs[y]! / paceKm[y]!,
     };
-    final tiers = {for (final t in CrestTier.values) t: 0};
-    for (final b in computeBadges(races)) {
-      if (!b.earned) continue;
-      final t = crestTierOf(b.badge.id);
-      tiers[t] = (tiers[t] ?? 0) + 1;
+    final medals = {'gold': 0, 'silver': 0, 'bronze': 0};
+    for (final r in races) {
+      final m = r.medal;
+      if (r.status == RaceStatus.completed && m != null && medals.containsKey(m)) {
+        medals[m] = medals[m]! + 1;
+      }
     }
-    return ChartStats(count, km, pace, tiers);
+    return ChartStats(count, km, pace, medals);
   }
 
   /// The most recent [n] years of a map, oldest first.
@@ -73,6 +73,7 @@ class ChartsScreen extends StatelessWidget {
       required IconData icon,
       required Color color,
       required bool empty,
+      String emptyText = 'Finish a race to see this chart.',
       required Widget chart}) {
     final muted =
         Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7);
@@ -105,7 +106,7 @@ class ChartsScreen extends StatelessWidget {
             SizedBox(
               height: 90,
               child: Center(
-                child: Text('Finish a race to see this chart.',
+                child: Text(emptyText,
                     style: TextStyle(color: muted)),
               ),
             )
@@ -131,9 +132,9 @@ class ChartsScreen extends StatelessWidget {
           final perYear = ChartStats.lastYears(s.racesPerYear);
           final kmYear = ChartStats.lastYears(s.kmPerYear);
           final paceYear = ChartStats.lastYears(s.paceSecPerKm);
-          final tiers = [
-            for (final t in CrestTier.values)
-              if ((s.badgesByTier[t] ?? 0) > 0) (t, s.badgesByTier[t]!),
+          final medals = [
+            for (final m in const ['gold', 'silver', 'bronze'])
+              if ((s.medals[m] ?? 0) > 0) (m, s.medals[m]!),
           ];
           return ListView(
             padding: const EdgeInsets.only(top: 4, bottom: 28),
@@ -160,15 +161,22 @@ class ChartsScreen extends StatelessWidget {
               ),
               _card(
                 context,
-                title: 'Badges by tier',
-                subtitle: 'Bronze, silver, gold and above',
+                title: 'Medals collected',
+                subtitle: 'Gold, silver and bronze from your races',
                 icon: Icons.emoji_events_outlined,
                 color: const Color(0xFFFFB400),
-                empty: tiers.isEmpty,
+                empty: medals.isEmpty,
+                emptyText: 'Add a medal to a finished race to see this chart.',
                 chart: _Donut(
                   slices: [
-                    for (final (t, n) in tiers) (t.label, n.toDouble(), _tierColor(t)),
+                    for (final (m, n) in medals)
+                      (
+                        '${m[0].toUpperCase()}${m.substring(1)}',
+                        n.toDouble(),
+                        medalColor(m)
+                      ),
                   ],
+                  centreLabel: 'medals',
                   text: text,
                 ),
               ),
@@ -215,21 +223,6 @@ class ChartsScreen extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-Color _tierColor(CrestTier t) {
-  switch (t) {
-    case CrestTier.bronze:
-      return const Color(0xFFCD7F32);
-    case CrestTier.silver:
-      return const Color(0xFFAEB8C6);
-    case CrestTier.gold:
-      return const Color(0xFFFFC21F);
-    case CrestTier.platinum:
-      return const Color(0xFF8E9BFF);
-    case CrestTier.titanium:
-      return const Color(0xFF5E6B82);
   }
 }
 
@@ -424,7 +417,9 @@ class _LinePainter extends CustomPainter {
 class _Donut extends StatelessWidget {
   final List<(String, double, Color)> slices;
   final Color text;
-  const _Donut({required this.slices, required this.text});
+  final String centreLabel;
+  const _Donut(
+      {required this.slices, required this.text, required this.centreLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -443,7 +438,7 @@ class _Donut extends StatelessWidget {
                   Text('${total.round()}',
                       style: const TextStyle(
                           fontSize: 28, fontWeight: FontWeight.w800)),
-                  Text('badges',
+                  Text(centreLabel,
                       style: TextStyle(
                           fontSize: 12, color: text.withValues(alpha: 0.65))),
                 ],

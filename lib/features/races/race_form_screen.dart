@@ -68,6 +68,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               ? RaceStatus.completed
               : RaceStatus.planned));
   bool _saving = false;
+  late String? _medal = widget.race?.medal;
   final List<XFile> _pendingPhotos = [];
   Place? _place;
   TextEditingController? _loc;
@@ -159,6 +160,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
       lng: place?.lng,
       region: place?.province,
       country: place?.country,
+      medal: _status == RaceStatus.completed ? _medal : null,
       notes: clean(_notes),
     );
     try {
@@ -359,6 +361,24 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               ],
             ),
             gap,
+            if (_status == RaceStatus.completed) ...[
+              DropdownButtonFormField<String?>(
+                // ignore: deprecated_member_use
+                value: _medal,
+                decoration: const InputDecoration(
+                    labelText: 'Medal collected',
+                    prefixIcon: Icon(Icons.emoji_events_outlined),
+                    border: OutlineInputBorder()),
+                items: const [
+                  DropdownMenuItem(value: null, child: Text('No medal')),
+                  DropdownMenuItem(value: 'gold', child: Text('Gold')),
+                  DropdownMenuItem(value: 'silver', child: Text('Silver')),
+                  DropdownMenuItem(value: 'bronze', child: Text('Bronze')),
+                ],
+                onChanged: (v) => setState(() => _medal = v),
+              ),
+              gap,
+            ],
             PlaceField(
               initialText: widget.race?.locationName ??
                   widget.initialPlace?.name ??

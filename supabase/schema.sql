@@ -485,3 +485,6 @@ $$;
 --   update public.profiles set account_type = 'admin'
 --   where id = (select id from auth.users where email = 'YOUR-EMAIL');
 -- Give a friend or tester unlimited access the same way with 'premium'.
+-- The medal a runner collected at a race: gold, silver or bronze.
+alter table public.races
+  add column if not exists medal text check (medal in ('gold', 'silver', 'bronze'));
