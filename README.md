@@ -191,3 +191,10 @@ kilometres per year (horizontal bars). They are drawn by hand (no chart package)
 The card is drawn on a tall 9:16 "story" stage and shared as a 1080 x 1920 PNG through the phone's share sheet,
 so it fits Instagram and Facebook Stories, WhatsApp Status and TikTok. Direct per-app buttons were left out on
 purpose: they need a Meta developer app, a restricted storage permission and TikTok approval.
+
+## Journey album
+
+Menu > **Journey album** pages through finished races like an old photo album: a cover, one page per race
+(photos stuck on with tape, name, date, town, distance, time, pace, position and medal), and a closing page with
+totals. Swipe to turn pages, tap the play button to turn them automatically, tap a photo to open it full screen,
+share the current page as a picture, and use the filter to pick a year or show only races with photos.

@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../bucket/bucket_item.dart';
 import '../bucket/bucket_list_screen.dart';
 import '../bucket/bucket_store.dart';
+import '../album/album_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../friends/friends_screen.dart';
 import '../stats/badges_screen.dart';
@@ -121,6 +122,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openAlbum() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AlbumScreen(
+          store: _store,
+          name: _profile.profile.displayName ?? '',
+        ),
+      ),
+    );
+  }
+
   void _openCharts() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => ChartsScreen(store: _store)),
@@ -185,6 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   _openBadges();
                 case 'charts':
                   _openCharts();
+                case 'album':
+                  _openAlbum();
                 case 'results':
                   _openResults();
                 case 'friends':
@@ -242,6 +256,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.insights),
                   title: Text('Charts'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'album',
+                child: ListTile(
+                  leading: Icon(Icons.auto_stories),
+                  title: Text('Journey album'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

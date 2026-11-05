@@ -42,6 +42,12 @@ class PhotoRepository {
     return photos;
   }
 
+  /// Ids of the races that have at least one photo.
+  Future<Set<String>> raceIdsWithPhotos() async {
+    final rows = await _db.from('race_photos').select('race_id');
+    return {for (final r in rows as List) (r as Map)['race_id'] as String};
+  }
+
   /// Uploads a (already downsized) picture and records it against the race.
   Future<void> add(String raceId, XFile file) async {
     final uid = _db.auth.currentUser!.id;

@@ -1,0 +1,697 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../photos/photo_repository.dart';
+import '../photos/photo_widgets.dart';
+import '../photos/race_photo.dart';
+import '../profile/share_card.dart';
+import '../races/race.dart';
+import '../races/race_list_screen.dart' show medalColor;
+import '../races/race_store.dart';
+
+const _paper = Color(0xFFF6EFE2);
+const _ink = Color(0xFF3B2F2F);
+const _leather = Color(0xFF2A1B22);
+
+/// Races shown in the album: finished ones, oldest first, optionally limited
+/// to a year and to races that have photos. When the runner has no photos at
+/// all every race is kept, so the album is never empty for lack of pictures.
+List<Race> albumRaces(
+  Iterable<Race> all, {
+  int? year,
+  bool onlyWithPhotos = true,
+  Set<String>? photoRaceIds,
+}) {
+  final keepPhotoFilter =
+      onlyWithPhotos && photoRaceIds != null && photoRaceIds.isNotEmpty;
+  final list = all.where((r) {
+    if (r.status != RaceStatus.completed) return false;
+    if (year != null && r.date.year != year) return false;
+    if (keepPhotoFilter && !photoRaceIds.contains(r.id)) return false;
+    return true;
+  }).toList()
+    ..sort((a, b) => a.date.compareTo(b.date));
+  return list;
+}
+
+/// An old-style photo album: cover, one page per race, then a closing page.
+class AlbumScreen extends StatefulWidget {
+  final RaceStore store;
+  final String name;
+  const AlbumScreen({super.key, required this.store, required this.name});
+
+  @override
+  State<AlbumScreen> createState() => _AlbumScreenState();
+}
+
+class _AlbumScreenState extends State<AlbumScreen> {
+  PageController _pc = PageController();
+  Timer? _timer;
+  bool _playing = false;
+  bool _onlyPhotos = true;
+  int? _year;
+  int _index = 0;
+  Set<String>? _photoIds;
+  final Map<int, GlobalKey> _keys = {};
+
+  List<Race> get _races => albumRaces(
+        widget.store.races,
+        year: _year,
+        onlyWithPhotos: _onlyPhotos,
+        photoRaceIds: _photoIds,
+      );
+
+  @override
+  void initState() {
+    super.initState();
+    PhotoRepository().raceIdsWithPhotos().then((ids) {
+      if (mounted) setState(() => _photoIds = ids);
+    }).catchError((_) {});
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pc.dispose();
+    super.dispose();
+  }
+
+  void _togglePlay(int total) {
+    if (_playing) {
+      _timer?.cancel();
+      setState(() => _playing = false);
+      return;
+    }
+    if (_index >= total - 1) _pc.jumpToPage(0);
+    setState(() => _playing = true);
+    _timer = Timer.periodic(const Duration(seconds: 4), (t) {
+      if (!mounted || _index >= total - 1) {
+        t.cancel();
+        if (mounted) setState(() => _playing = false);
+        return;
+      }
+      _pc.nextPage(
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOutCubic);
+    });
+  }
+
+  void _restart() {
+    _timer?.cancel();
+    _playing = false;
+    _index = 0;
+    _keys.clear();
+    final old = _pc;
+    _pc = PageController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final races = _races;
+    final total = races.length + 2;
+    final years = {
+      for (final r in widget.store.races)
+        if (r.status == RaceStatus.completed) r.date.year
+    }.toList()
+      ..sort();
+    final index = _index.clamp(0, total - 1);
+
+    return Scaffold(
+      backgroundColor: _leather,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        titleTextStyle: const TextStyle(
+            color: Colors.white, fontSize: 20, fontWeight: FontWeight.w800),
+        title: const Text('Journey album'),
+        actions: [
+          IconButton(
+            tooltip: _playing ? 'Pause' : 'Play',
+            icon: Icon(_playing ? Icons.pause_circle : Icons.play_circle),
+            onPressed: total > 2 ? () => _togglePlay(total) : null,
+          ),
+          IconButton(
+            tooltip: 'Share this page',
+            icon: const Icon(Icons.ios_share),
+            onPressed: () => shareRunnerCard(
+              context,
+              _keys.putIfAbsent(index, GlobalKey.new),
+              message: 'My Running Journal',
+            ),
+          ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.filter_list),
+            onSelected: (v) {
+              setState(() {
+                _restart();
+                if (v == 'photos') {
+                  _onlyPhotos = !_onlyPhotos;
+                } else if (v == 'all') {
+                  _year = null;
+                } else {
+                  _year = int.parse(v);
+                }
+              });
+            },
+            itemBuilder: (_) => [
+              CheckedPopupMenuItem(
+                value: 'photos',
+                checked: _onlyPhotos,
+                child: const Text('Only races with photos'),
+              ),
+              const PopupMenuDivider(),
+              CheckedPopupMenuItem(
+                value: 'all',
+                checked: _year == null,
+                child: const Text('All years'),
+              ),
+              for (final y in years.reversed)
+                CheckedPopupMenuItem(
+                  value: '$y',
+                  checked: _year == y,
+                  child: Text('$y'),
+                ),
+            ],
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(18, 4, 18, 8),
+                child: PageView.builder(
+                  key: ValueKey('${_year}_$_onlyPhotos'),
+                  controller: _pc,
+                  itemCount: total,
+                  onPageChanged: (i) => setState(() => _index = i),
+                  itemBuilder: (context, i) {
+                    final Widget page;
+                    if (i == 0) {
+                      page = _CoverPage(name: widget.name, races: races);
+                    } else if (i == total - 1) {
+                      page = _EndPage(races: races);
+                    } else {
+                      page = _RacePage(race: races[i - 1]);
+                    }
+                    return _Flip(
+                      controller: _pc,
+                      index: i,
+                      child: RepaintBoundary(
+                        key: _keys.putIfAbsent(i, GlobalKey.new),
+                        child: page,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Text(
+                '${index + 1} / $total',
+                style: const TextStyle(
+                    color: Colors.white60,
+                    fontSize: 12,
+                    letterSpacing: 2,
+                    fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Turns a page about its left edge, like a page of a book, as it is swiped.
+class _Flip extends StatelessWidget {
+  final PageController controller;
+  final int index;
+  final Widget child;
+  const _Flip(
+      {required this.controller, required this.index, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        double page = index.toDouble();
+        if (controller.hasClients && controller.position.haveDimensions) {
+          page = controller.page ?? page;
+        } else if (controller.initialPage != 0) {
+          page = controller.initialPage.toDouble();
+        }
+        final d = (page - index).clamp(-1.0, 1.0);
+        final angle = d > 0 ? d * 3.14159 * 0.45 : d * 3.14159 * 0.12;
+        final m = Matrix4.identity()
+          ..setEntry(3, 2, 0.0012)
+          ..rotateY(angle);
+        return Opacity(
+          opacity: (1 - d.abs() * 0.5).clamp(0.0, 1.0),
+          child: Transform(
+            alignment: Alignment.centerLeft,
+            transform: m,
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+}
+
+/// Cream paper with a shaded spine on the left.
+class _Paper extends StatelessWidget {
+  final Widget child;
+  final Color color;
+  const _Paper({required this.child, this.color = _paper});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: const BorderRadius.horizontal(
+            left: Radius.circular(4), right: Radius.circular(14)),
+        boxShadow: const [
+          BoxShadow(color: Colors.black54, blurRadius: 14, offset: Offset(2, 6))
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(30, 22, 20, 22),
+              child: child,
+            ),
+          ),
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 30,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  Colors.black.withValues(alpha: 0.28),
+                  Colors.transparent,
+                ]),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+const _serif = 'serif';
+
+class _CoverPage extends StatelessWidget {
+  final String name;
+  final List<Race> races;
+  const _CoverPage({required this.name, required this.races});
+
+  @override
+  Widget build(BuildContext context) {
+    final years = races.map((r) => r.date.year).toSet().toList()..sort();
+    final span = years.isEmpty
+        ? ''
+        : years.length == 1
+            ? '${years.first}'
+            : '${years.first} – ${years.last}';
+    const gold = Color(0xFFE2B857);
+    return _Paper(
+      color: const Color(0xFF4A2A3A),
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: gold, width: 2),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.directions_run, color: gold, size: 54),
+            const SizedBox(height: 22),
+            const Text('MY RUNNING\nJOURNAL',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: gold,
+                    fontFamily: _serif,
+                    fontSize: 30,
+                    height: 1.15,
+                    letterSpacing: 4,
+                    fontWeight: FontWeight.w700)),
+            const SizedBox(height: 18),
+            Container(height: 2, width: 90, color: gold),
+            const SizedBox(height: 18),
+            if (name.trim().isNotEmpty)
+              Text(name,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontFamily: _serif,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 22)),
+            const SizedBox(height: 8),
+            Text(span,
+                style: const TextStyle(
+                    color: Colors.white70, letterSpacing: 3, fontSize: 14)),
+            const SizedBox(height: 30),
+            const Text('Swipe to turn the page',
+                style: TextStyle(color: Colors.white54, fontSize: 12)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EndPage extends StatelessWidget {
+  final List<Race> races;
+  const _EndPage({required this.races});
+
+  @override
+  Widget build(BuildContext context) {
+    final km = races.fold<double>(0, (a, r) => a + (r.distanceKm ?? 0));
+    final medals = races.where((r) => r.medal != null).length;
+    Widget line(String big, String small) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Column(children: [
+            Text(big,
+                style: const TextStyle(
+                    color: _ink,
+                    fontFamily: _serif,
+                    fontSize: 38,
+                    fontWeight: FontWeight.w700)),
+            Text(small.toUpperCase(),
+                style: TextStyle(
+                    color: _ink.withValues(alpha: 0.6),
+                    fontSize: 12,
+                    letterSpacing: 2)),
+          ]),
+        );
+    return _Paper(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text('The story so far',
+              style: TextStyle(
+                  color: _ink,
+                  fontFamily: _serif,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 24)),
+          const SizedBox(height: 14),
+          line('${races.length}', 'races'),
+          line(km.toStringAsFixed(km >= 100 ? 0 : 1), 'kilometres'),
+          line('$medals', 'medals'),
+          const SizedBox(height: 14),
+          Text('To be continued…',
+              style: TextStyle(
+                  color: _ink.withValues(alpha: 0.6),
+                  fontFamily: _serif,
+                  fontStyle: FontStyle.italic)),
+        ],
+      ),
+    );
+  }
+}
+
+class _RacePage extends StatefulWidget {
+  final Race race;
+  const _RacePage({required this.race});
+
+  @override
+  State<_RacePage> createState() => _RacePageState();
+}
+
+class _RacePageState extends State<_RacePage>
+    with AutomaticKeepAliveClientMixin {
+  List<RacePhoto>? _photos;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    final id = widget.race.id;
+    if (id == null) {
+      _photos = const [];
+    } else {
+      PhotoRepository().list(id).then((p) {
+        if (mounted) setState(() => _photos = p);
+      }).catchError((_) {
+        if (mounted) setState(() => _photos = const []);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final r = widget.race;
+    final photos = _photos;
+    final where = [
+      if ((r.locationName ?? '').isNotEmpty) r.locationName!,
+      if ((r.country ?? '').isNotEmpty) r.country!,
+    ].join(', ');
+    final stats = <String>[
+      if (r.distanceKm != null) '${r.distanceKm!.toStringAsFixed(1)} km',
+      if (r.finishTimeSeconds != null) r.formattedTime,
+      if (r.pace != null) r.pace!,
+      if (r.overallPosition != null) 'Position ${r.overallPosition}',
+    ];
+    return _Paper(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: photos == null
+                ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
+                : photos.isEmpty
+                    ? Center(
+                        child: Icon(Icons.directions_run,
+                            size: 90, color: _ink.withValues(alpha: 0.18)))
+                    : _Collage(photos: photos),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Text(r.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        color: _ink,
+                        fontFamily: _serif,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 22)),
+              ),
+              if (r.medal != null)
+                Icon(Icons.workspace_premium, color: medalColor(r.medal!)),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Text(
+            [DateFormat.yMMMMd().format(r.date), if (where.isNotEmpty) where]
+                .join('  ·  '),
+            style: TextStyle(color: _ink.withValues(alpha: 0.65), fontSize: 13),
+          ),
+          if (stats.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              runSpacing: 4,
+              children: [
+                for (final s in stats)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: _ink.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(s,
+                        style: const TextStyle(
+                            color: _ink,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600)),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Photos stuck onto the page: one big, two on a slant, or a grid of four.
+class _Collage extends StatelessWidget {
+  final List<RacePhoto> photos;
+  const _Collage({required this.photos});
+
+  void _open(BuildContext c, int i) => openPhotoViewer(c, photos, i);
+
+  @override
+  Widget build(BuildContext context) {
+    final n = photos.length;
+    if (n == 1) {
+      return Center(
+        child: FractionallySizedBox(
+          widthFactor: 0.88,
+          child: _Frame(
+              photo: photos[0], angle: -0.03, onTap: () => _open(context, 0)),
+        ),
+      );
+    }
+    if (n == 2) {
+      return Column(
+        children: [
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: 0.78,
+                child: _Frame(
+                    photo: photos[0],
+                    angle: -0.04,
+                    onTap: () => _open(context, 0)),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: 0.78,
+                child: _Frame(
+                    photo: photos[1],
+                    angle: 0.035,
+                    onTap: () => _open(context, 1)),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+    const angles = [-0.03, 0.025, 0.02, -0.025];
+    Widget cell(int i) {
+      final more = i == 3 && n > 4 ? n - 3 : 0;
+      return Expanded(
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            _Frame(
+                photo: photos[i],
+                angle: angles[i],
+                onTap: () => _open(context, i)),
+            if (more > 0)
+              Center(
+                child: IgnorePointer(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text('+$more',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 18)),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Expanded(child: Row(children: [cell(0), cell(1)])),
+        Expanded(
+            child: Row(children: [
+          cell(2),
+          if (n >= 4) cell(3) else const Expanded(child: SizedBox()),
+        ])),
+      ],
+    );
+  }
+}
+
+class _Frame extends StatelessWidget {
+  final RacePhoto photo;
+  final double angle;
+  final VoidCallback onTap;
+  const _Frame(
+      {required this.photo, required this.angle, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Transform.rotate(
+          angle: angle,
+          child: Stack(
+            clipBehavior: Clip.none,
+            fit: StackFit.expand,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 5,
+                        offset: const Offset(1, 3))
+                  ],
+                ),
+                child: Image.network(
+                  photo.url,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const ColoredBox(
+                    color: Color(0xFFE5DECF),
+                    child: Icon(Icons.broken_image, color: Colors.black26),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: -6,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Transform.rotate(
+                    angle: -0.08,
+                    child: Container(
+                      width: 46,
+                      height: 14,
+                      color: const Color(0xAAE8D9A0),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
