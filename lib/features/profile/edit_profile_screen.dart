@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../subscription/subscription_store.dart';
 import '../map/place_field.dart';
+import 'account_repository.dart';
 import '../map/places.dart';
 import 'profile.dart';
 import 'profile_store.dart';
@@ -89,6 +91,64 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final n = int.tryParse(t);
     if (n == null || n < 10 || n > 100) return 'Enter an age between 10 and 100';
     return null;
+  }
+
+  Future<void> _confirmDelete() async {
+    final typed = TextEditingController();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AlertDialog(
+          title: const Text('Delete your account?'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                  'This permanently deletes your profile, races, photos, bucket list and friend '
+                  'connections. It cannot be undone.\n\n'
+                  'It does not cancel a Google Play subscription. Cancel that in Google Play '
+                  'first if you have one.'),
+              const SizedBox(height: 12),
+              TextField(
+                controller: typed,
+                autofocus: true,
+                onChanged: (_) => setLocal(() {}),
+                decoration: const InputDecoration(
+                    labelText: 'Type DELETE to confirm',
+                    border: OutlineInputBorder()),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Cancel')),
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: typed.text.trim().toUpperCase() == 'DELETE'
+                  ? () => Navigator.pop(ctx, true)
+                  : null,
+              child: const Text('Delete everything'),
+            ),
+          ],
+        ),
+      ),
+    );
+    typed.dispose();
+    if (ok != true || !mounted) return;
+    setState(() => _saving = true);
+    try {
+      await AccountRepository().deleteAccount();
+      await subscription.reset();
+      if (mounted) Navigator.of(context).popUntil((r) => r.isFirst);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _saving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not delete the account: $e')));
+      }
+    }
   }
 
   Future<void> _save() async {
@@ -245,6 +305,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       width: 20,
                       child: CircularProgressIndicator(strokeWidth: 2))
                   : const Text('Save profile'),
+            ),
+            const SizedBox(height: 32),
+            Center(
+              child: TextButton.icon(
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                onPressed: _saving ? null : _confirmDelete,
+                icon: const Icon(Icons.delete_forever_outlined),
+                label: const Text('Delete my account'),
+              ),
             ),
           ],
         ),

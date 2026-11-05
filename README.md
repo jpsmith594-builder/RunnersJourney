@@ -59,7 +59,7 @@ for the race card, and see your own football-style runner card.
 1. Create a Supabase project and run `supabase/schema.sql` in the SQL editor.
    If you set up an earlier version, run these once instead:
    `supabase/002_profile_trigger.sql`, `supabase/003_profile_card.sql` and
-   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql`, `supabase/009_subscriptions.sql`, `supabase/010_account_types.sql`, `supabase/011_medals.sql` (003 adds the profile columns and the private `avatars`
+   `supabase/004_gender_age.sql`, `supabase/005_bucket_list.sql`, `supabase/006_friends.sql`, `supabase/007_reactions.sql`, `supabase/008_places_global.sql`, `supabase/009_subscriptions.sql`, `supabase/010_account_types.sql`, `supabase/011_medals.sql`, `supabase/012_delete_account.sql` (003 adds the profile columns and the private `avatars`
    photo bucket; 004 adds gender and age, 005 adds the bucket list, 006 adds friends, 007 adds reactions, 008 adds region and country to races and coordinates to the bucket list, 009 adds subscriptions and the free-plan limits)
 2. In the repo folder: `flutter create . --project-name runners_journey --org com.runnersjourney --platforms=android`
    (generates `android/`; your `lib/` and `pubspec.yaml` are kept. Restore any file
@@ -175,3 +175,13 @@ a card per race. The Badges screen leads with a progress ring.
 
 Four chart cards: races per year (bars), medals collected (donut: gold, silver, bronze, set on each finished race), average pace per year (line) and
 kilometres per year (horizontal bars). They are drawn by hand (no chart package) in `charts_screen.dart`.
+
+## Password reset and deleting an account
+
+- **Forgot password?** (login screen): sends a reset email. The link opens the app (same deep link as the
+  confirmation email, see above) and asks for a new password. Make sure
+  `io.runnersjourney.app://login-callback/` is in Supabase > Authentication > URL Configuration > Redirect URLs.
+- **Delete my account** (Profile > Edit profile, bottom): asks the runner to type DELETE, removes their photo
+  files, then calls `delete_my_account()` (`supabase/012_delete_account.sql`), which deletes the auth user and
+  everything that cascades from it. Google Play also wants a web page that explains how to delete an account;
+  that goes with the privacy policy.

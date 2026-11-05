@@ -21,6 +21,28 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  Future<void> _forgot() async {
+    final email = _email.text.trim();
+    if (email.isEmpty || !email.contains('@')) {
+      _toast('Type your email address above first, then tap "Forgot password?".');
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await Supabase.instance.client.auth.resetPasswordForEmail(
+        email,
+        redirectTo: 'io.runnersjourney.app://login-callback/',
+      );
+      _toast('If that email has an account, a reset link is on its way.');
+    } on AuthException catch (e) {
+      _toast(e.message);
+    } catch (e) {
+      _toast('Something went wrong: $e');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _submit() async {
     final email = _email.text.trim();
     final password = _password.text;
@@ -143,6 +165,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 : Text(_signUp ? 'Create account' : 'Sign in'),
                           ),
                         ),
+                        if (!_signUp)
+                          TextButton(
+                            onPressed: _busy ? null : _forgot,
+                            child: const Text('Forgot password?'),
+                          ),
                         TextButton(
                           onPressed: _busy
                               ? null
