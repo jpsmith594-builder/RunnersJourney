@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../core/theme.dart';
+import '../../core/tiles.dart';
 import 'race.dart';
 import 'race_store.dart';
 
@@ -55,40 +57,195 @@ class RaceListView extends StatelessWidget {
         ),
       );
     }
+    final sum = RaceSummary.from(store.races);
+    final next = sum.nextPlanned;
     return RefreshIndicator(
       onRefresh: store.load,
-      child: ListView.separated(
+      child: ListView(
         padding: const EdgeInsets.only(bottom: 96),
-        itemCount: races.length,
-        separatorBuilder: (_, __) => const Divider(height: 1),
-        itemBuilder: (context, i) {
-          final r = races[i];
-          final done = r.status == RaceStatus.completed;
-          final details = [
-            if (r.distanceKm != null) '${r.distanceKm} km',
-            if (done && r.finishTimeSeconds != null) r.formattedTime,
-            if (done && r.pace != null) r.pace!,
-            if (done && r.overallPosition != null) 'Pos ${r.overallPosition}',
-          ].join(' · ');
-          return ListTile(
-            leading: Icon(
-              done ? Icons.flag : Icons.flag_outlined,
-              color: done ? const Color(0xFF00B35C) : null,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+            child: GridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.35,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                StatTile(
+                  icon: Icons.flag,
+                  color: AppTheme.navyLight,
+                  label: 'Races run',
+                  value: '${sum.finished}',
+                  note: sum.thisYear > 0 ? '${sum.thisYear} this year' : null,
+                ),
+                StatTile(
+                  icon: Icons.directions_run,
+                  color: AppTheme.purpleMid,
+                  label: 'Distance',
+                  value: sum.km >= 100
+                      ? sum.km.round().toString()
+                      : sum.km.toStringAsFixed(1),
+                  unit: 'km',
+                  note: sum.kmThisYear > 0
+                      ? '${sum.kmThisYear.round()} km this year'
+                      : null,
+                ),
+                StatTile(
+                  icon: Icons.timer_outlined,
+                  color: const Color(0xFF00A86B),
+                  label: 'Time racing',
+                  value: sum.seconds >= 3600
+                      ? (sum.seconds / 3600).toStringAsFixed(1)
+                      : '${(sum.seconds / 60).round()}',
+                  unit: sum.seconds >= 3600 ? 'h' : 'min',
+                ),
+                StatTile(
+                  icon: Icons.event_available,
+                  color: const Color(0xFFFF9F0A),
+                  label: 'Next race',
+                  value: next == null ? '-' : '${next.days}',
+                  unit: next == null ? null : (next.days == 1 ? 'day' : 'days'),
+                  note: next?.race.name,
+                ),
+              ],
             ),
-            title: Text(r.name),
-            subtitle: Text([
-              DateFormat.yMMMd().format(r.date),
-              if (details.isNotEmpty) details,
-            ].join('\n')),
-            isThreeLine: details.isNotEmpty,
-            onTap: () => onEdit(r),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete_outline),
-              onPressed: () => _confirmDelete(context, r),
-            ),
-          );
-        },
+          ),
+          const SectionTitle('All races'),
+          for (final r in races) _raceCard(context, r),
+        ],
       ),
+    );
+  }
+
+  Widget _raceCard(BuildContext context, Race r) {
+    final done = r.status == RaceStatus.completed;
+    final muted =
+        Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7);
+    final (icon, color) = switch (r.status) {
+      RaceStatus.completed => (Icons.flag, AppTheme.navyLight),
+      RaceStatus.planned => (Icons.flag_outlined, const Color(0xFFFF9F0A)),
+      RaceStatus.dnf => (Icons.block, const Color(0xFFE5484D)),
+      RaceStatus.dns => (Icons.remove_circle_outline, Colors.grey),
+    };
+    final chips = [
+      if (r.distanceKm != null) '${r.distanceKm} km',
+      if (done && r.finishTimeSeconds != null) r.formattedTime,
+      if (done && r.pace != null) r.pace!,
+      if (done && r.overallPosition != null) 'Pos ${r.overallPosition}',
+    ];
+    return SoftCard(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      onTap: () => onEdit(r),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          IconBubble(icon: icon, color: color),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(r.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 2),
+                Text(
+                    [
+                      DateFormat.yMMMd().format(r.date),
+                      if (r.locationName != null) r.locationName!,
+                    ].join(' · '),
+                    style: TextStyle(color: muted)),
+                if (chips.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      for (final c in chips)
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(c,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: color)),
+                        ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            icon: Icon(Icons.delete_outline, color: muted),
+            onPressed: () => _confirmDelete(context, r),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Numbers for the tiles at the top of the Races tab.
+class RaceSummary {
+  final int finished;
+  final int thisYear;
+  final double km;
+  final double kmThisYear;
+  final int seconds;
+  final ({Race race, int days})? nextPlanned;
+
+  const RaceSummary({
+    required this.finished,
+    required this.thisYear,
+    required this.km,
+    required this.kmThisYear,
+    required this.seconds,
+    required this.nextPlanned,
+  });
+
+  factory RaceSummary.from(List<Race> races, [DateTime? now]) {
+    final n = now ?? DateTime.now();
+    final today = DateTime(n.year, n.month, n.day);
+    var finished = 0, thisYear = 0, seconds = 0;
+    var km = 0.0, kmYear = 0.0;
+    ({Race race, int days})? next;
+    for (final r in races) {
+      if (r.status == RaceStatus.completed) {
+        finished++;
+        km += r.distanceKm ?? 0;
+        seconds += r.finishTimeSeconds ?? 0;
+        if (r.date.year == n.year) {
+          thisYear++;
+          kmYear += r.distanceKm ?? 0;
+        }
+      } else if (r.status == RaceStatus.planned) {
+        final d = DateTime(r.date.year, r.date.month, r.date.day)
+            .difference(today)
+            .inDays;
+        if (d >= 0 && (next == null || d < next.days)) {
+          next = (race: r, days: d);
+        }
+      }
+    }
+    return RaceSummary(
+      finished: finished,
+      thisYear: thisYear,
+      km: km,
+      kmThisYear: kmYear,
+      seconds: seconds,
+      nextPlanned: next,
     );
   }
 }

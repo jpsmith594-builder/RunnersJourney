@@ -167,3 +167,10 @@ type (a database trigger blocks it); you set it in the Supabase SQL editor:
 update public.profiles set account_type = 'admin'
 where id = (select id from auth.users where email = 'YOUR-EMAIL');
 ```
+
+## Look and feel
+
+Samsung Health style: a soft grey canvas with big rounded white cards (`lib/core/tiles.dart`: `SoftCard`,
+`IconBubble`, `StatTile`, `RingProgress`, `SectionTitle`), light app bars with bold titles, and a white
+navigation bar. The Races tab opens with summary tiles (races run, distance, time racing, next race) above
+a card per race. The Badges screen leads with a progress ring.

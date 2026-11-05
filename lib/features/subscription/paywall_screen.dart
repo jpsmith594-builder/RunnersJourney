@@ -110,7 +110,14 @@ class _PaywallScreenState extends State<PaywallScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('My Running Journal')),
+      appBar: AppBar(
+        title: const Text('My Running Journal'),
+        backgroundColor: AppTheme.purple,
+        foregroundColor: Colors.white,
+        titleTextStyle: const TextStyle(
+            color: Colors.white, fontSize: 21, fontWeight: FontWeight.w800),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/tiles.dart';
 import '../races/race.dart';
 
 /// A reminder strip for the next planned race in the coming two months.
@@ -49,32 +50,30 @@ class _UpcomingBannerState extends State<UpcomingBanner> {
     if (_hidden) return const SizedBox.shrink();
     final n = UpcomingBanner.nextRace(widget.races);
     if (n == null) return const SizedBox.shrink();
-    return Material(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 8, 4, 8),
-        child: Row(
-          children: [
-            const Icon(Icons.alarm),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('${n.race.name} ${_when(n.days)}',
-                      style: const TextStyle(fontWeight: FontWeight.w700)),
-                  Text(_tip(n.days),
-                      style: Theme.of(context).textTheme.bodySmall),
-                ],
-              ),
+    return SoftCard(
+      margin: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+      padding: const EdgeInsets.fromLTRB(12, 8, 4, 8),
+      child: Row(
+        children: [
+          const IconBubble(icon: Icons.alarm, color: Color(0xFFFF9F0A), size: 38),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('${n.race.name} ${_when(n.days)}',
+                    style: const TextStyle(fontWeight: FontWeight.w800)),
+                Text(_tip(n.days),
+                    style: Theme.of(context).textTheme.bodySmall),
+              ],
             ),
-            IconButton(
-              tooltip: 'Hide',
-              icon: const Icon(Icons.close, size: 18),
-              onPressed: () => setState(() => _hidden = true),
-            ),
-          ],
-        ),
+          ),
+          IconButton(
+            tooltip: 'Hide',
+            icon: const Icon(Icons.close, size: 18),
+            onPressed: () => setState(() => _hidden = true),
+          ),
+        ],
       ),
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../races/race_store.dart';
+import '../../core/theme.dart';
+import '../../core/tiles.dart';
 import 'badges.dart';
 import 'crest.dart';
 
@@ -68,42 +70,43 @@ class BadgesScreen extends StatelessWidget {
           return CustomScrollView(
             slivers: [
               SliverToBoxAdapter(
-                child: Container(
-                  margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white, width: 2),
-                    gradient: LinearGradient(
-                      colors: const [Color(0xFF37003C), Color(0xFF6B1B9A), Color(0xFFE90052)],
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: SoftCard(
+                  margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
                     children: [
-                      Text('${earned.length} of ${all.length} badges',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w900)),
-                      const SizedBox(height: 4),
-                      Text(
-                        earned.isEmpty
-                            ? 'Finish a race to win your first badge.'
-                            : earned.length == all.length
-                                ? 'You have every badge. Legend!'
-                                : '${locked.length} more to chase.',
-                        style: const TextStyle(color: Colors.white70),
+                      RingProgress(
+                        value: all.isEmpty ? 0 : earned.length / all.length,
+                        size: 92,
+                        stroke: 11,
+                        color: AppTheme.purpleMid,
+                        child: Text('${earned.length}',
+                            style: const TextStyle(
+                                fontSize: 28, fontWeight: FontWeight.w800)),
                       ),
-                      const SizedBox(height: 12),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: LinearProgressIndicator(
-                          value: all.isEmpty ? 0 : earned.length / all.length,
-                          minHeight: 10,
-                          backgroundColor: Colors.white24,
-                          valueColor:
-                              const AlwaysStoppedAnimation(Color(0xFF00FF85)),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('${earned.length} of ${all.length} badges',
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.w800)),
+                            const SizedBox(height: 4),
+                            Text(
+                              earned.isEmpty
+                                  ? 'Finish a race to win your first badge.'
+                                  : earned.length == all.length
+                                      ? 'You have every badge. Legend!'
+                                      : '${locked.length} more to chase.',
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withValues(alpha: 0.7)),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -129,8 +132,8 @@ class BadgesScreen extends StatelessWidget {
                           padding: const EdgeInsets.fromLTRB(4, 8, 4, 6),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
-                            color: scheme.surfaceContainerHighest
-                                .withValues(alpha: b.earned ? 0.7 : 0.35),
+                            color: scheme.surface
+                                .withValues(alpha: b.earned ? 1 : 0.6),
                           ),
                           child: Column(
                             children: [

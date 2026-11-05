@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/theme.dart';
+import '../../core/tiles.dart';
 import '../races/race.dart';
 import 'paywall_screen.dart';
 
@@ -89,28 +90,28 @@ class FreePlanBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppTheme.purpleMid,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              const Icon(Icons.workspace_premium, color: Colors.white, size: 18),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(message,
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w600)),
-              ),
-              const Text('Go unlimited',
-                  style: TextStyle(
-                      color: AppTheme.cyan, fontWeight: FontWeight.w800)),
-              const Icon(Icons.chevron_right, color: AppTheme.cyan, size: 18),
-            ],
+    return SoftCard(
+      margin: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+      onTap: onTap,
+      child: Row(
+        children: [
+          const IconBubble(
+              icon: Icons.workspace_premium,
+              color: AppTheme.purpleMid,
+              size: 38),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(message,
+                style: const TextStyle(fontWeight: FontWeight.w700)),
           ),
-        ),
+          Text('Go unlimited',
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w800)),
+          Icon(Icons.chevron_right,
+              color: Theme.of(context).colorScheme.primary, size: 18),
+        ],
       ),
     );
   }

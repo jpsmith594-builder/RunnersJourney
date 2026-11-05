@@ -11,6 +11,11 @@ class AppTheme {
   static const Color cyan = Color(0xFF04F5FF);
   static const Color magenta = Color(0xFFE90052);
 
+  /// Soft grey canvas the white cards sit on (Samsung Health style).
+  static const Color canvasLight = Color(0xFFF2F3F8);
+  static const Color canvasDark = Color(0xFF0B0B10);
+  static const Color cardDark = Color(0xFF1C1C24);
+
   static ThemeData light() => _build(
         ColorScheme.fromSeed(
           seedColor: purpleMid,
@@ -25,7 +30,7 @@ class AppTheme {
           onSecondary: Colors.white,
           tertiary: magenta,
           onTertiary: Colors.white,
-          surface: const Color(0xFFF5F2FA),
+          surface: Colors.white,
         ),
         accent: navy,
         onAccent: Colors.white,
@@ -45,7 +50,7 @@ class AppTheme {
           onSecondary: const Color(0xFF00213D),
           tertiary: const Color(0xFFFF4D8D),
           onTertiary: Colors.white,
-          surface: const Color(0xFF1C0022),
+          surface: cardDark,
           onSurface: Colors.white,
         ),
         accent: navyLight,
@@ -57,10 +62,12 @@ class AppTheme {
     final base = ThemeData(useMaterial3: true, colorScheme: scheme);
     final t = base.textTheme;
     final dark = scheme.brightness == Brightness.dark;
-    // Header colour: always the deep brand purple.
-    final header = dark ? const Color(0xFF2A0030) : purple;
+    final canvas = dark ? canvasDark : canvasLight;
+    final fg = dark ? Colors.white : const Color(0xFF14141A);
+    final muted = dark ? Colors.white60 : const Color(0xFF6B6F7B);
+    final header = dark ? cardDark : const Color(0xFF1F1F27); // snack bars
     return base.copyWith(
-      scaffoldBackgroundColor: scheme.surface,
+      scaffoldBackgroundColor: canvas,
       textTheme: t.copyWith(
         headlineMedium: t.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
         titleLarge: t.titleLarge?.copyWith(fontWeight: FontWeight.w800),
@@ -68,44 +75,44 @@ class AppTheme {
         labelLarge: t.labelLarge?.copyWith(fontWeight: FontWeight.w700),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: header,
-        foregroundColor: Colors.white,
+        backgroundColor: canvas,
+        foregroundColor: fg,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 21,
+        titleTextStyle: TextStyle(
+          color: fg,
+          fontSize: 26,
           fontWeight: FontWeight.w800,
         ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        actionsIconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: fg),
+        actionsIconTheme: IconThemeData(color: fg),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 70,
-        backgroundColor: header,
+        height: 68,
+        backgroundColor: scheme.surface,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: accent,
+        elevation: 0,
+        indicatorColor: dark ? const Color(0xFF3A1A66) : const Color(0xFFE9DDF5),
         labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
               fontSize: 12,
-              color: states.contains(WidgetState.selected)
-                  ? Colors.white
-                  : Colors.white70,
+              color: states.contains(WidgetState.selected) ? fg : muted,
               fontWeight: states.contains(WidgetState.selected)
                   ? FontWeight.w800
                   : FontWeight.w600,
             )),
         iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(
-              color:
-                  states.contains(WidgetState.selected) ? onAccent : Colors.white70,
+              color: states.contains(WidgetState.selected)
+                  ? (dark ? const Color(0xFFD9B8FF) : purpleMid)
+                  : muted,
             )),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: accent,
         foregroundColor: onAccent,
         elevation: 4,
-        shape: const StadiumBorder(side: BorderSide(color: Colors.white, width: 2)),
+        shape: const StadiumBorder(),
         extendedTextStyle:
             const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
       ),
@@ -150,7 +157,6 @@ class AppTheme {
         actionTextColor: cyan,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
-          side: const BorderSide(color: Colors.white54),
         ),
       ),
       listTileTheme: const ListTileThemeData(
