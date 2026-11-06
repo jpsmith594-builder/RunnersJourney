@@ -232,3 +232,14 @@ arriving once more people register. Use your own sender:
    ("Confirm your email - My Running Journal", "Reset your password - My Running Journal").
 4. Authentication > Rate Limits: raise the emails-per-hour limit.
 5. Test with a fresh address, and check the spam folder once.
+
+## Privacy policy and account-deletion pages
+
+`docs/` holds three plain web pages: `index.html`, `privacy.html` and `delete-account.html`. Google Play needs the
+privacy policy link and a web page that explains account deletion.
+
+1. Replace `CONTACT_EMAIL` with your support address in all three pages
+   (`sed -i 's/CONTACT_EMAIL/you@yourdomain.com/g' docs/*.html`).
+2. GitHub > the repo > Settings > Pages > Source: **Deploy from a branch**, branch `main`, folder `/docs`.
+3. The pages go live at `https://<your-github-name>.github.io/<repo-name>/privacy.html` and `.../delete-account.html`.
+   Use those two links in the Play Console (Data safety and the app content section).
