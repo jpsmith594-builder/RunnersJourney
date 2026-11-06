@@ -217,3 +217,18 @@ The icon is drawn by `tools/make_icon.py` into `assets/icon/`. To put it on the 
 3. In `android/app/src/main/AndroidManifest.xml` set `android:label="My Running Journal"` on `<application>`
    and add `<uses-permission android:name="android.permission.INTERNET"/>` above it (release builds need it).
 4. Uninstall the old app from the phone, then run again.
+
+## Sending real emails (SMTP)
+
+Supabase's built-in sender only allows a few emails an hour, so confirmation and password-reset emails stop
+arriving once more people register. Use your own sender:
+
+1. Get an email provider (Resend, Brevo or similar) and verify a sending domain you own (an address like
+   `no-reply@yourdomain.com`). Sending from a gmail.com address is blocked by Gmail's own rules.
+2. Supabase > Project Settings > Authentication > SMTP Settings: switch on **Custom SMTP** and fill in sender
+   email, sender name ("My Running Journal"), host, port, username and password from the provider.
+3. Supabase > Authentication > Emails > Templates: paste `supabase/email-templates/confirm-signup.html`
+   into **Confirm signup** and `reset-password.html` into **Reset Password**, and set the subjects
+   ("Confirm your email - My Running Journal", "Reset your password - My Running Journal").
+4. Authentication > Rate Limits: raise the emails-per-hour limit.
+5. Test with a fresh address, and check the spam folder once.
