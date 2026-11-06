@@ -207,3 +207,13 @@ distance (1 per 8 km, up to 200), towns (4 each, up to 100), medals (gold 10, si
 countries (10 each, up to 80) and improvement (up to 250). Improvement compares you with your own past, so it is
 fair to every pace: up to 40 points per distance (5, 10, 21, 42 km) for how much your best beats your first time,
 plus 10 points each time a season's best at a distance beats all earlier seasons. Elite takes years.
+
+## App icon and name
+
+The icon is drawn by `tools/make_icon.py` into `assets/icon/`. To put it on the phone:
+
+1. `flutter pub get`
+2. `dart run flutter_launcher_icons`
+3. In `android/app/src/main/AndroidManifest.xml` set `android:label="My Running Journal"` on `<application>`
+   and add `<uses-permission android:name="android.permission.INTERNET"/>` above it (release builds need it).
+4. Uninstall the old app from the phone, then run again.
