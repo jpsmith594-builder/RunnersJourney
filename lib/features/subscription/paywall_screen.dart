@@ -5,7 +5,7 @@ import '../../core/theme.dart';
 import 'limits.dart';
 import 'subscription_store.dart';
 
-/// Shows the plans (R30 a month or R250 a year) and starts the purchase.
+/// Shows the plans (R50 a month or R400 a year in South Africa; $3 or $25 elsewhere) and starts the purchase.
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key});
 
@@ -172,8 +172,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ),
               );
             }
-            final yearlyPrice = s.yearly?.storeProduct.priceString ?? 'R250';
-            final monthlyPrice = s.monthly?.storeProduct.priceString ?? 'R30';
+            final yearlyPrice = s.yearly?.storeProduct.priceString ?? 'R400';
+            final monthlyPrice = s.monthly?.storeProduct.priceString ?? 'R50';
             final chosen = _yearly ? s.yearly : s.monthly;
             return ListView(
               padding: const EdgeInsets.all(20),

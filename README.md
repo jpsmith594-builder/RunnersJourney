@@ -112,7 +112,7 @@ tools/         gen_places.py
 
 - **Free**: up to 5 finished races (completed, DNF or DNS), 1 photo per race. Planned races and the
   bucket list are always free.
-- **Subscriber** (R30 a month or R250 a year): unlimited races, up to 10 photos per race.
+- **Subscriber** (South Africa: R50 a month or R400 a year; everywhere else: $3 a month or $25 a year, set per country in the Play Console): unlimited races, up to 10 photos per race.
 - **After cancelling**: when the paid period ends, a runner with more than 5 races keeps all of them,
   but they are read-only (viewing and deleting still work) until they subscribe again or delete down to 5.
 - The limits are enforced in the database (`supabase/009_subscriptions.sql`), so the app cannot get
@@ -120,7 +120,7 @@ tools/         gen_places.py
 
 ### Switching it on (one-off setup)
 
-1. **Google Play Console**: create a subscription with two base plans, monthly (R30) and yearly (R250).
+1. **Google Play Console**: create a subscription with two base plans, monthly (R50) and yearly (R400), then add per-country prices: about $3 a month and $25 a year for the rest of the world.
    Subscriptions need a Play developer account and the app uploaded to a testing track.
 2. **RevenueCat** (free until you earn over about $2.5k a month): create a project, add the Android app,
    connect it to Google Play, create an entitlement called `pro`, an offering marked as *current* with a
