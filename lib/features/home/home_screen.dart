@@ -6,6 +6,7 @@ import '../bucket/bucket_list_screen.dart';
 import '../bucket/bucket_store.dart';
 import '../album/album_screen.dart';
 import '../calendar/calendar_screen.dart';
+import '../calendar/show_sa_races.dart';
 import '../friends/friends_screen.dart';
 import '../goals/goal_store.dart';
 import '../help/faq_screen.dart';
@@ -240,8 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Supabase.instance.client.auth.signOut();
               }
             },
-            itemBuilder: (_) => const [
-              PopupMenuItem(
+            itemBuilder: (_) => [
+              const PopupMenuItem(
                 value: 'profile',
                 child: ListTile(
                   leading: Icon(Icons.badge_outlined),
@@ -249,7 +250,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              if (showSouthAfricanRaces(
+                races: _store.races,
+                homeTown: _profile.profile.homeTown,
+                localeCountry:
+                    WidgetsBinding.instance.platformDispatcher.locale.countryCode,
+              ))
+                const PopupMenuItem(
                 value: 'calendar',
                 child: ListTile(
                   leading: Icon(Icons.event_outlined),
@@ -257,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'review',
                 child: ListTile(
                   leading: Icon(Icons.auto_awesome_outlined),
@@ -265,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'badges',
                 child: ListTile(
                   leading: Icon(Icons.workspace_premium_outlined),
@@ -273,7 +280,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'charts',
                 child: ListTile(
                   leading: Icon(Icons.insights),
@@ -281,7 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'faq',
                 child: ListTile(
                   leading: Icon(Icons.help_outline),
@@ -289,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'goals',
                 child: ListTile(
                   leading: Icon(Icons.flag_outlined),
@@ -297,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'album',
                 child: ListTile(
                   leading: Icon(Icons.auto_stories),
@@ -305,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'results',
                 child: ListTile(
                   leading: Icon(Icons.table_chart_outlined),
@@ -313,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'friends',
                 child: ListTile(
                   leading: Icon(Icons.group_outlined),
@@ -321,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'bucket',
                 child: ListTile(
                   leading: Icon(Icons.checklist),
@@ -329,7 +336,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'plan',
                 child: ListTile(
                   leading: Icon(Icons.workspace_premium_outlined),
@@ -337,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'refresh',
                 child: ListTile(
                   leading: Icon(Icons.refresh),
@@ -345,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
-              PopupMenuItem(
+              const PopupMenuItem(
                 value: 'signout',
                 child: ListTile(
                   leading: Icon(Icons.logout),
