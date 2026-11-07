@@ -255,7 +255,7 @@ It can be hidden for the session. A 29 February race shows on 28 February in yea
 Menu > **Goals**: set a distance goal (km) and a races goal for the year. Rings fill as finished races are added,
 with a hint ("About 12 km a month for the rest of the year", "2 more races to go. 1 already planned."). The page
 also shows how many points are left to the next runner-card category and the badge that is closest to being
-earned. Once a goal is set a slim progress strip shows on the home screen. Run `supabase/013_goals.sql` in the
+earned. Once a goal is set a slim progress strip shows on the home screen (the races goal if there is one, otherwise the distance goal). Run `supabase/013_goals.sql` in the
 Supabase SQL editor first (it adds `goal_km` and `goal_races` to `profiles`).
 
 ## Help inside the app

@@ -24,7 +24,8 @@ class GoalStrip extends StatelessWidget {
         final year = DateTime.now().year;
         final g = goalProgress(races.races, year,
             goalKm: goals.goalKm, goalRaces: goals.goalRaces);
-        final useKm = g.goalKm != null;
+        // The strip shows the races goal when there is one, else distance.
+        final useKm = g.goalRaces == null;
         final fraction = (useKm ? g.kmFraction : g.racesFraction) ?? 0;
         final label = useKm
             ? '$year goal: ${g.km.toStringAsFixed(g.km >= 100 ? 0 : 1)} / ${g.goalKm} km'
