@@ -19,6 +19,14 @@ class YearReviewScreen extends StatefulWidget {
 class _YearReviewScreenState extends State<YearReviewScreen> {
   final GlobalKey _posterKey = GlobalKey();
   int? _year;
+  PageController? _pc;
+  int _pcLen = 0;
+
+  @override
+  void dispose() {
+    _pc?.dispose();
+    super.dispose();
+  }
 
   String _hours(int secs) {
     final h = secs ~/ 3600;
@@ -40,7 +48,7 @@ class _YearReviewScreenState extends State<YearReviewScreen> {
               onPressed: () => shareRunnerCard(
                 context,
                 _posterKey,
-                message: 'My ${_year ?? years.first} in running, on Runner\'s Journey.',
+                message: 'My ${_year ?? years.first} in running, in My Running Journal.',
               ),
             ),
         ],
@@ -60,38 +68,71 @@ class _YearReviewScreenState extends State<YearReviewScreen> {
             );
           }
           final year = years.contains(_year) ? _year! : years.first;
-          final s = summarize(widget.store.races, year);
-          return ListView(
-            padding: const EdgeInsets.all(16),
+          final idx = years.indexOf(year);
+          if (_pc == null || _pcLen != years.length) {
+            _pc?.dispose();
+            _pc = PageController(initialPage: idx);
+            _pcLen = years.length;
+          }
+          return Column(
             children: [
               if (years.length > 1)
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (final y in years) ...[
-                        ChoiceChip(
-                          label: Text('$y'),
-                          selected: y == year,
-                          onSelected: (_) => setState(() => _year = y),
-                        ),
-                        const SizedBox(width: 8),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (var i = 0; i < years.length; i++) ...[
+                          ChoiceChip(
+                            label: Text('${years[i]}'),
+                            selected: years[i] == year,
+                            onSelected: (_) => _pc!.animateToPage(i,
+                                duration: const Duration(milliseconds: 350),
+                                curve: Curves.easeOutCubic),
+                          ),
+                          const SizedBox(width: 8),
+                        ],
                       ],
-                    ],
-                  ),
-                ),
-              const SizedBox(height: 12),
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 380),
-                  child: RepaintBoundary(
-                    key: _posterKey,
-                    child: _Poster(
-                      summary: s,
-                      name: widget.name,
-                      hours: _hours(s.totalSeconds),
                     ),
                   ),
+                ),
+              if (years.length > 1)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text('Swipe the card to change year',
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.5))),
+                ),
+              Expanded(
+                child: PageView.builder(
+                  controller: _pc,
+                  itemCount: years.length,
+                  onPageChanged: (i) => setState(() => _year = years[i]),
+                  itemBuilder: (context, i) {
+                    final s = summarize(widget.store.races, years[i]);
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.all(16),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 380),
+                          child: RepaintBoundary(
+                            // Only the card on screen is the one that is shared.
+                            key: i == idx ? _posterKey : null,
+                            child: _Poster(
+                              summary: s,
+                              name: widget.name,
+                              hours: _hours(s.totalSeconds),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

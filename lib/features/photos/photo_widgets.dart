@@ -159,7 +159,7 @@ class _PhotosEditorState extends State<PhotosEditor> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choose from gallery'),
+              title: const Text('Choose from gallery (pick several)'),
               onTap: () => Navigator.pop(ctx, ImageSource.gallery),
             ),
             ListTile(
@@ -174,18 +174,39 @@ class _PhotosEditorState extends State<PhotosEditor> {
     if (source == null) return;
     try {
       // Downsized on pick, so photos stay around a few hundred KB.
-      final file = await _picker.pickImage(
-          source: source, maxWidth: 1600, maxHeight: 1600, imageQuality: 80);
-      if (file == null) return;
+      final List<XFile> files;
+      if (source == ImageSource.gallery) {
+        files = await _picker.pickMultiImage(
+            maxWidth: 1600, maxHeight: 1600, imageQuality: 80);
+      } else {
+        final one = await _picker.pickImage(
+            source: source, maxWidth: 1600, maxHeight: 1600, imageQuality: 80);
+        files = one == null ? [] : [one];
+      }
+      if (files.isEmpty) return;
       final id = widget.raceId;
       if (id == null) {
-        widget.pending.add(file);
+        widget.pending.addAll(files);
         widget.onPendingChanged();
         setState(() {});
       } else {
         setState(() => _busy = true);
-        await _repo.add(id, file);
+        var added = 0;
+        try {
+          for (final f in files) {
+            await _repo.add(id, f);
+            added++;
+          }
+        } catch (e) {
+          // Keep what went up before the problem (for example the photo limit).
+          await _reload();
+          if (added > 0) {
+            _toast('Added $added of ${files.length} photos');
+          }
+          rethrow;
+        }
         await _reload();
+        if (files.length > 1) _toast('Added ${files.length} photos');
       }
     } catch (e) {
       if (!mounted || !handleLimitError(context, e)) {
