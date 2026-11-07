@@ -249,3 +249,11 @@ privacy policy link and a web page that explains account deletion.
 When a finished race took place on today's date in an earlier year, the home screen shows a memory strip:
 "2 years ago today", the race, its distance, time and town, and its first photo (tap to open the photos).
 It can be hidden for the session. A 29 February race shows on 28 February in years without a leap day.
+
+## Goals
+
+Menu > **Goals**: set a distance goal (km) and a races goal for the year. Rings fill as finished races are added,
+with a hint ("About 12 km a month for the rest of the year", "2 more races to go. 1 already planned."). The page
+also shows how many points are left to the next runner-card category and the badge that is closest to being
+earned. Once a goal is set a slim progress strip shows on the home screen. Run `supabase/013_goals.sql` in the
+Supabase SQL editor first (it adds `goal_km` and `goal_races` to `profiles`).

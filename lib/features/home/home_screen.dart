@@ -7,6 +7,9 @@ import '../bucket/bucket_store.dart';
 import '../album/album_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../friends/friends_screen.dart';
+import '../goals/goal_store.dart';
+import '../goals/goal_strip.dart';
+import '../goals/goals_screen.dart';
 import '../stats/badges_screen.dart';
 import '../stats/charts_screen.dart';
 import '../stats/year_review_screen.dart';
@@ -39,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final RaceStore _store = RaceStore();
   final ProfileStore _profile = ProfileStore();
   final BucketStore _bucket = BucketStore();
+  final GoalStore _goals = GoalStore();
   final FriendsStore _friends = FriendsStore();
   int _tab = 0;
 
@@ -48,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _store.load();
     _profile.load();
     _bucket.load();
+    _goals.load();
     _friends.load();
     subscription.init();
   }
@@ -61,6 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _friends.dispose();
     _bucket.dispose();
+    _goals.dispose();
     _store.dispose();
     _profile.dispose();
     super.dispose();
@@ -140,6 +146,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openGoals() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => GoalsScreen(races: _store, goals: _goals),
+      ),
+    );
+  }
+
   void _openBadges() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => BadgesScreen(store: _store)),
@@ -198,6 +212,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   _openBadges();
                 case 'charts':
                   _openCharts();
+                case 'goals':
+                  _openGoals();
                 case 'album':
                   _openAlbum();
                 case 'results':
@@ -210,6 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _store.load();
                   _profile.load();
                   _bucket.load();
+                  _goals.load();
                   _friends.load();
                   subscription.refresh();
                 case 'plan':
@@ -257,6 +274,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.insights),
                   title: Text('Charts'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'goals',
+                child: ListTile(
+                  leading: Icon(Icons.flag_outlined),
+                  title: Text('Goals'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),
@@ -333,6 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     FreePlanBanner(message: note, onTap: _openPaywall),
                   UpcomingBanner(races: _store.races),
                   OnThisDayBanner(races: _store.races),
+                  GoalStrip(races: _store, goals: _goals, onTap: _openGoals),
                 ],
               );
             },
