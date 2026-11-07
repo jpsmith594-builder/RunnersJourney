@@ -8,6 +8,7 @@ import '../album/album_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../friends/friends_screen.dart';
 import '../goals/goal_store.dart';
+import '../help/faq_screen.dart';
 import '../goals/goal_strip.dart';
 import '../goals/goals_screen.dart';
 import '../stats/badges_screen.dart';
@@ -214,6 +215,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   _openCharts();
                 case 'goals':
                   _openGoals();
+                case 'faq':
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const FaqScreen()));
                 case 'album':
                   _openAlbum();
                 case 'results':
@@ -274,6 +278,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.insights),
                   title: Text('Charts'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              PopupMenuItem(
+                value: 'faq',
+                child: ListTile(
+                  leading: Icon(Icons.help_outline),
+                  title: Text('Frequently asked questions'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

@@ -257,3 +257,15 @@ with a hint ("About 12 km a month for the rest of the year", "2 more races to go
 also shows how many points are left to the next runner-card category and the badge that is closest to being
 earned. Once a goal is set a slim progress strip shows on the home screen. Run `supabase/013_goals.sql` in the
 Supabase SQL editor first (it adds `goal_km` and `goal_races` to `profiles`).
+
+## Help inside the app
+
+Menu > **Frequently asked questions** (`lib/features/help/faq_screen.dart`) answers the common questions in
+five groups: the runner card and rating, the subscription, races/map/photos, friends and privacy, and the account.
+When prices, limits or the rating formula change, update the answers there too.
+
+## Planned domain
+
+The app will use **myrunningjournal.co.za** for its email and public pages. Still to do when it is bought: add the
+mailboxes (for example `no-reply@` and `support@`), switch the Supabase SMTP settings to them, replace
+`CONTACT_EMAIL` in `docs/*.html` with the support address, and update the privacy policy if the company name changes.

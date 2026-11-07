@@ -128,13 +128,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Text('Could not load your profile: ${profileStore.error}',
                           style: small, textAlign: TextAlign.center),
                     ],
-                    const SizedBox(height: 12),
-                    Text(
-                      'Rating starts at 45 and grows with every finished race (+2), '
-                      'every 15 km raced (+1) and every new town (+1).',
-                      style: small,
-                      textAlign: TextAlign.center,
-                    ),
                   ],
                 ),
               ),
