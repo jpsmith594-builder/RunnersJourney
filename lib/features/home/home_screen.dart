@@ -10,6 +10,7 @@ import '../friends/friends_screen.dart';
 import '../stats/badges_screen.dart';
 import '../stats/charts_screen.dart';
 import '../stats/year_review_screen.dart';
+import 'on_this_day_banner.dart';
 import 'upcoming_banner.dart';
 import '../friends/friends_store.dart';
 import '../map/map_view.dart';
@@ -331,6 +332,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (note != null)
                     FreePlanBanner(message: note, onTap: _openPaywall),
                   UpcomingBanner(races: _store.races),
+                  OnThisDayBanner(races: _store.races),
                 ],
               );
             },

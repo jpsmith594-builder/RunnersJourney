@@ -243,3 +243,9 @@ privacy policy link and a web page that explains account deletion.
 2. GitHub > the repo > Settings > Pages > Source: **Deploy from a branch**, branch `main`, folder `/docs`.
 3. The pages go live at `https://<your-github-name>.github.io/<repo-name>/privacy.html` and `.../delete-account.html`.
    Use those two links in the Play Console (Data safety and the app content section).
+
+## On this day
+
+When a finished race took place on today's date in an earlier year, the home screen shows a memory strip:
+"2 years ago today", the race, its distance, time and town, and its first photo (tap to open the photos).
+It can be hidden for the session. A 29 February race shows on 28 February in years without a leap day.
