@@ -290,4 +290,7 @@ update public.profiles set club_id = '<keep id>', club = '<keep name>' where clu
 delete from public.clubs where id = '<duplicate id>';
 ```
 
+`supabase/016_clubs_boland.sql` adds the 32 Boland Athletics member clubs (from their published list as at
+30 January 2026). Run it after 015. Both files skip clubs that are already in the list.
+
 Until the SQL has been run the club box still works as a plain text box.

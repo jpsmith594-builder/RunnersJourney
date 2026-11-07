@@ -1,0 +1,37 @@
+-- Boland Athletics member clubs (from "Boland Athletics Member Clubs as at 30
+-- January 2026", bolandathletics.com). Run after 015_clubs.sql. Clubs that are
+-- already in the list are skipped.
+insert into public.clubs (name, area, province) values
+  ('Ashton AC', 'Ashton', 'Western Cape'),
+  ('Boland Correctional Services AC', 'Malmesbury', 'Western Cape'),
+  ('Boland SANDF AC', 'Saldanha Bay', 'Western Cape'),
+  ('Bonnievale AC', 'Bonnievale', 'Western Cape'),
+  ('Botriver AC', 'Botrivier', 'Western Cape'),
+  ('Bredasdorp AC', 'Bredasdorp', 'Western Cape'),
+  ('Caledon AC', 'Caledon', 'Western Cape'),
+  ('Capitec AC', 'Stellenbosch', 'Western Cape'),
+  ('Ceres AC', 'Ceres', 'Western Cape'),
+  ('Citrusdal AC', 'Citrusdal', 'Western Cape'),
+  ('Club Mykonos Multisport', 'Langebaan', 'Western Cape'),
+  ('Dwarsrivier Valley AC', 'Dwars River Valley', 'Western Cape'),
+  ('Elgin Grabouw AC', 'Grabouw', 'Western Cape'),
+  ('Franschhoek AC', 'Franschhoek', 'Western Cape'),
+  ('Hangklip AC', 'Kleinmond', 'Western Cape'),
+  ('Hopefield AC', 'Hopefield', 'Western Cape'),
+  ('Klawer AC', 'Klawer', 'Western Cape'),
+  ('Langebaan AC', 'Langebaan', 'Western Cape'),
+  ('Langebaan Strandlopers AC', 'Langebaan', 'Western Cape'),
+  ('Maties Stellenbosch AC', 'Stellenbosch', 'Western Cape'),
+  ('Montagu AC', 'Montagu', 'Western Cape'),
+  ('Namaqua AC', null, 'Western Cape'),
+  ('Paarl AC', 'Paarl', 'Western Cape'),
+  ('Robertson AC', 'Robertson', 'Western Cape'),
+  ('Salkoriane AC', 'Vredenburg', 'Western Cape'),
+  ('St Helena Bay AC', 'St Helena Bay', 'Western Cape'),
+  ('Stellenbosch AC', 'Stellenbosch', 'Western Cape'),
+  ('Swartland AC', 'Moorreesburg', 'Western Cape'),
+  ('The Athlete Academy AC', 'Stellenbosch', 'Western Cape'),
+  ('Whalers AC', 'Hermanus', 'Western Cape'),
+  ('Wellington AC', 'Wellington', 'Western Cape'),
+  ('Worcester AC', 'Worcester', 'Western Cape')
+on conflict do nothing;
