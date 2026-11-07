@@ -54,6 +54,9 @@ extension GenderInfo on Gender {
 class RunnerProfile {
   final String? displayName;
   final String? club;
+
+  /// The club in the shared club list (the name above is its official name).
+  final String? clubId;
   final String? homeTown;
   final String? favouriteDistance; // e.g. 5K, 10K, 21K, 42K, Ultra, Trail
   final String? avatarPath; // path in the private `avatars` storage bucket
@@ -65,6 +68,7 @@ class RunnerProfile {
   const RunnerProfile({
     this.displayName,
     this.club,
+    this.clubId,
     this.homeTown,
     this.favouriteDistance,
     this.avatarPath,
@@ -83,6 +87,7 @@ class RunnerProfile {
   factory RunnerProfile.fromMap(Map<String, dynamic> m) => RunnerProfile(
         displayName: m['display_name'] as String?,
         club: m['club'] as String?,
+        clubId: m['club_id'] as String?,
         homeTown: m['home_town'] as String?,
         favouriteDistance: m['favourite_distance'] as String?,
         avatarPath: m['avatar_path'] as String?,
@@ -90,9 +95,11 @@ class RunnerProfile {
         birthYear: m['birth_year'] as int?,
       );
 
-  Map<String, dynamic> toMap() => {
+  /// [includeClubId] adds the club link, including a null to clear it.
+  Map<String, dynamic> toMap({bool includeClubId = false}) => {
         'display_name': displayName,
         'club': club,
+        if (includeClubId || clubId != null) 'club_id': clubId,
         'home_town': homeTown,
         'favourite_distance': favouriteDistance,
         'avatar_path': avatarPath,

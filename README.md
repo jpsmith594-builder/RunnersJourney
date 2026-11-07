@@ -271,3 +271,23 @@ When prices, limits or the rating formula change, update the answers there too.
 The app will use **myrunningjournal.co.za** for its email and public pages. Still to do when it is bought: add the
 mailboxes (for example `no-reply@` and `support@`), switch the Supabase SMTP settings to them, replace
 `CONTACT_EMAIL` in `docs/*.html` with the support address, and update the privacy policy if the company name changes.
+
+## Clubs
+
+The running club on a profile is picked from a shared list, so two runners from the same club end up in the same
+club even when one of them mistypes the name. While typing, the Profile edit screen suggests clubs from the list
+(with area and member count). If what was typed matches a club once capitals, dots and words like "athletic club"
+are ignored, that club is used. If it only looks like a club ("Seapoint Stridrs"), the app asks "Did you mean ...?"
+before adding a new one. Anything else is added as a new club.
+
+Run `supabase/015_clubs.sql` in the Supabase SQL editor. It adds the `clubs` table, the search and add functions,
+`profiles.club_id`, links existing profiles to clubs, and seeds the Western Province Athletics affiliated club list
+(105 clubs, taken from wpa.org.za/wpa-club-list). The other provinces have no public list yet: runners add their
+clubs and you can add or merge clubs in the SQL editor. For example, to merge a duplicate:
+
+```sql
+update public.profiles set club_id = '<keep id>', club = '<keep name>' where club_id = '<duplicate id>';
+delete from public.clubs where id = '<duplicate id>';
+```
+
+Until the SQL has been run the club box still works as a plain text box.

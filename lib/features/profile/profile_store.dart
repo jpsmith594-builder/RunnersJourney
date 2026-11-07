@@ -39,15 +39,20 @@ class ProfileStore extends ChangeNotifier {
         }
       }
     }
-    await _repo.save(RunnerProfile(
+    // Clearing the club also clears the link to the club list.
+    final clearClub = profile.clubId != null && p.clubId == null;
+    await _repo.save(
+        RunnerProfile(
       displayName: p.displayName,
       club: p.club,
+      clubId: p.clubId,
       homeTown: p.homeTown,
       favouriteDistance: p.favouriteDistance,
       avatarPath: path,
       gender: p.gender,
       birthYear: p.birthYear,
-    ));
+    ),
+        clearClub: clearClub);
     await load();
   }
 }

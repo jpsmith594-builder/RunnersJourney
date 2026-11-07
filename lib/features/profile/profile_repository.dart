@@ -15,8 +15,10 @@ class ProfileRepository {
   }
 
   /// Upsert so it also works if the profile row doesn't exist yet.
-  Future<void> save(RunnerProfile p) async {
-    await _db.from('profiles').upsert({'id': _uid, ...p.toMap()});
+  Future<void> save(RunnerProfile p, {bool clearClub = false}) async {
+    await _db
+        .from('profiles')
+        .upsert({'id': _uid, ...p.toMap(includeClubId: clearClub)});
   }
 
   /// Uploads a new profile photo and returns its storage path.

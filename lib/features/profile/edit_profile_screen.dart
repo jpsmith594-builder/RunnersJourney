@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../subscription/subscription_store.dart';
+import '../clubs/club.dart';
+import '../clubs/club_field.dart';
+import '../clubs/club_repository.dart';
 import '../map/place_field.dart';
 import 'account_repository.dart';
 import '../map/places.dart';
@@ -27,8 +30,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   late final _name =
       TextEditingController(text: widget.store.profile.displayName ?? '');
-  late final _club =
-      TextEditingController(text: widget.store.profile.club ?? '');
+  TextEditingController? _clubCtl; // owned by the ClubField widget
+  Club? _clubPick; // the club picked from the suggestions, if any
   late final _age =
       TextEditingController(text: widget.store.profile.age?.toString() ?? '');
   TextEditingController? _home; // owned by the PlaceField widget
@@ -50,7 +53,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void dispose() {
     _name.dispose();
-    _club.dispose();
     _age.dispose();
     super.dispose();
   }
@@ -151,9 +153,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
+  /// The club to save: the one picked, the one already linked, or what was
+  /// typed matched against the club list (asking before adding a lookalike).
+  Future<({String? name, String? id})> _resolveClub() async {
+    final typed = _clean(_clubCtl?.text);
+    if (typed == null) return (name: null, id: null);
+    final picked = _clubPick;
+    if (picked != null && picked.id != null && picked.name == typed) {
+      return (name: picked.name, id: picked.id);
+    }
+    final current = widget.store.profile;
+    if (current.clubId != null && current.club == typed) {
+      return (name: typed, id: current.clubId);
+    }
+    try {
+      final repo = ClubRepository();
+      final d = decideClub(typed, await repo.search(typed));
+      final near = d.club;
+      switch (d.decision) {
+        case ClubDecision.useExisting:
+          return (name: near!.name, id: near.id);
+        case ClubDecision.askDidYouMean:
+          if (!mounted) break;
+          final use = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Did you mean this club?'),
+              content: Text(
+                  '"$typed" looks like ${near!.name}'
+                  '${near.area.isEmpty ? '' : ' (${near.area})'}. '
+                  'Using the same club puts you with your club-mates.'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx, false),
+                    child: const Text('No, add mine')),
+                FilledButton(
+                    onPressed: () => Navigator.pop(ctx, true),
+                    child: Text('Use ${near.name}')),
+              ],
+            ),
+          );
+          if (use == true) return (name: near!.name, id: near.id);
+        case ClubDecision.createNew:
+        case ClubDecision.none:
+          break;
+      }
+      final created = await repo.findOrCreate(typed);
+      return (name: created.name, id: created.id);
+    } catch (_) {
+      // For example before the club list has been set up: keep the text.
+      return (name: typed, id: null);
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
+    final club = await _resolveClub();
     final typedHome = _clean(_home?.text);
     final home = typedHome == null
         ? null
@@ -163,7 +219,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await widget.store.save(
         RunnerProfile(
           displayName: _name.text.trim(),
-          club: _clean(_club.text),
+          club: club.name,
+          clubId: club.id,
           homeTown: home,
           favouriteDistance: _favourite,
           avatarPath: widget.store.profile.avatarPath,
@@ -262,12 +319,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ],
             ),
             gap,
-            TextFormField(
-              controller: _club,
-              textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(
-                  labelText: 'Running club (optional)',
-                  border: OutlineInputBorder()),
+            ClubField(
+              initialText: widget.store.profile.club ?? '',
+              onController: (c) => _clubCtl = c,
+              onClub: (c) => _clubPick = c,
             ),
             gap,
             PlaceField(
