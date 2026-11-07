@@ -93,6 +93,13 @@ class GoalsScreen extends StatelessWidget {
           final badge = nextBadge(races.races);
           final green = AppTheme.runGreen(Theme.of(context).brightness);
           final noGoals = g.goalKm == null && g.goalRaces == null;
+          final now = DateTime.now();
+          final prompt = needsNewYearPrompt(goals.byYear, now);
+          final last = latestGoalBefore(goals.byYear, year);
+          final past = goals.byYear.values
+              .where((e) => e.year < year && !e.isEmpty)
+              .toList()
+            ..sort((a, b) => b.year.compareTo(a.year));
 
           Widget goalCard(String title, String value, String? hint,
               double? fraction, Color color) {
@@ -137,7 +144,48 @@ class GoalsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             children: [
               SectionTitle('$year goals'),
-              if (noGoals)
+              if (prompt && last != null)
+                SoftCard(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Set your $year goals',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 4),
+                      Text('Last year you aimed for ${[
+                        if (last.races != null) '${last.races} races',
+                        if (last.km != null) '${last.km} km',
+                      ].join(' and ')}. Keep the same, or choose new ones.'),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        children: [
+                          FilledButton(
+                              onPressed: () async {
+                                try {
+                                  await goals.saveFor(year,
+                                      km: last.km, races: last.races);
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Could not save goals: $e')));
+                                  }
+                                }
+                              },
+                              child: const Text('Keep the same')),
+                          OutlinedButton(
+                              onPressed: () => _edit(context),
+                              child: const Text('Choose new')),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              if (noGoals && !prompt)
                 SoftCard(
                   margin: const EdgeInsets.only(bottom: 12),
                   child: Column(
@@ -167,6 +215,40 @@ class GoalsScreen extends StatelessWidget {
               if (g.goalRaces != null)
                 goalCard('Races', '${g.races} / ${g.goalRaces}', g.racesHint(),
                     g.racesFraction, AppTheme.navyLight),
+              if (past.isNotEmpty) ...[
+                const SectionTitle('Past years'),
+                SoftCard(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Column(
+                    children: [
+                      for (final e in past)
+                        Builder(builder: (context) {
+                          final pg = goalProgress(races.races, e.year,
+                              goalKm: e.km, goalRaces: e.races);
+                          final done = yearAchieved(pg);
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            child: Row(
+                              children: [
+                                Text('${e.year}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w800)),
+                                const SizedBox(width: 14),
+                                Expanded(child: Text(yearResult(pg))),
+                                Icon(
+                                    done
+                                        ? Icons.check_circle
+                                        : Icons.radio_button_unchecked,
+                                    size: 20,
+                                    color: done ? green : null),
+                              ],
+                            ),
+                          );
+                        }),
+                    ],
+                  ),
+                ),
+              ],
               const SectionTitle('Next up'),
               SoftCard(
                 margin: const EdgeInsets.only(bottom: 12),

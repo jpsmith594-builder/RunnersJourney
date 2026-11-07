@@ -55,4 +55,41 @@ void main() {
       expect(b.progress, isNotNull);
     }
   });
+
+  group('goals by year', () {
+    final goals = {
+      2025: const YearGoal(2025, km: 300, races: 8),
+      2026: const YearGoal(2026, races: 12),
+    };
+
+    test('latest earlier goal', () {
+      expect(latestGoalBefore(goals, 2027)?.year, 2026);
+      expect(latestGoalBefore(goals, 2026)?.year, 2025);
+      expect(latestGoalBefore(goals, 2025), isNull);
+    });
+
+    test('new year prompt only when this year has no goal yet', () {
+      expect(needsNewYearPrompt(goals, DateTime(2027, 1, 2)), isTrue);
+      expect(needsNewYearPrompt(goals, DateTime(2026, 6, 1)), isFalse);
+      expect(needsNewYearPrompt({}, DateTime(2027, 1, 2)), isFalse);
+      // An empty goal for the new year still counts as "not set".
+      expect(
+          needsNewYearPrompt(
+              {...goals, 2027: const YearGoal(2027)}, DateTime(2027, 1, 2)),
+          isTrue);
+    });
+
+    test('past year result and achievement', () {
+      final done = [
+        r(DateTime(2025, 2, 1), RaceStatus.completed, km: 21.1),
+        r(DateTime(2025, 5, 1), RaceStatus.completed, km: 10),
+      ];
+      final g = goalProgress(done, 2025, goalKm: 30, goalRaces: 2);
+      expect(yearResult(g), '2 / 2 races, 31.1 / 30 km');
+      expect(yearAchieved(g), isTrue);
+      final miss = goalProgress(done, 2025, goalKm: 300, goalRaces: 2);
+      expect(yearAchieved(miss), isFalse);
+      expect(yearAchieved(goalProgress(done, 2025)), isFalse);
+    });
+  });
 }

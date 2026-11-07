@@ -111,3 +111,50 @@ BadgeResult? nextBadge(List<Race> races) {
   }
   return best;
 }
+
+/// The goals a runner set for one year.
+class YearGoal {
+  final int year;
+  final int? km;
+  final int? races;
+  const YearGoal(this.year, {this.km, this.races});
+
+  bool get isEmpty => km == null && races == null;
+}
+
+/// The most recent year before [year] that had a goal, or null.
+YearGoal? latestGoalBefore(Map<int, YearGoal> goals, int year) {
+  YearGoal? best;
+  for (final g in goals.values) {
+    if (g.year < year && !g.isEmpty && (best == null || g.year > best.year)) {
+      best = g;
+    }
+  }
+  return best;
+}
+
+/// True when this year has no goal yet but an earlier year did, so the app
+/// can offer to set (or keep) goals for the new year.
+bool needsNewYearPrompt(Map<int, YearGoal> goals, DateTime now) {
+  final current = goals[now.year];
+  if (current != null && !current.isEmpty) return false;
+  return latestGoalBefore(goals, now.year) != null;
+}
+
+/// A one-line result for a past year, such as "12 / 12 races, 480 / 500 km".
+String yearResult(GoalProgress g) {
+  final parts = <String>[];
+  if (g.goalRaces != null) parts.add('${g.races} / ${g.goalRaces} races');
+  if (g.goalKm != null) {
+    parts.add('${g.km.toStringAsFixed(g.km >= 100 ? 0 : 1)} / ${g.goalKm} km');
+  }
+  return parts.join(', ');
+}
+
+/// Whether every goal set for that year was reached.
+bool yearAchieved(GoalProgress g) {
+  final any = g.goalKm != null || g.goalRaces != null;
+  return any &&
+      (g.goalKm == null || g.kmReached) &&
+      (g.goalRaces == null || g.racesReached);
+}
