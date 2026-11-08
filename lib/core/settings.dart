@@ -66,3 +66,6 @@ class AppSettings extends ChangeNotifier {
     } catch (_) {}
   }
 }
+
+/// The one settings object used across the app.
+final AppSettings settings = AppSettings();
