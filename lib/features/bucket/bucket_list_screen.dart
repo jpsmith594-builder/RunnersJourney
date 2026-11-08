@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'bucket_form_screen.dart';
 import 'bucket_item.dart';
 import 'bucket_store.dart';
+import '../../core/units.dart';
 
 /// The race bucket list: races the runner wants to do, with a tickbox each.
 /// Open races show as grey pins on the map; ticked ones come off the map.
@@ -49,7 +50,7 @@ class BucketListScreen extends StatelessWidget {
               final it = items[i];
               final sub = [
                 if (it.locationName != null) it.locationName!,
-                if (it.distanceKm != null) '${it.distanceKm} km',
+                if (it.distanceKm != null) formatDistance(it.distanceKm!),
               ].join('  ·  ');
               return Dismissible(
                 key: ValueKey(it.id ?? it.name),

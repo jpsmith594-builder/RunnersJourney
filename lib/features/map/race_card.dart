@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../friends/reactions.dart';
 import '../photos/photo_widgets.dart';
 import '../races/race.dart';
+import '../../core/units.dart';
 
 /// Small summary card shown when a race pin is tapped (or hovered on desktop).
 class RaceCard extends StatelessWidget {
@@ -36,7 +37,7 @@ class RaceCard extends StatelessWidget {
     final t = Theme.of(context).textTheme;
     final done = race.status == RaceStatus.completed;
     final stats = <String>[
-      if (race.distanceKm != null) '${race.distanceKm} km',
+      if (race.distanceKm != null) formatDistance(race.distanceKm!),
       if (done && race.finishTimeSeconds != null) race.formattedTime,
       if (done && race.pace != null) race.pace!,
       if (done && race.overallPosition != null)

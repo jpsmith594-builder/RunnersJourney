@@ -12,6 +12,10 @@ class AppConfig {
   /// RevenueCat public SDK key (Android) for subscriptions. Optional while testing.
   static const revenueCatKey = String.fromEnvironment('REVENUECAT_KEY');
 
+  /// Optional links shown in Settings (hidden while empty).
+  static const privacyUrl = String.fromEnvironment('PRIVACY_URL');
+  static const supportEmail = String.fromEnvironment('SUPPORT_EMAIL');
+
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
 }

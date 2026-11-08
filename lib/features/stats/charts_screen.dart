@@ -7,6 +7,7 @@ import '../../core/tiles.dart';
 import '../races/race.dart';
 import '../races/race_list_screen.dart' show medalColor;
 import '../races/race_store.dart';
+import '../../core/units.dart';
 
 /// Numbers behind the four charts. Only completed races count.
 class ChartStats {
@@ -183,7 +184,7 @@ class ChartsScreen extends StatelessWidget {
               _card(
                 context,
                 title: 'Pace by year',
-                subtitle: 'Average min/km, lower is faster',
+                subtitle: 'Average min/${unitLabel()}, lower is faster',
                 icon: Icons.show_chart,
                 color: green,
                 empty: paceYear.isEmpty,
@@ -192,7 +193,7 @@ class ChartsScreen extends StatelessWidget {
                   width: double.infinity,
                   child: CustomPaint(
                     painter: _LinePainter(
-                      [for (final e in paceYear) ('${e.key}', e.value)],
+                      [for (final e in paceYear) ('${e.key}', paceInUnit(e.value))],
                       green,
                       text,
                     ),
@@ -201,8 +202,8 @@ class ChartsScreen extends StatelessWidget {
               ),
               _card(
                 context,
-                title: 'Kilometres per year',
-                subtitle: 'Distance in finished races',
+                title: 'Distance per year',
+                subtitle: 'Finished races, in ${unitWord()}',
                 icon: Icons.stacked_bar_chart,
                 color: const Color(0xFFFF9F0A),
                 empty: kmYear.isEmpty,
@@ -211,7 +212,7 @@ class ChartsScreen extends StatelessWidget {
                   width: double.infinity,
                   child: CustomPaint(
                     painter: _HBarPainter(
-                      [for (final e in kmYear) ('${e.key}', e.value)],
+                      [for (final e in kmYear) ('${e.key}', toUnit(e.value))],
                       const Color(0xFFFF9F0A),
                       text,
                     ),
@@ -317,7 +318,7 @@ class _HBarPainter extends CustomPainter {
             colors: [color.withValues(alpha: 0.5), color],
           ).createShader(rect.outerRect),
       );
-      _label(canvas, '${v >= 100 ? v.round() : v.toStringAsFixed(1)} km',
+      _label(canvas, '${formatNumber(v)} ${unitLabel()}',
           Offset(labelW + w + 8, cy), text,
           align: TextAlign.left, weight: FontWeight.w800, centreY: true);
     }

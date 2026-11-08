@@ -5,6 +5,7 @@ import '../../core/theme.dart';
 import '../../core/tiles.dart';
 import 'race.dart';
 import 'race_store.dart';
+import '../../core/units.dart';
 
 /// The "Races" tab: a plain chronological list (newest first).
 class RaceListView extends StatelessWidget {
@@ -87,12 +88,10 @@ class RaceListView extends StatelessWidget {
                   icon: Icons.directions_run,
                   color: AppTheme.purpleMid,
                   label: 'Distance',
-                  value: sum.km >= 100
-                      ? sum.km.round().toString()
-                      : sum.km.toStringAsFixed(1),
-                  unit: 'km',
+                  value: formatNumber(toUnit(sum.km)),
+                  unit: unitLabel(),
                   note: sum.kmThisYear > 0
-                      ? '${sum.kmThisYear.round()} km this year'
+                      ? '${formatDistance(sum.kmThisYear)} this year'
                       : null,
                 ),
                 StatTile(
@@ -136,7 +135,7 @@ class RaceListView extends StatelessWidget {
       RaceStatus.dns => (Icons.remove_circle_outline, Colors.grey),
     };
     final chips = <(String, Color)>[
-      if (r.distanceKm != null) ('${r.distanceKm} km', color),
+      if (r.distanceKm != null) (formatDistance(r.distanceKm!), color),
       if (done && r.finishTimeSeconds != null) (r.formattedTime, color),
       if (done && r.pace != null) (r.pace!, color),
       if (done && r.overallPosition != null) ('Pos ${r.overallPosition}', color),

@@ -9,7 +9,9 @@ import '../calendar/calendar_screen.dart';
 import '../calendar/show_sa_races.dart';
 import '../friends/friends_screen.dart';
 import '../goals/goal_store.dart';
+import '../../core/settings.dart';
 import '../help/faq_screen.dart';
+import '../settings/settings_screen.dart';
 import '../goals/goal_strip.dart';
 import '../goals/goals_screen.dart';
 import '../stats/badges_screen.dart';
@@ -196,7 +198,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: settings,
+        builder: (context, _) => _buildHome(context),
+      );
+
+  Widget _buildHome(BuildContext context) {
     const titles = ['My Journey', 'My Races'];
     return Scaffold(
       appBar: AppBar(
@@ -220,6 +227,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 case 'faq':
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const FaqScreen()));
+                case 'settings':
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const SettingsScreen()));
                 case 'album':
                   _openAlbum();
                 case 'results':
@@ -334,6 +344,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.checklist),
                   title: Text('Race bucket list'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'settings',
+                child: ListTile(
+                  leading: Icon(Icons.settings_outlined),
+                  title: Text('Settings'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

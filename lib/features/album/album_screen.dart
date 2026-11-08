@@ -10,6 +10,7 @@ import '../profile/share_card.dart';
 import '../races/race.dart';
 import '../races/race_list_screen.dart' show medalColor;
 import '../races/race_store.dart';
+import '../../core/units.dart';
 
 const _paper = Color(0xFFF6EFE2);
 const _ink = Color(0xFF3B2F2F);
@@ -413,7 +414,7 @@ class _EndPage extends StatelessWidget {
                   fontSize: 24)),
           const SizedBox(height: 14),
           line('${races.length}', 'races'),
-          line(km.toStringAsFixed(km >= 100 ? 0 : 1), 'kilometres'),
+          line(formatNumber(toUnit(km)), unitWord()),
           line('$medals', 'medals'),
           const SizedBox(height: 14),
           Text('To be continued…',
@@ -467,7 +468,7 @@ class _RacePageState extends State<_RacePage>
       if ((r.country ?? '').isNotEmpty) r.country!,
     ].join(', ');
     final stats = <String>[
-      if (r.distanceKm != null) '${r.distanceKm!.toStringAsFixed(1)} km',
+      if (r.distanceKm != null) formatDistance(r.distanceKm!),
       if (r.finishTimeSeconds != null) r.formattedTime,
       if (r.pace != null) r.pace!,
       if (r.overallPosition != null) 'Position ${r.overallPosition}',

@@ -11,6 +11,7 @@ import '../photos/photo_widgets.dart';
 import '../subscription/limits.dart';
 import 'race.dart';
 import 'race_repository.dart';
+import '../../core/units.dart';
 
 class RaceFormScreen extends StatefulWidget {
   final Race? race;
@@ -36,13 +37,21 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
   final _repo = RaceRepository();
 
   final _nameFocus = FocusNode();
+
+  /// The typed distance in km (what is stored), whatever unit was typed.
+  double? _typedKm() {
+    final v = double.tryParse(_distance.text.trim().replaceAll(',', '.'));
+    return v == null ? null : tidyKm(fromUnit(v));
+  }
+
   late final _name = TextEditingController(
       text: widget.race?.name ?? widget.prefill?.name ?? widget.initialName);
   late final _distance = TextEditingController(
-      text: widget.race?.distanceKm?.toString() ??
-          (widget.prefill == null
+      text: widget.race?.distanceKm != null
+          ? formatNumber(toUnit(widget.race!.distanceKm!))
+          : (widget.prefill == null
               ? ''
-              : widget.prefill!.distanceKm.toString()));
+              : formatNumber(toUnit(widget.prefill!.distanceKm))));
   late final _hours = TextEditingController(
       text: widget.race?.finishTimeSeconds == null
           ? ''
@@ -154,7 +163,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
       name: _name.text.trim(),
       date: _date,
       status: _status,
-      distanceKm: double.tryParse(_distance.text.trim()),
+      distanceKm: _typedKm(),
       finishTimeSeconds: _finishSeconds,
       overallPosition: int.tryParse(_position.text.trim()),
       ageGroupPosition: int.tryParse(_ageGroup.text.trim()),
@@ -218,7 +227,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               onSelected: (e) {
                 // Fill in what we know, without overwriting what is typed.
                 if (_distance.text.trim().isEmpty) {
-                  _distance.text = e.distanceKm.toString();
+                  _distance.text = formatNumber(toUnit(e.distanceKm));
                 }
                 final town = e.town;
                 if (town != null && (_loc?.text ?? '').trim().isEmpty) {
@@ -306,8 +315,9 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               controller: _distance,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                  labelText: 'Distance (km)', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: 'Distance (${unitLabel()})',
+                  border: const OutlineInputBorder()),
               validator: (v) => _optionalNumber(v, decimal: true),
             ),
             gap,
@@ -327,7 +337,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
               listenable: Listenable.merge([_distance, _hours, _mins, _secs]),
               builder: (context, _) {
                 final pace =
-                    formatPace(double.tryParse(_distance.text.trim()), _finishSeconds);
+                    formatPace(_typedKm(), _finishSeconds);
                 return InputDecorator(
                   decoration: const InputDecoration(
                       labelText: 'Pace (calculated)',

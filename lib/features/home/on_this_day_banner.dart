@@ -5,6 +5,7 @@ import '../photos/photo_repository.dart';
 import '../photos/photo_widgets.dart';
 import '../photos/race_photo.dart';
 import '../races/race.dart';
+import '../../core/units.dart';
 
 /// A finished race from the same day in an earlier year.
 typedef Memory = ({Race race, int yearsAgo});
@@ -65,7 +66,7 @@ class _OnThisDayBannerState extends State<OnThisDayBanner> {
     _loadPhotos(m.race);
     final r = m.race;
     final bits = [
-      if (r.distanceKm != null) '${r.distanceKm!.toStringAsFixed(1)} km',
+      if (r.distanceKm != null) formatDistance(r.distanceKm!),
       if (r.finishTimeSeconds != null) r.formattedTime,
       if ((r.locationName ?? '').isNotEmpty) r.locationName!,
     ];

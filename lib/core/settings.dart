@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// How distances and paces are shown.
+enum DistanceUnit { km, mi }
+
+/// Settings kept on this phone: distance units and light/dark appearance.
+class AppSettings extends ChangeNotifier {
+  DistanceUnit unit = DistanceUnit.km;
+  ThemeMode themeMode = ThemeMode.system;
+
+  bool get miles => unit == DistanceUnit.mi;
+
+  /// Reads the saved choices. Without storage the defaults are used.
+  Future<void> load() async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      unit = p.getString('unit') == 'mi' ? DistanceUnit.mi : DistanceUnit.km;
+      themeMode = switch (p.getString('theme')) {
+        'light' => ThemeMode.light,
+        'dark' => ThemeMode.dark,
+        _ => ThemeMode.system,
+      };
+    } catch (_) {
+      // Defaults are fine.
+    }
+    notifyListeners();
+  }
+
+  Future<void> setUnit(DistanceUnit u) async {
+    unit = u;
+    notifyListeners();
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setString('unit', u == DistanceUnit.mi ? 'mi' : 'km');
+    } catch (_) {}
+  }
+
+  Future<void> setThemeMode(ThemeMode m) async {
+    themeMode = m;
+    notifyListeners();
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setString('theme', switch (m) {
+        ThemeMode.light => 'light',
+        ThemeMode.dark => 'dark',
+        ThemeMode.system => 'system',
+      });
+    } catch (_) {}
+  }
+}
+
+/// The one set of settings for the whole app.
+final AppSettings settings = AppSettings();

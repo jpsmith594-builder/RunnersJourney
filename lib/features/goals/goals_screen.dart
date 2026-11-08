@@ -7,6 +7,7 @@ import '../profile/runner_stats.dart';
 import '../races/race_store.dart';
 import 'goal_store.dart';
 import 'goals.dart';
+import '../../core/units.dart';
 
 /// Yearly goals with progress rings, plus how close the next card category
 /// and the next badge are.
@@ -16,7 +17,10 @@ class GoalsScreen extends StatelessWidget {
   const GoalsScreen({super.key, required this.races, required this.goals});
 
   Future<void> _edit(BuildContext context) async {
-    final km = TextEditingController(text: goals.goalKm?.toString() ?? '');
+    final km = TextEditingController(
+        text: goals.goalKm == null
+            ? ''
+            : formatNumber(toUnit(goals.goalKm!.toDouble())));
     final rc = TextEditingController(text: goals.goalRaces?.toString() ?? '');
     final saved = await showDialog<bool>(
       context: context,
@@ -29,8 +33,8 @@ class GoalsScreen extends StatelessWidget {
               controller: km,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: const InputDecoration(
-                  labelText: 'Distance goal (km)',
+              decoration: InputDecoration(
+                  labelText: 'Distance goal (${unitLabel()})',
                   helperText: 'Leave empty for no distance goal'),
             ),
             const SizedBox(height: 12),
@@ -61,7 +65,9 @@ class GoalsScreen extends StatelessWidget {
     }
 
     try {
-      await goals.save(km: parse(km.text, 100000), races: parse(rc.text, 1000));
+      await goals.save(km: parse(km.text, 100000) == null
+          ? null
+          : fromUnit(parse(km.text, 100000)!.toDouble()).round(), races: parse(rc.text, 1000));
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -156,7 +162,7 @@ class GoalsScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text('Last year you aimed for ${[
                         if (last.races != null) '${last.races} races',
-                        if (last.km != null) '${last.km} km',
+                        if (last.km != null) formatDistance(last.km!.toDouble()),
                       ].join(' and ')}. Keep the same, or choose new ones.'),
                       const SizedBox(height: 12),
                       Wrap(
@@ -208,7 +214,7 @@ class GoalsScreen extends StatelessWidget {
               if (g.goalKm != null)
                 goalCard(
                     'Distance',
-                    '${g.km.toStringAsFixed(g.km >= 100 ? 0 : 1)} / ${g.goalKm} km',
+                    '${formatNumber(toUnit(g.km))} / ${formatDistance(g.goalKm!.toDouble())}',
                     g.kmHint(DateTime.now()),
                     g.kmFraction,
                     green),

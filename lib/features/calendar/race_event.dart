@@ -1,3 +1,5 @@
+import '../../core/units.dart';
+
 /// A well-known South African race in the built-in calendar.
 ///
 /// Dates change every year, so only the usual time of year is kept. Always
@@ -15,7 +17,7 @@ class RaceEvent {
 
   String get distanceLabel {
     final d = distanceKm;
-    return d % 1 == 0 ? '${d.toInt()} km' : '$d km';
+    return formatDistance(d);
   }
 
   /// Next time the usual month comes round (first of that month), or null.

@@ -1,5 +1,6 @@
 import '../races/race.dart';
 import '../stats/badges.dart';
+import '../../core/units.dart';
 
 /// Where a runner stands against their goals for one year. Only finished
 /// races count towards the goals.
@@ -146,7 +147,7 @@ String yearResult(GoalProgress g) {
   final parts = <String>[];
   if (g.goalRaces != null) parts.add('${g.races} / ${g.goalRaces} races');
   if (g.goalKm != null) {
-    parts.add('${g.km.toStringAsFixed(g.km >= 100 ? 0 : 1)} / ${g.goalKm} km');
+    parts.add('${formatNumber(toUnit(g.km))} / ${formatDistance(g.goalKm!.toDouble())}');
   }
   return parts.join(', ');
 }

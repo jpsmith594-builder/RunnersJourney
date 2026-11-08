@@ -9,6 +9,7 @@ import '../races/race.dart';
 import 'friend_entry.dart';
 import 'friends_repository.dart';
 import 'reactions.dart';
+import '../../core/units.dart';
 
 /// A friend's runner card and their most recent races.
 class FriendCardScreen extends StatefulWidget {
@@ -115,7 +116,7 @@ class _FriendCardScreenState extends State<FriendCardScreen> {
                             title: Text(r.name),
                             subtitle: Text([
                               DateFormat.yMMMd().format(r.date),
-                              if (r.distanceKm != null) '${r.distanceKm} km',
+                              if (r.distanceKm != null) formatDistance(r.distanceKm!),
                               if (r.finishTimeSeconds != null) r.formattedTime,
                               if (r.pace != null) r.pace!,
                             ].join(' \u00B7 ')),

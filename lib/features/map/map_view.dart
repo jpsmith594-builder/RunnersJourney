@@ -14,6 +14,7 @@ import 'map_geometry.dart';
 import 'places.dart';
 import 'race_card.dart';
 import 'season_filter.dart';
+import '../../core/units.dart';
 
 const Color _oceanColor = Color(0xFFAAD3DF);
 const LatLng _saCentre = LatLng(-29.0, 24.5);
@@ -486,7 +487,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                         child: Text(
                           it.distanceKm == null
                               ? it.name
-                              : '${it.name} (${it.distanceKm} km)',
+                              : '${it.name} (${formatDistance(it.distanceKm!)})',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),

@@ -4,6 +4,7 @@ import '../../core/tiles.dart';
 import '../races/race_store.dart';
 import 'goal_store.dart';
 import 'goals.dart';
+import '../../core/units.dart';
 
 /// A slim progress strip on the home screen, shown once a goal is set.
 class GoalStrip extends StatelessWidget {
@@ -50,7 +51,7 @@ class GoalStrip extends StatelessWidget {
         final useKm = g.goalRaces == null;
         final fraction = (useKm ? g.kmFraction : g.racesFraction) ?? 0;
         final label = useKm
-            ? '$year goal: ${g.km.toStringAsFixed(g.km >= 100 ? 0 : 1)} / ${g.goalKm} km'
+            ? '$year goal: ${formatNumber(toUnit(g.km))} / ${formatDistance(g.goalKm!.toDouble())}'
             : '$year goal: ${g.races} / ${g.goalRaces} races';
         return SoftCard(
           margin: const EdgeInsets.fromLTRB(12, 4, 12, 4),

@@ -5,6 +5,7 @@ import '../profile/share_card.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
 import 'year_review.dart';
+import '../../core/units.dart';
 
 /// "My year in running": a shareable poster of the year's numbers.
 class YearReviewScreen extends StatefulWidget {
@@ -226,7 +227,7 @@ class _Poster extends StatelessWidget {
           const SizedBox(height: 22),
           Row(children: [
             _big('${s.races}', s.races == 1 ? 'race' : 'races'),
-            _big(s.km.toStringAsFixed(s.km >= 100 ? 0 : 1), 'km'),
+            _big(formatNumber(toUnit(s.km)), unitLabel()),
             _big(s.totalSeconds > 0 ? hours : '-', 'racing'),
           ]),
           const SizedBox(height: 22),
@@ -236,7 +237,7 @@ class _Poster extends StatelessWidget {
                 '${s.provinces > 0 ? ' in ${s.provinces} province${s.provinces == 1 ? '' : 's'}' : ''}'),
           if (longest != null)
             _line(Icons.straighten,
-                'Longest: ${longest.name} (${longest.distanceKm} km)'),
+                'Longest: ${longest.name} (${formatDistance(longest.distanceKm!)})'),
           if (fast != null)
             _line(Icons.bolt, 'Fastest pace: ${fast.pace} at ${fast.name}'),
           if (s.busiestMonth != null && s.busiestMonthRaces > 1)

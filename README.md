@@ -304,3 +304,7 @@ On the Friends screen, **People from my club** has a switch, "Let people from my
 When both runners have switched it on and are in the same club, they see each other's name and can send a friend
 request; races, photos and the runner card stay private until the request is accepted. Changing club switches it
 off again. Run `supabase/018_club_mates.sql` in the Supabase SQL editor first.
+
+## Settings and units
+
+Menu > Settings: distances in kilometres or miles, appearance (phone / light / dark), FAQ, and optional support and privacy links (`SUPPORT_EMAIL`, `PRIVACY_URL` in env.json; hidden when empty). The choice is saved on the phone (shared_preferences). Races are always stored in km; `lib/core/units.dart` converts for display, and distances typed in miles snap to standard race distances (6.2 mi = 10 km).

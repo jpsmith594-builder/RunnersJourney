@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import 'race.dart';
 import 'race_store.dart';
+import '../../core/units.dart';
 
 enum _SortBy { date, time, pace, distance, name }
 
@@ -205,7 +206,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
                 child: Text(
                   '${rows.length} race${rows.length == 1 ? '' : 's'}'
-                  '${km > 0 ? ' · ${km.toStringAsFixed(1)} km' : ''}',
+                  '${km > 0 ? ' · ${formatDistance(km)}' : ''}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -235,7 +236,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                   onSort: (_, __) => _setSort(_SortBy.name)),
                               DataColumn(
                                   numeric: true,
-                                  label: const Text('km'),
+                                  label: Text(unitLabel()),
                                   onSort: (_, __) =>
                                       _setSort(_SortBy.distance)),
                               DataColumn(
@@ -262,14 +263,13 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                   )),
                                   DataCell(Text(r.distanceKm == null
                                       ? '-'
-                                      : r.distanceKm!.toStringAsFixed(
-                                          r.distanceKm! % 1 == 0 ? 0 : 1))),
+                                      : formatNumber(toUnit(r.distanceKm!)))),
                                   DataCell(Text(r.finishTimeSeconds == null
                                       ? '-'
                                       : r.formattedTime)),
                                   DataCell(Text(r.pace == null
                                       ? '-'
-                                      : r.pace!.replaceAll(' /km', ''))),
+                                        : r.pace!.replaceAll(RegExp(r' /(km|mi)'), ''))),
                                   DataCell(Text(
                                       r.overallPosition?.toString() ?? '-')),
                                 ]),

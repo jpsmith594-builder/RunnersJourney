@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../races/race.dart';
 import 'friend_entry.dart';
 import 'friends_repository.dart';
+import '../../core/units.dart';
 
 enum _Metric { km, races, towns }
 
@@ -82,7 +83,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   String _format(_Row r) {
     switch (_metric) {
       case _Metric.km:
-        return '${r.km.toStringAsFixed(r.km >= 100 ? 0 : 1)} km';
+        return formatDistance(r.km);
       case _Metric.races:
         return '${r.count} race${r.count == 1 ? '' : 's'}';
       case _Metric.towns:

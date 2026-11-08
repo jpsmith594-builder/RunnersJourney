@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../races/race.dart';
 import 'runner_stats.dart';
+import '../../core/units.dart';
 
 class _Palette {
   final Color top;
@@ -265,7 +266,8 @@ class RunnerCard extends StatelessWidget {
           if (club != null && club!.trim().isNotEmpty) club!.trim(),
           if (homeTown != null && homeTown!.trim().isNotEmpty) homeTown!.trim(),
         ].join('  •  ');
-        final km = NumberFormat.decimalPattern().format(stats.totalKm.round());
+        final km = NumberFormat.decimalPattern()
+            .format(toUnit(stats.totalKm).round());
 
         TextStyle ink(double size, {FontWeight w = FontWeight.w700}) =>
             TextStyle(
@@ -398,7 +400,7 @@ class RunnerCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _Stat('${stats.completed}', 'RACES', p.ink, u),
-                        _Stat(km, 'KM', p.ink, u),
+                        _Stat(km, unitLabel().toUpperCase(), p.ink, u),
                         _Stat('${stats.towns}', 'TOWNS', p.ink, u),
                       ],
                     ),
