@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../core/config.dart';
 import '../../core/settings.dart';
 import '../help/faq_screen.dart';
+import '../help/welcome_tour.dart';
 
 /// Distance units, appearance, help and about.
 class SettingsScreen extends StatelessWidget {
@@ -54,6 +55,13 @@ class SettingsScreen extends StatelessWidget {
               title: const Text('Frequently asked questions'),
               onTap: () => Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const FaqScreen())),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.explore_outlined),
+              title: const Text('Replay the welcome tour'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  fullscreenDialog: true, builder: (_) => const WelcomeTour())),
             ),
             if (AppConfig.supportEmail.isNotEmpty)
               ListTile(

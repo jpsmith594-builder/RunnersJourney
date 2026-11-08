@@ -308,3 +308,7 @@ off again. Run `supabase/018_club_mates.sql` in the Supabase SQL editor first.
 ## Settings and units
 
 Menu > Settings: distances in kilometres or miles, appearance (phone / light / dark), FAQ, and optional support and privacy links (`SUPPORT_EMAIL`, `PRIVACY_URL` in env.json; hidden when empty). The choice is saved on the phone (shared_preferences). Races are always stored in km; `lib/core/units.dart` converts for display, and distances typed in miles snap to standard race distances (6.2 mi = 10 km).
+
+## Welcome tour
+
+Five swipeable screens (map, adding a race, album and year review, runner card, goals and friends) shown once after a runner first opens the app (`tour_seen` in shared_preferences). Replay it from Settings. Text lives in `tourPages` in `lib/features/help/welcome_tour.dart`.

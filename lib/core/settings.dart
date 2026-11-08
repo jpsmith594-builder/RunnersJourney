@@ -48,7 +48,21 @@ class AppSettings extends ChangeNotifier {
       });
     } catch (_) {}
   }
-}
 
-/// The one set of settings for the whole app.
-final AppSettings settings = AppSettings();
+  /// Whether the welcome tour has been shown on this phone.
+  Future<bool> tourSeen() async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      return p.getBool('tour_seen') ?? false;
+    } catch (_) {
+      return true; // Never nag when storage is unavailable.
+    }
+  }
+
+  Future<void> markTourSeen() async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setBool('tour_seen', true);
+    } catch (_) {}
+  }
+}

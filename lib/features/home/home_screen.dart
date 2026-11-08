@@ -11,6 +11,7 @@ import '../friends/friends_screen.dart';
 import '../goals/goal_store.dart';
 import '../../core/settings.dart';
 import '../help/faq_screen.dart';
+import '../help/welcome_tour.dart';
 import '../settings/settings_screen.dart';
 import '../goals/goal_strip.dart';
 import '../goals/goals_screen.dart';
@@ -59,6 +60,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _goals.load();
     _friends.load();
     subscription.init();
+    _maybeShowTour();
+  }
+
+  Future<void> _maybeShowTour() async {
+    if (await settings.tourSeen() || !mounted) return;
+    await settings.markTourSeen();
+    if (!mounted) return;
+    Navigator.of(context).push(
+        MaterialPageRoute(fullscreenDialog: true, builder: (_) => const WelcomeTour()));
   }
 
   void _openPaywall() {
