@@ -60,7 +60,7 @@ class SettingsScreen extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.mail_outline),
                 title: const Text('Contact support'),
-                subtitle: Text(AppConfig.supportEmail),
+                subtitle: const Text(AppConfig.supportEmail),
                 onTap: () => launchUrl(
                     Uri(scheme: 'mailto', path: AppConfig.supportEmail)),
               ),
