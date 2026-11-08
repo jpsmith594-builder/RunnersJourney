@@ -294,3 +294,13 @@ delete from public.clubs where id = '<duplicate id>';
 30 January 2026). Run it after 015. Both files skip clubs that are already in the list.
 
 Until the SQL has been run the club box still works as a plain text box.
+
+`supabase/017_clubs_gauteng_north.sql` adds the Athletics Gauteng North affiliated clubs (190 of the 222 on their
+2026 list; school clubs are left out and a few spelling slips are corrected). Run it after 015.
+
+## People from my club
+
+On the Friends screen, **People from my club** has a switch, "Let people from my club find me", off by default.
+When both runners have switched it on and are in the same club, they see each other's name and can send a friend
+request; races, photos and the runner card stay private until the request is accepted. Changing club switches it
+off again. Run `supabase/018_club_mates.sql` in the Supabase SQL editor first.

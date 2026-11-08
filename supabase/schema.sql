@@ -753,3 +753,332 @@ from public.clubs c
 where p.club is not null
   and c.country = 'South Africa'
   and public.club_key(c.name) = public.club_key(p.club);
+-- Boland Athletics member clubs (from "Boland Athletics Member Clubs as at 30
+-- January 2026", bolandathletics.com). Run after 015_clubs.sql. Clubs that are
+-- already in the list are skipped.
+insert into public.clubs (name, area, province) values
+  ('Ashton AC', 'Ashton', 'Western Cape'),
+  ('Boland Correctional Services AC', 'Malmesbury', 'Western Cape'),
+  ('Boland SANDF AC', 'Saldanha Bay', 'Western Cape'),
+  ('Bonnievale AC', 'Bonnievale', 'Western Cape'),
+  ('Botriver AC', 'Botrivier', 'Western Cape'),
+  ('Bredasdorp AC', 'Bredasdorp', 'Western Cape'),
+  ('Caledon AC', 'Caledon', 'Western Cape'),
+  ('Capitec AC', 'Stellenbosch', 'Western Cape'),
+  ('Ceres AC', 'Ceres', 'Western Cape'),
+  ('Citrusdal AC', 'Citrusdal', 'Western Cape'),
+  ('Club Mykonos Multisport', 'Langebaan', 'Western Cape'),
+  ('Dwarsrivier Valley AC', 'Dwars River Valley', 'Western Cape'),
+  ('Elgin Grabouw AC', 'Grabouw', 'Western Cape'),
+  ('Franschhoek AC', 'Franschhoek', 'Western Cape'),
+  ('Hangklip AC', 'Kleinmond', 'Western Cape'),
+  ('Hopefield AC', 'Hopefield', 'Western Cape'),
+  ('Klawer AC', 'Klawer', 'Western Cape'),
+  ('Langebaan AC', 'Langebaan', 'Western Cape'),
+  ('Langebaan Strandlopers AC', 'Langebaan', 'Western Cape'),
+  ('Maties Stellenbosch AC', 'Stellenbosch', 'Western Cape'),
+  ('Montagu AC', 'Montagu', 'Western Cape'),
+  ('Namaqua AC', null, 'Western Cape'),
+  ('Paarl AC', 'Paarl', 'Western Cape'),
+  ('Robertson AC', 'Robertson', 'Western Cape'),
+  ('Salkoriane AC', 'Vredenburg', 'Western Cape'),
+  ('St Helena Bay AC', 'St Helena Bay', 'Western Cape'),
+  ('Stellenbosch AC', 'Stellenbosch', 'Western Cape'),
+  ('Swartland AC', 'Moorreesburg', 'Western Cape'),
+  ('The Athlete Academy AC', 'Stellenbosch', 'Western Cape'),
+  ('Whalers AC', 'Hermanus', 'Western Cape'),
+  ('Wellington AC', 'Wellington', 'Western Cape'),
+  ('Worcester AC', 'Worcester', 'Western Cape')
+on conflict do nothing;
+
+-- Athletics Gauteng North affiliated clubs (agn.co.za/affiliated-clubs, 2026
+-- list). Run after 015_clubs.sql. School clubs are left out, obvious spelling
+-- slips in the published list are corrected, and clubs already in the list
+-- are skipped. A few names are longer than the original 60 characters, so the
+-- limit is raised to 100.
+alter table public.clubs drop constraint if exists clubs_name_check;
+alter table public.clubs
+  add constraint clubs_name_check check (char_length(btrim(name)) between 2 and 100);
+
+insert into public.clubs (name, area, province) values
+  ('32GI Athletics Club', 'Centurion', 'Gauteng'),
+  ('ABSA Athletics Club', 'Centurion', 'Gauteng'),
+  ('AcedSports Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Addicted to Lifestyle Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Adventist Athletics Club', 'Centurion', 'Gauteng'),
+  ('Aerobics 4 All Athletics Club', 'Centurion', 'Gauteng'),
+  ('Affies Marathon Club', 'Lynnwood', 'Gauteng'),
+  ('Agape Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Akademia Athletics Club', 'Centurion', 'Gauteng'),
+  ('Akasia Athletics Club', 'Pretoria North', 'Gauteng'),
+  ('Akasia Veteren Athletics Club', 'Pretoria North', 'Gauteng'),
+  ('Alpha Centurion Athletics Club', 'Centurion', 'Gauteng'),
+  ('Anchor Dynamic Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Apex Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Arcadia Athletics Club', 'Arcadia', 'Gauteng'),
+  ('ARC Athletics Club', 'Irene', 'Gauteng'),
+  ('Armscor Athletics Club', 'Erasmuskloof', 'Gauteng'),
+  ('AS Eagles Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Atteridgeville Athletics Club', 'Atteridgeville', 'Gauteng'),
+  ('Athletics Eesterust Athletics Club', 'Eersterust', 'Gauteng'),
+  ('Azania Athletics Club', 'Centurion', 'Gauteng'),
+  ('BackTrack Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Bella''s Athletics Club', 'Centurion', 'Gauteng'),
+  ('BestMed Athletics Club', 'Centurion', 'Gauteng'),
+  ('Beefcor Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Black Diamond Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Blizz Athletics Club', 'Pretoria', 'Gauteng'),
+  ('BMW Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Bophelong Athletics Club', 'Mamelodi', 'Gauteng'),
+  ('Boxer Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Bronkhorspriut Athletics Club', 'Bronkhorspriut', 'Gauteng'),
+  ('Bud-Mbele Athletics Club', 'Atteridgeville', 'Gauteng'),
+  ('Capital City Active Athletics Club', 'Atteridgeville', 'Gauteng'),
+  ('Chimurenga Athletics Club', 'Moreleta Park', 'Gauteng'),
+  ('City Changers Marathon Club', 'Pretoria', 'Gauteng'),
+  ('City of Tshwane Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Coach M. MultiSports Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Courageous Athletics Club', 'Eesterust', 'Gauteng'),
+  ('CSIR Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Cullinan Athletics Club', 'Cullinan', 'Gauteng'),
+  ('Cultivation Athletics Club', 'Mamelodi', 'Gauteng'),
+  ('Danville Development Athletics Club', 'Danville', 'Gauteng'),
+  ('DCS Tshwane Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('DCS Baviaanspoort Athletics Club', 'Baviaanspoort', 'Gauteng'),
+  ('DCS Zonderwater Athletics Club', 'Zonderwater', 'Gauteng'),
+  ('Department of Agriculture Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Department of Electricity and Energy Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Department of Employment & Labour Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Department of Forestry, Fisheries and the Environment Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Department of Higher Education & Training Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Department of Land Reform & Rural development Athletic Club (DLRRD)', 'Pretoria', 'Gauteng'),
+  ('Department of Mineral and Petroleum Resources Athletics Club (DMPR AC)', 'Pretoria', 'Gauteng'),
+  ('Department of Public Works Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Department of Sport, Arts & Culture Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Department of Tourism Athletics Club', 'Sunnyside', 'Gauteng'),
+  ('Die Vuilhonde Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Dirco Athletics Club', 'Lynnwood', 'Gauteng'),
+  ('DSI Sumbandila Athletics Club', 'Pretoria', 'Gauteng'),
+  ('DWS Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('DMRE Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('EasyEquities Born 2 Run Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Education Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Emeris Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Eskom Athletics Club', 'Centurion', 'Gauteng'),
+  ('Eta Campus Pretoria Athletics Club', 'Centurion', 'Gauteng'),
+  ('Exxaro Athletics Club', 'Centurion', 'Gauteng'),
+  ('Eyethu Athletics Club', 'Centurion', 'Gauteng'),
+  ('Faranani Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Fear is A Choice Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Fit Pretoria Athletics Club', 'Pretoria North', 'Gauteng'),
+  ('Ford Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Fortis Pretoria North Athletics Club', 'Pretoria North', 'Gauteng'),
+  ('FSCA Running Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Flying School Athletics Club', 'Soshanguve', 'Gauteng'),
+  ('Gabedi Athletics Club', 'Monument Park', 'Gauteng'),
+  ('Gauteng North Masters Athletics Club', 'Queenswood', 'Gauteng'),
+  ('Gaza Athletics Club', 'Pretoria', 'Gauteng'),
+  ('GPAA Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Grace Mission Athletics Club', 'Atteridgeville', 'Gauteng'),
+  ('Green Mile Athletics Club', 'Centurion', 'Gauteng'),
+  ('Hatfield Run Athletics Club', 'Hatfield', 'Gauteng'),
+  ('Hauz of Gravity Athletics Club', 'Mamelodi', 'Gauteng'),
+  ('Human Sciences Research Council Athletics Club', 'Irene', 'Gauteng'),
+  ('Harlequins Harriers Athletics Club', 'Groenkloof', 'Gauteng'),
+  ('His House Church Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Hollywood Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Independent Police Investigative Directorate Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Irene Athletics Club', 'Irene', 'Gauteng'),
+  ('Jacaranda Athletics Club', 'Erasmuskloof', 'Gauteng'),
+  ('JHJ Sport Akademic Athletics Club', 'Pretoria', 'Gauteng'),
+  ('JS Athletics Club', 'Mountain View', 'Gauteng'),
+  ('Just Running Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Justice Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Kingdom Embassy Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Kosmosdal Athletics Club', 'Centurion', 'Gauteng'),
+  ('Lefakong Athletics Club', 'Mamelodi', 'Gauteng'),
+  ('LetsGo Running Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Legends Road Runners Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Lenyeke Athletics Club', 'Soshanguve', 'Gauteng'),
+  ('Love Running Athletics Club', 'Waterkloof Glen', 'Gauteng'),
+  ('Lucas Athletics Club', 'Eesterust', 'Gauteng'),
+  ('Madoko Athletics Club', 'Soshanguve', 'Gauteng'),
+  ('Magnolia Road Runners Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Mamelodi Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Mamelodi Striders Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Masai Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Maselelo Athletics Club', 'Mabapane', 'Gauteng'),
+  ('Mercedes-Benz Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Mercia Harriers Athletics Club', 'Pretoria', 'Gauteng'),
+  ('MM Active Athletics Club', 'Pretoria West', 'Gauteng'),
+  ('Modiba Olivenhoutbotch Athletics Club', 'Olivenhoutbotch', 'Gauteng'),
+  ('Montana Athletics Club', 'Montana', 'Gauteng'),
+  ('Moloto Athletics Club', null, 'Gauteng'),
+  ('Moretele Athletics Club', 'Mamelodi', 'Gauteng'),
+  ('Move 4 Life Athletics Club', 'Pretoria', 'Gauteng'),
+  ('National Department of Health Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Nedbank Athletics Club', 'Rosslynn', 'Gauteng'),
+  ('Nexa Athletics Club', 'Montana', 'Gauteng'),
+  ('Newton Track Athletics Club', 'Centurion', 'Gauteng'),
+  ('Nissan Athletics Club', 'Rosslynn', 'Gauteng'),
+  ('Nkwe Estate Athletics Club', 'Ga-Rankuwa', 'Gauteng'),
+  ('Oos- Moot Athletics Club', 'Montana', 'Gauteng'),
+  ('Oppie Bol Athletics Club', 'Pretoria West', 'Gauteng'),
+  ('Overkruin Athletics Club', 'Overkruin', 'Gauteng'),
+  ('Oryx Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Pele Primary Athletics Club', 'Soshanguve', 'Gauteng'),
+  ('Pheli Road Runners', 'Atteridgeville', 'Gauteng'),
+  ('Phobians Athletics Club', 'Lynnwood', 'Gauteng'),
+  ('Phora Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Pierre Van Ryneveld Athletics Club', 'Centurion', 'Gauteng'),
+  ('Pretoria Bobbies Athletics Club', 'Wonderboom', 'Gauteng'),
+  ('Pretoria Marathon Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Pretoria Military Marathon Athletics Club', 'Thaba Tshwane', 'Gauteng'),
+  ('Pretoria Military Walking Athletics Club', 'Thaba Tshwane', 'Gauteng'),
+  ('Resbank Athletics Club', 'Pretoria Central', 'Gauteng'),
+  ('Road Accident Fund Athletics Club', 'Centurion', 'Gauteng'),
+  ('RunAvation Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Run Walk For life Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('RunXtreme Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('SAB Rosslyn Athletics Club', 'Rosslynn', 'Gauteng'),
+  ('Sanbi Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Sanral Athletics Club', 'Pretoria', 'Gauteng'),
+  ('SAPS Head Office Athletics Club', 'Pretoria', 'Gauteng'),
+  ('SAPS Maupa Naga Athletics Club', 'Pretoria', 'Gauteng'),
+  ('SAPS Tshwane Academy Athletics Club', 'Pretoria West', 'Gauteng'),
+  ('SABS Striders Athletics Club', 'Brooklyn', 'Gauteng'),
+  ('Sefako Makgatho Health Sciences University A.C (SMU)', 'Ga-Rankuwa', 'Gauteng'),
+  ('Shaka Running Athletics Club', 'Soshanguve', 'Gauteng'),
+  ('Shosholoza Athletics Club', 'Atteridgeville', 'Gauteng'),
+  ('Sita Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Siyahlala Atteridgeville Athletics Club', 'Atteridgeville', 'Gauteng'),
+  ('Skuilkrans Athletics Club', 'Irene', 'Gauteng'),
+  ('Slyza Athletics Club', 'Soshanguve', 'Gauteng'),
+  ('Solidarity Athletics Club', 'Montana', 'Gauteng'),
+  ('Soshanguve Greate Run Athletics Club', 'Soshanguve', 'Gauteng'),
+  ('Sterk Span Athletics Club', 'Centurion', 'Gauteng'),
+  ('Super Eagles Athletics Club', 'Centurion', 'Gauteng'),
+  ('Sutherland Athletics Club', 'Centurion', 'Gauteng'),
+  ('Sweet Sole''s Athletics Club', 'Pretoria North', 'Gauteng'),
+  ('Team Vitality Athletics Club', 'Pretoria West', 'Gauteng'),
+  ('Telkom Runners Athletics Club', 'Centurion', 'Gauteng'),
+  ('Tidimalo Modiga', 'Ga-Rankuwa', 'Gauteng'),
+  ('Tinghwazi Athletics Club', 'Pretoria', 'Gauteng'),
+  ('The Disciples Athletics Club', 'Pretoria', 'Gauteng'),
+  ('The Hills Athletics Club', 'Centurion', 'Gauteng'),
+  ('The Presidency Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Thorn Tree Athletics Club', 'Soshanguve', 'Gauteng'),
+  ('TMPD Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Top Runners Athletics Club', 'Mabapane', 'Gauteng'),
+  ('Trans-Caledon Tunnel Authority', 'Pretoria', 'Gauteng'),
+  ('Transnet Athletics Club', 'Silverton', 'Gauteng'),
+  ('Trivium Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Tuine Tekkies Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Tuks Athletics Club', 'Hatfield', 'Gauteng'),
+  ('TUT Athletics Club', 'Pretoria West', 'Gauteng'),
+  ('Uhuru Athletics Club', 'Rietvlei', 'Gauteng'),
+  ('Unisa Athletics Club', 'Brooklyn', 'Gauteng'),
+  ('Universal Safety Products Athletics Club', 'Pretoria', 'Gauteng'),
+  ('URun Athletics Club', 'Montana', 'Gauteng'),
+  ('Voortrekker Monument Draf & Stap Athletics Club', 'Thaba Tshwane', 'Gauteng'),
+  ('Van H. Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Vutha Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Wierie Athletics Club', 'Zwartkop', 'Gauteng'),
+  ('Willebeer Athletics Club', 'Pretoria', 'Gauteng'),
+  ('Wingate Road Runners Athletics Club', 'Centurion', 'Gauteng'),
+  ('Wonderpark Athletics Club', 'Wonderpark', 'Gauteng'),
+  ('Worth It Athletics Club', 'Centurion', 'Gauteng'),
+  ('XCEL Athletics Club', 'Centurion', 'Gauteng'),
+  ('Zutari Athletics Club', 'Pretoria East', 'Gauteng'),
+  ('Zwakala Athletics Club', 'Mamelodi', 'Gauteng')
+on conflict do nothing;
+
+-- "Let people from my club find me": an opt-in so club-mates can see each
+-- other's name and send a friend request. Races, photos and the runner card
+-- stay private until the request is accepted. Run after 015_clubs.sql.
+alter table public.profiles
+  add column if not exists club_visible boolean not null default false;
+
+-- Changing club switches visibility off again, so a runner is never shown to
+-- a new club without choosing it.
+create or replace function public.reset_club_visible()
+returns trigger language plpgsql as $$
+begin
+  if new.club_id is distinct from old.club_id then
+    new.club_visible := false;
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists profiles_reset_club_visible on public.profiles;
+create trigger profiles_reset_club_visible
+  before update on public.profiles
+  for each row execute function public.reset_club_visible();
+
+-- Club-mates who have also opted in. Empty unless the caller has opted in too.
+-- friend_status: none, pending_out (you asked), pending_in (they asked), friends.
+create or replace function public.my_club_mates()
+returns table (user_id uuid, display_name text, friend_status text)
+language sql stable security definer set search_path = public as $$
+  with me as (
+    select club_id from public.profiles
+    where id = auth.uid() and club_visible and club_id is not null
+  )
+  select p.id,
+         coalesce(p.display_name, 'Runner'),
+         case
+           when f.id is null then 'none'
+           when f.status = 'accepted' then 'friends'
+           when f.addressee = auth.uid() then 'pending_in'
+           else 'pending_out'
+         end
+  from public.profiles p
+  join me on p.club_id = me.club_id
+  left join public.friendships f
+    on least(f.requester, f.addressee) = least(auth.uid(), p.id)
+   and greatest(f.requester, f.addressee) = greatest(auth.uid(), p.id)
+  where p.club_visible and p.id <> auth.uid()
+  order by lower(coalesce(p.display_name, 'Runner'))
+  limit 200
+$$;
+
+-- Sends a friend request to a club-mate (or accepts one they sent you).
+-- Both runners must be in the same club and have opted in.
+create or replace function public.add_club_mate(p_user uuid)
+returns text
+language plpgsql security definer set search_path = public as $$
+declare
+  v_name text;
+  v_existing public.friendships;
+begin
+  if auth.uid() is null then
+    raise exception 'not signed in';
+  end if;
+  if p_user = auth.uid() then
+    raise exception 'That is you';
+  end if;
+  select coalesce(o.display_name, 'Runner') into v_name
+  from public.profiles me
+  join public.profiles o on o.club_id = me.club_id
+  where me.id = auth.uid() and me.club_visible and me.club_id is not null
+    and o.id = p_user and o.club_visible;
+  if v_name is null then
+    raise exception 'That runner is not visible in your club';
+  end if;
+  select * into v_existing from public.friendships
+  where (requester = auth.uid() and addressee = p_user)
+     or (requester = p_user and addressee = auth.uid());
+  if found then
+    if v_existing.status = 'pending' and v_existing.addressee = auth.uid() then
+      update public.friendships set status = 'accepted' where id = v_existing.id;
+    end if;
+  else
+    insert into public.friendships (requester, addressee) values (auth.uid(), p_user);
+  end if;
+  return v_name;
+end $$;
+
+revoke all on function public.my_club_mates() from public, anon;
+revoke all on function public.add_club_mate(uuid) from public, anon;
+grant execute on function public.my_club_mates() to authenticated;
+grant execute on function public.add_club_mate(uuid) to authenticated;

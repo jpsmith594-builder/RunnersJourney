@@ -126,6 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
           store: _friends,
           myName: _profile.profile.displayName ?? '',
           myRaces: () => _store.races,
+          myClub: _profile.profile.club,
         ),
       ),
     );

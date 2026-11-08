@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../clubs/club_mates.dart';
+import '../clubs/club_mates_section.dart';
 import 'friend_card_screen.dart';
 import 'friend_entry.dart';
 import 'friends_store.dart';
@@ -14,11 +16,15 @@ class FriendsScreen extends StatefulWidget {
   final FriendsStore store;
   final String myName;
   final List<Race> Function() myRaces;
+
+  /// The club name on the runner's profile, if any.
+  final String? myClub;
   const FriendsScreen(
       {super.key,
       required this.store,
       required this.myName,
-      required this.myRaces});
+      required this.myRaces,
+      this.myClub});
 
   @override
   State<FriendsScreen> createState() => _FriendsScreenState();
@@ -26,17 +32,20 @@ class FriendsScreen extends StatefulWidget {
 
 class _FriendsScreenState extends State<FriendsScreen> {
   final _codeField = TextEditingController();
+  final _clubMates = ClubMatesStore();
   bool _busy = false;
 
   @override
   void initState() {
     super.initState();
     widget.store.load();
+    _clubMates.load();
   }
 
   @override
   void dispose() {
     _codeField.dispose();
+    _clubMates.dispose();
     super.dispose();
   }
 
@@ -48,8 +57,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
 
   String get _inviteText {
     final who = widget.myName.trim().isEmpty ? 'I' : widget.myName.trim();
-    return '$who invited you to Runner\'s Journey, the app that pins your '
-        'races on a map of South Africa. Install it, then add me as a friend '
+    return '$who invited you to My Running Journal, the app that pins your '
+        'races on a map of the world. Install it, then add me as a friend '
         'with my friend code: ${widget.store.code}';
   }
 
@@ -208,6 +217,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
                           : const Text('Add'),
                     ),
                   ],
+                ),
+                ClubMatesSection(
+                  store: _clubMates,
+                  clubName: widget.myClub,
+                  onFriendsChanged: s.load,
                 ),
                 if (s.requests.isNotEmpty) ...[
                   const SizedBox(height: 20),
