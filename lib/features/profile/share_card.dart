@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../core/brand.dart';
 import '../../core/errors.dart';
 
 /// Puts a runner card on a tall 9:16 "story" stage with the app name. This is
@@ -44,12 +45,13 @@ class CardStage extends StatelessWidget {
               const SizedBox(height: 18),
               child,
               const SizedBox(height: 18),
-              const Text('EVERY RACE. EVERY TOWN.',
+              const Text(brandMessage,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white38,
-                    fontSize: 10,
-                    letterSpacing: 3,
-                    fontWeight: FontWeight.w700,
+                    color: Colors.white70,
+                    fontSize: 11.5,
+                    height: 1.4,
+                    fontStyle: FontStyle.italic,
                   )),
             ],
           ),

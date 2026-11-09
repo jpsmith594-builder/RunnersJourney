@@ -24,7 +24,7 @@ void main() {
   testWidgets('the Settings switch turns the trail on', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
     expect(find.text('Show journey trail'), findsOneWidget);
-    await tester.tap(find.byType(SwitchListTile));
+    await tester.tap(find.widgetWithText(SwitchListTile, 'Show journey trail'));
     await tester.pump();
     expect(settings.showTrail, isTrue);
   });

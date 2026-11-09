@@ -265,7 +265,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
               fit: StackFit.expand,
               children: [
                 ColorFiltered(
-                  colorFilter: seasonFilter(season),
+                  colorFilter: seasonFilter(season, vivid: settings.vividMap),
                   child: FlutterMap(
                     mapController: _map,
                     options: MapOptions(

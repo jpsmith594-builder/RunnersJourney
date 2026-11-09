@@ -12,6 +12,9 @@ class AppSettings extends ChangeNotifier {
   /// The faint dotted trail joining races on the map. Off unless chosen.
   bool showTrail = false;
 
+  /// Richer, deeper map colours. On unless switched off.
+  bool vividMap = true;
+
   bool get miles => unit == DistanceUnit.mi;
 
   /// Reads the saved choices. Without storage the defaults are used.
@@ -20,6 +23,7 @@ class AppSettings extends ChangeNotifier {
       final p = await SharedPreferences.getInstance();
       unit = p.getString('unit') == 'mi' ? DistanceUnit.mi : DistanceUnit.km;
       showTrail = p.getBool('trail') ?? false;
+      vividMap = p.getBool('vivid') ?? true;
       themeMode = switch (p.getString('theme')) {
         'light' => ThemeMode.light,
         'dark' => ThemeMode.dark,
@@ -46,6 +50,15 @@ class AppSettings extends ChangeNotifier {
     try {
       final p = await SharedPreferences.getInstance();
       await p.setBool('trail', on);
+    } catch (_) {}
+  }
+
+  Future<void> setVividMap(bool on) async {
+    vividMap = on;
+    notifyListeners();
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setBool('vivid', on);
     } catch (_) {}
   }
 

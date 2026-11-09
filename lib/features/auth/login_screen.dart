@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/brand.dart';
 import '../../core/errors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -201,6 +202,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 24),
+                  const Text(brandMessage,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          height: 1.45,
+                          fontStyle: FontStyle.italic)),
                 ],
               ),
             ),

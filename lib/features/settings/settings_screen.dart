@@ -51,6 +51,13 @@ class SettingsScreen extends StatelessWidget {
             const _Heading('Map'),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
+              title: const Text('Vivid map colours'),
+              subtitle: const Text('Deeper, richer colours on the map.'),
+              value: settings.vividMap,
+              onChanged: settings.setVividMap,
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
               title: const Text('Show journey trail'),
               subtitle: const Text(
                   'A faint dotted trail drifts between your races on the map.'),
