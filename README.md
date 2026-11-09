@@ -239,7 +239,7 @@ arriving once more people register. Use your own sender:
 privacy policy link and a web page that explains account deletion.
 
 1. Replace `CONTACT_EMAIL` with your support address in all three pages
-   (`sed -i 's/CONTACT_EMAIL/you@yourdomain.com/g' docs/*.html`).
+   (already done: `support@myrunningjournal.co.za`).
 2. GitHub > the repo > Settings > Pages > Source: **Deploy from a branch**, branch `main`, folder `/docs`.
 3. The pages go live at `https://<your-github-name>.github.io/<repo-name>/privacy.html` and `.../delete-account.html`.
    Use those two links in the Play Console (Data safety and the app content section).
@@ -269,8 +269,7 @@ When prices, limits or the rating formula change, update the answers there too.
 ## Planned domain
 
 The app will use **myrunningjournal.co.za** for its email and public pages. Still to do when it is bought: add the
-mailboxes (for example `no-reply@` and `support@`), switch the Supabase SMTP settings to them, replace
-`CONTACT_EMAIL` in `docs/*.html` with the support address, and update the privacy policy if the company name changes.
+mailboxes, switch the Supabase SMTP settings to `accounts@myrunningjournal.co.za` (sender for confirm and reset emails).
 
 ## Clubs
 
@@ -324,3 +323,10 @@ Set `SENTRY_DSN` in env.json (create a free Flutter project at sentry.io and cop
 ## Celebration moments
 
 After a race is saved the app compares the races before and after (`detectCelebrations` in `lib/features/celebrate/celebrations.dart`) and shows a confetti popup for each of: a new personal best (5 km, 10 km, half, marathon; needs an earlier time to beat), a newly earned badge, a higher runner-card category, and a yearly goal reached by that save. Several at once are shown one by one.
+
+## Website and mailboxes
+
+`website/` is the whole public site for `https://myrunningjournal.co.za`: upload its contents to the web root of the hosting account (`index.html`, `privacy.html`, `delete-account.html`, `404.html`, `robots.txt`, `sitemap.xml`, `og-image.png`, `favicon.ico`, `apple-touch-icon.png`). `docs/` keeps older copies of the three legal pages; `website/` is the one to edit and upload.
+
+Mailboxes (project of Sustainovate): `support@` is shown publicly (help, data and deletion requests), `accounts@` is the sender for sign-in emails (Supabase SMTP), `info@` is for clubs, race organisers and general enquiries.
+In env.json: `PRIVACY_URL=https://myrunningjournal.co.za/privacy.html`, `SUPPORT_EMAIL=support@myrunningjournal.co.za`.

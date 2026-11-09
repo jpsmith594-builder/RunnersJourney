@@ -25,7 +25,7 @@ Either way the one-off registration fee is about US$25 [CONFIRM]. If you plan to
 6. **Version**: in `pubspec.yaml` `version: 1.0.0+1`. The number after `+` must go up for every upload.
 7. **Build**: `flutter build appbundle --release --dart-define-from-file=env.json` gives `build/app/outputs/bundle/release/app-release.aab`.
 8. Make sure `env.json` has the Supabase keys, `REVENUECAT_KEY`, `SENTRY_DSN`, `PRIVACY_URL` and `SUPPORT_EMAIL` before building.
-9. Publish `docs/` (GitHub Pages or your domain) so the privacy policy and delete-account pages are live, with `CONTACT_EMAIL` replaced.
+9. Publish `website/` (upload it to myrunningjournal.co.za) so the privacy policy and delete-account pages are live. They are in `website/` and use `support@myrunningjournal.co.za`.
 
 ## 2. Create the app in the Play Console
 
