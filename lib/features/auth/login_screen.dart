@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/errors.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } on AuthException catch (e) {
       _toast(e.message);
     } catch (e) {
-      _toast('Something went wrong: $e');
+      _toast(failMessage('Something went wrong', e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -71,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } on AuthException catch (e) {
       _toast(e.message);
     } catch (e) {
-      _toast('Something went wrong: $e');
+      _toast(failMessage('Something went wrong', e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }

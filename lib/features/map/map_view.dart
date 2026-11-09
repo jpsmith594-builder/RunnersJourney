@@ -15,6 +15,7 @@ import 'places.dart';
 import 'race_card.dart';
 import 'season_filter.dart';
 import '../../core/units.dart';
+import '../../core/load_error.dart';
 
 const Color _oceanColor = Color(0xFFAAD3DF);
 const LatLng _saCentre = LatLng(-29.0, 24.5);
@@ -193,13 +194,10 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
           return const Center(child: CircularProgressIndicator());
         }
         if (store.error != null && store.races.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Text('Could not load your journey.\n${store.error}',
-                  textAlign: TextAlign.center),
-            ),
-          );
+          return LoadError(
+              title: 'Could not load your journey',
+              message: store.error,
+              onRetry: store.load);
         }
 
         final season = seasonFor(DateTime.now(), southern: store.southern);

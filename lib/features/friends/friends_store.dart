@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'friend_entry.dart';
 import 'friends_repository.dart';
+import '../../core/errors.dart';
 
 /// The runner's friend code, friends and pending requests.
 class FriendsStore extends ChangeNotifier {
@@ -24,7 +25,7 @@ class FriendsStore extends ChangeNotifier {
       entries = await _repo.list();
       error = null;
     } catch (e) {
-      error = e.toString();
+      error = describeError(e);
     }
     loading = false;
     notifyListeners();

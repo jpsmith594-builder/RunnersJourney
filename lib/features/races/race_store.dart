@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../photos/photo_repository.dart';
 import 'race.dart';
 import 'race_repository.dart';
+import '../../core/errors.dart';
 
 /// Holds the runner's races so the Journey and Races tabs share one list.
 class RaceStore extends ChangeNotifier {
@@ -27,7 +28,7 @@ class RaceStore extends ChangeNotifier {
       error = null;
       _loaded = true;
     } catch (e) {
-      error = e.toString();
+      error = describeError(e);
     }
     loading = false;
     notifyListeners();

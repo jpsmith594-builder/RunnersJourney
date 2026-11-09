@@ -312,3 +312,7 @@ Menu > Settings: distances in kilometres or miles, appearance (phone / light / d
 ## Welcome tour
 
 Five swipeable screens (map, adding a race, album and year review, runner card, goals and friends) shown once after a runner first opens the app (`tour_seen` in shared_preferences). Replay it from Settings. Text lives in `tourPages` in `lib/features/help/welcome_tour.dart`.
+
+## Offline handling
+
+Network failures show one friendly message ("No internet connection...") instead of raw errors (`lib/core/errors.dart`: `isOffline`, `describeError`, `failMessage`). The races list and map show a Try again button when they cannot load (`lib/core/load_error.dart`). Saving needs a connection; nothing is queued offline yet.

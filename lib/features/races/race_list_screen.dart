@@ -6,6 +6,7 @@ import '../../core/tiles.dart';
 import 'race.dart';
 import 'race_store.dart';
 import '../../core/units.dart';
+import '../../core/load_error.dart';
 
 /// The "Races" tab: a plain chronological list (newest first).
 class RaceListView extends StatelessWidget {
@@ -39,13 +40,10 @@ class RaceListView extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
     if (store.error != null && store.races.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text('Could not load races.\n${store.error}',
-              textAlign: TextAlign.center),
-        ),
-      );
+      return LoadError(
+          title: 'Could not load your races',
+          message: store.error,
+          onRetry: store.load);
     }
     final races = store.races.reversed.toList();
     if (races.isEmpty) {

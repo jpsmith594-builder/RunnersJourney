@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/errors.dart';
 
 /// A runner in the same club who has chosen to be found.
 class ClubMate {
@@ -65,7 +66,7 @@ class ClubMatesStore extends ChangeNotifier {
       }
       error = null;
     } catch (e) {
-      error = e.toString();
+      error = describeError(e);
     }
     loading = false;
     notifyListeners();

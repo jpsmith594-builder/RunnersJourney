@@ -12,6 +12,7 @@ import '../subscription/limits.dart';
 import 'race.dart';
 import 'race_repository.dart';
 import '../../core/units.dart';
+import '../../core/errors.dart';
 
 class RaceFormScreen extends StatefulWidget {
   final Race? race;
@@ -201,7 +202,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
         setState(() => _saving = false);
         if (!handleLimitError(context, e)) {
           ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text('Could not save: $e')));
+              .showSnackBar(SnackBar(content: Text(failMessage('Could not save', e))));
         }
       }
     }

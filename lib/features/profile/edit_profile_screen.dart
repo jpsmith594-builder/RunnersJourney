@@ -13,6 +13,7 @@ import 'account_repository.dart';
 import '../map/places.dart';
 import 'profile.dart';
 import 'profile_store.dart';
+import '../../core/errors.dart';
 
 /// Create or edit the runner profile: name, age, gender, club, home town,
 /// favourite distance and profile photo.
@@ -78,7 +79,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _preview = bytes;
       });
     } catch (e) {
-      _toast('Could not open the photo: $e');
+      _toast(failMessage('Could not open the photo', e));
     }
   }
 
@@ -148,7 +149,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Could not delete the account: $e')));
+            SnackBar(content: Text(failMessage('Could not delete the account', e))));
       }
     }
   }

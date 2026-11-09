@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'profile.dart';
 import 'profile_repository.dart';
+import '../../core/errors.dart';
 
 /// Holds the runner's profile and a signed URL for their photo.
 class ProfileStore extends ChangeNotifier {
@@ -19,7 +20,7 @@ class ProfileStore extends ChangeNotifier {
       avatarUrl = await _repo.signedAvatarUrl(profile.avatarPath);
       error = null;
     } catch (e) {
-      error = e.toString();
+      error = describeError(e);
     }
     loading = false;
     notifyListeners();

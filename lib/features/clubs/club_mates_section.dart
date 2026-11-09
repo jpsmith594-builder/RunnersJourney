@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/tiles.dart';
 import 'club_mates.dart';
+import '../../core/errors.dart';
 
 /// "People from my club" on the Friends screen, with the opt-in switch.
 class ClubMatesSection extends StatelessWidget {
@@ -47,7 +48,7 @@ class ClubMatesSection extends StatelessWidget {
                 : 'Request sent to $name.');
       }
     } catch (e) {
-      if (context.mounted) _toast(context, 'Could not add: $e');
+      if (context.mounted) _toast(context, failMessage('Could not add', e));
     }
   }
 

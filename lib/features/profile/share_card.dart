@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
+import '../../core/errors.dart';
 
 /// Puts a runner card on a tall 9:16 "story" stage with the app name. This is
 /// what gets turned into the picture that is shared, so it fits Instagram and
@@ -88,6 +89,6 @@ Future<void> shareRunnerCard(
   } catch (e) {
     messenger
       ..clearSnackBars()
-      ..showSnackBar(SnackBar(content: Text('Could not share the card: $e')));
+      ..showSnackBar(SnackBar(content: Text(failMessage('Could not share the card', e))));
   }
 }

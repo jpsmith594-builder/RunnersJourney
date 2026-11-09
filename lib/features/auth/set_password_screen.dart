@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../core/errors.dart';
 
 /// Null when the new password is fine, otherwise what is wrong with it.
 String? passwordProblem(String password, String again) {
@@ -47,7 +48,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
     } on AuthException catch (e) {
       _toast(e.message);
     } catch (e) {
-      _toast('Something went wrong: $e');
+      _toast(failMessage('Something went wrong', e));
     }
     if (mounted) setState(() => _busy = false);
   }

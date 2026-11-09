@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'bucket_item.dart';
 import 'bucket_repository.dart';
+import '../../core/errors.dart';
 
 /// Holds the runner's bucket list so the list screen and the map share it.
 class BucketStore extends ChangeNotifier {
@@ -18,7 +19,7 @@ class BucketStore extends ChangeNotifier {
       items = await _repo.list();
       error = null;
     } catch (e) {
-      error = e.toString();
+      error = describeError(e);
     }
     loading = false;
     notifyListeners();
@@ -44,7 +45,7 @@ class BucketStore extends ChangeNotifier {
     try {
       await _repo.update(item.copyWith(done: done));
     } catch (e) {
-      error = e.toString();
+      error = describeError(e);
       await load();
     }
   }

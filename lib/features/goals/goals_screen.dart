@@ -8,6 +8,7 @@ import '../races/race_store.dart';
 import 'goal_store.dart';
 import 'goals.dart';
 import '../../core/units.dart';
+import '../../core/errors.dart';
 
 /// Yearly goals with progress rings, plus how close the next card category
 /// and the next badge are.
@@ -71,7 +72,7 @@ class GoalsScreen extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Could not save goals: $e')));
+            SnackBar(content: Text(failMessage('Could not save goals', e))));
       }
     }
   }
@@ -178,7 +179,7 @@ class GoalsScreen extends StatelessWidget {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         SnackBar(
                                             content: Text(
-                                                'Could not save goals: $e')));
+                                                failMessage('Could not save goals', e))));
                                   }
                                 }
                               },

@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../subscription/limits.dart';
 import 'photo_repository.dart';
 import 'race_photo.dart';
+import '../../core/errors.dart';
 
 /// Full-screen, swipeable, zoomable photo viewer.
 class PhotoViewerScreen extends StatelessWidget {
@@ -138,7 +139,7 @@ class _PhotosEditorState extends State<PhotosEditor> {
       final list = await _repo.list(id, refresh: true);
       if (mounted) setState(() => _saved = list);
     } catch (e) {
-      _toast('Could not load photos: $e');
+      _toast(failMessage('Could not load photos', e));
     }
     if (mounted) setState(() => _loading = false);
   }
@@ -210,7 +211,7 @@ class _PhotosEditorState extends State<PhotosEditor> {
       }
     } catch (e) {
       if (!mounted || !handleLimitError(context, e)) {
-        _toast('Could not add photo: $e');
+        _toast(failMessage('Could not add photo', e));
       }
     }
     if (mounted) setState(() => _busy = false);
@@ -236,7 +237,7 @@ class _PhotosEditorState extends State<PhotosEditor> {
       await _repo.delete(p);
       await _reload();
     } catch (e) {
-      _toast('Could not delete photo: $e');
+      _toast(failMessage('Could not delete photo', e));
     }
   }
 
