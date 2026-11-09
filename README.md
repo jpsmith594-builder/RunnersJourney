@@ -316,3 +316,7 @@ Five swipeable screens (map, adding a race, album and year review, runner card, 
 ## Offline handling
 
 Network failures show one friendly message ("No internet connection...") instead of raw errors (`lib/core/errors.dart`: `isOffline`, `describeError`, `failMessage`). The races list and map show a Try again button when they cannot load (`lib/core/load_error.dart`). Saving needs a connection; nothing is queued offline yet.
+
+## Crash reporting (Sentry)
+
+Set `SENTRY_DSN` in env.json (create a free Flutter project at sentry.io and copy its DSN). Without it nothing is reported. Reports carry only the error, app version and phone model: no personal details, screenshots or typed text, and offline errors are ignored. The privacy policy lists Sentry; in the Play Console Data safety form declare "Crash logs" and "Diagnostics" as collected, not linked to identity.

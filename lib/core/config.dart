@@ -12,6 +12,9 @@ class AppConfig {
   /// RevenueCat public SDK key (Android) for subscriptions. Optional while testing.
   static const revenueCatKey = String.fromEnvironment('REVENUECAT_KEY');
 
+  /// Sentry crash reporting. Without a DSN nothing is reported.
+  static const sentryDsn = String.fromEnvironment('SENTRY_DSN');
+
   /// Optional links shown in Settings (hidden while empty).
   static const privacyUrl = String.fromEnvironment('PRIVACY_URL');
   static const supportEmail = String.fromEnvironment('SUPPORT_EMAIL');
