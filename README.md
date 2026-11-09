@@ -337,3 +337,7 @@ Settings > **Show journey trail** (off by default) draws a faint dotted trail on
 ## Brand message and vivid map
 
 `lib/core/brand.dart` holds the central brand message ("Your running life is more than the kilometres you've covered..."). It appears in italics at the bottom of the shareable runner card and under the login card. Settings > Map > **Vivid map colours** (on by default) deepens the map's saturation and contrast on top of the seasonal tint; the choice is saved on the phone.
+
+## Journey album look
+
+The album cover is a deep plum leather look with a gold double border, diamond corners, a faint map grid with a dotted route, a pin emblem, your name, the years covered and your race and distance totals. Every inner page has a fine double-line border with corner dots, and the closing page carries the brand message.

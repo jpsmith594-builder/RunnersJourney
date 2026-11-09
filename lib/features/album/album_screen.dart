@@ -10,6 +10,7 @@ import '../profile/share_card.dart';
 import '../races/race.dart';
 import '../races/race_list_screen.dart' show medalColor;
 import '../races/race_store.dart';
+import '../../core/brand.dart';
 import '../../core/units.dart';
 
 const _paper = Color(0xFFF6EFE2);
@@ -269,17 +270,24 @@ class _Flip extends StatelessWidget {
   }
 }
 
-/// Cream paper with a shaded spine on the left.
+/// Cream paper with a shaded spine and a fine double-line border.
 class _Paper extends StatelessWidget {
   final Widget child;
   final Color color;
-  const _Paper({required this.child, this.color = _paper});
+  final Gradient? gradient;
+  final bool border;
+  const _Paper(
+      {required this.child,
+      this.color = _paper,
+      this.gradient,
+      this.border = true});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: color,
+        gradient: gradient,
         borderRadius: const BorderRadius.horizontal(
             left: Radius.circular(4), right: Radius.circular(14)),
         boxShadow: const [
@@ -289,9 +297,19 @@ class _Paper extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
+          if (border)
+            const Positioned(
+              left: 36,
+              top: 10,
+              right: 10,
+              bottom: 10,
+              child: CustomPaint(painter: _PageBorderPainter(_ink)),
+            ),
           Positioned.fill(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 22, 20, 22),
+              padding: border
+                  ? const EdgeInsets.fromLTRB(50, 28, 26, 28)
+                  : const EdgeInsets.fromLTRB(30, 22, 20, 22),
               child: child,
             ),
           ),
@@ -315,6 +333,35 @@ class _Paper extends StatelessWidget {
   }
 }
 
+/// A fine outer line, a thinner inner line and a dot in each corner.
+class _PageBorderPainter extends CustomPainter {
+  final Color color;
+  const _PageBorderPainter(this.color);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final outer = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.3
+      ..color = color.withValues(alpha: 0.5);
+    final inner = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.7
+      ..color = color.withValues(alpha: 0.32);
+    final dot = Paint()..color = color.withValues(alpha: 0.5);
+    final r = Offset.zero & size;
+    canvas.drawRRect(RRect.fromRectAndRadius(r, const Radius.circular(3)), outer);
+    final i = r.deflate(5);
+    canvas.drawRect(i, inner);
+    for (final c in [i.topLeft, i.topRight, i.bottomLeft, i.bottomRight]) {
+      canvas.drawCircle(c, 2.2, dot);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_PageBorderPainter old) => old.color != color;
+}
+
 const _serif = 'serif';
 
 class _CoverPage extends StatelessWidget {
@@ -330,52 +377,188 @@ class _CoverPage extends StatelessWidget {
         : years.length == 1
             ? '${years.first}'
             : '${years.first} – ${years.last}';
+    final km = races.fold<double>(0, (a, r) => a + (r.distanceKm ?? 0));
     const gold = Color(0xFFE2B857);
+    const goldLight = Color(0xFFFFE9A8);
+    Widget stat(String big, String small) => Column(children: [
+          Text(big,
+              style: const TextStyle(
+                  color: goldLight,
+                  fontFamily: _serif,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700)),
+          Text(small.toUpperCase(),
+              style: const TextStyle(
+                  color: Colors.white60, fontSize: 10, letterSpacing: 2)),
+        ]);
     return _Paper(
+      border: false,
       color: const Color(0xFF4A2A3A),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: gold, width: 2),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.directions_run, color: gold, size: 54),
-            const SizedBox(height: 22),
-            const Text('MY RUNNING\nJOURNAL',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: gold,
-                    fontFamily: _serif,
-                    fontSize: 30,
-                    height: 1.15,
-                    letterSpacing: 4,
-                    fontWeight: FontWeight.w700)),
-            const SizedBox(height: 18),
-            Container(height: 2, width: 90, color: gold),
-            const SizedBox(height: 18),
-            if (name.trim().isNotEmpty)
-              Text(name,
-                  textAlign: TextAlign.center,
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [Color(0xFF6B2F55), Color(0xFF3E2038), Color(0xFF241326)],
+      ),
+      child: CustomPaint(
+        painter: _CoverPainter(gold),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(22, 26, 22, 22),
+          child: LayoutBuilder(
+            builder: (context, box) => FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(
+                width: box.maxWidth,
+                child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 92,
+                height: 92,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: gold, width: 2),
+                  gradient: const RadialGradient(
+                      colors: [Color(0x55E2B857), Color(0x00E2B857)]),
+                ),
+                child: const Icon(Icons.place, color: goldLight, size: 52),
+              ),
+              const SizedBox(height: 24),
+              ShaderMask(
+                shaderCallback: (r) => const LinearGradient(
+                  colors: [Color(0xFFFFF1C2), Color(0xFFE2B857), Color(0xFFB98A2E)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ).createShader(r),
+                child: const Text('MY RUNNING\nJOURNAL',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: _serif,
+                        fontSize: 32,
+                        height: 1.15,
+                        letterSpacing: 4,
+                        fontWeight: FontWeight.w800)),
+              ),
+              const SizedBox(height: 16),
+              Row(mainAxisSize: MainAxisSize.min, children: [
+                Container(height: 1.5, width: 34, color: gold),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(Icons.diamond, color: gold, size: 12),
+                ),
+                Container(height: 1.5, width: 34, color: gold),
+              ]),
+              const SizedBox(height: 16),
+              if (name.trim().isNotEmpty)
+                Text(name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontFamily: _serif,
+                        fontStyle: FontStyle.italic,
+                        fontSize: 24)),
+              const SizedBox(height: 8),
+              Text(span,
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontFamily: _serif,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 22)),
-            const SizedBox(height: 8),
-            Text(span,
-                style: const TextStyle(
-                    color: Colors.white70, letterSpacing: 3, fontSize: 14)),
-            const SizedBox(height: 30),
-            const Text('Swipe to turn the page',
-                style: TextStyle(color: Colors.white54, fontSize: 12)),
-          ],
+                      color: Colors.white70, letterSpacing: 3, fontSize: 14)),
+              if (races.isNotEmpty) ...[
+                const SizedBox(height: 26),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    stat('${races.length}', 'races'),
+                    stat(formatNumber(toUnit(km)), unitWord()),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 28),
+              const Text('Swipe to turn the page',
+                  style: TextStyle(color: Colors.white54, fontSize: 12)),
+            ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
+}
+
+/// The cover's artwork: a faint map grid, a dotted route with pins, and a
+/// gold double border with diamonds in the corners.
+class _CoverPainter extends CustomPainter {
+  final Color gold;
+  const _CoverPainter(this.gold);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final grid = Paint()
+      ..color = gold.withValues(alpha: 0.07)
+      ..strokeWidth = 1;
+    for (double x = 30; x < size.width; x += 38) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), grid);
+    }
+    for (double y = 30; y < size.height; y += 38) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), grid);
+    }
+
+    final pts = [
+      Offset(size.width * 0.14, size.height * 0.88),
+      Offset(size.width * 0.38, size.height * 0.80),
+      Offset(size.width * 0.58, size.height * 0.87),
+      Offset(size.width * 0.86, size.height * 0.76),
+    ];
+    final route = Path()..moveTo(pts[0].dx, pts[0].dy);
+    route.cubicTo(pts[0].dx + 30, pts[0].dy - 36, pts[1].dx - 30, pts[1].dy + 30,
+        pts[1].dx, pts[1].dy);
+    route.cubicTo(pts[1].dx + 30, pts[1].dy - 26, pts[2].dx - 26, pts[2].dy - 30,
+        pts[2].dx, pts[2].dy);
+    route.cubicTo(pts[2].dx + 30, pts[2].dy + 26, pts[3].dx - 30, pts[3].dy + 30,
+        pts[3].dx, pts[3].dy);
+    final dots = Paint()..color = gold.withValues(alpha: 0.4);
+    for (final m in route.computeMetrics()) {
+      for (double d = 0; d < m.length; d += 9) {
+        canvas.drawCircle(m.getTangentForOffset(d)!.position, 1.6, dots);
+      }
+    }
+    final pin = Paint()..color = gold.withValues(alpha: 0.65);
+    for (final p in pts) {
+      canvas.drawCircle(p, 4.5, pin);
+      canvas.drawCircle(
+          p,
+          8,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..color = gold.withValues(alpha: 0.35));
+    }
+
+    final outer = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..color = gold;
+    final inner = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.9
+      ..color = gold.withValues(alpha: 0.75);
+    final r = (Offset.zero & size).deflate(8);
+    canvas.drawRRect(RRect.fromRectAndRadius(r, const Radius.circular(6)), outer);
+    final i = r.deflate(6);
+    canvas.drawRect(i, inner);
+    final fill = Paint()..color = gold;
+    for (final c in [i.topLeft, i.topRight, i.bottomLeft, i.bottomRight]) {
+      final d = Path()
+        ..moveTo(c.dx, c.dy - 6)
+        ..lineTo(c.dx + 6, c.dy)
+        ..lineTo(c.dx, c.dy + 6)
+        ..lineTo(c.dx - 6, c.dy)
+        ..close();
+      canvas.drawPath(d, fill);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CoverPainter old) => old.gold != gold;
 }
 
 class _EndPage extends StatelessWidget {
@@ -403,8 +586,13 @@ class _EndPage extends StatelessWidget {
           ]),
         );
     return _Paper(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: LayoutBuilder(
+        builder: (context, box) => FittedBox(
+          fit: BoxFit.scaleDown,
+          child: SizedBox(
+            width: box.maxWidth,
+            child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           const Text('The story so far',
               style: TextStyle(
@@ -416,13 +604,25 @@ class _EndPage extends StatelessWidget {
           line('${races.length}', 'races'),
           line(formatNumber(toUnit(km)), unitWord()),
           line('$medals', 'medals'),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
+          Text(brandMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: _ink.withValues(alpha: 0.75),
+                  fontFamily: _serif,
+                  fontStyle: FontStyle.italic,
+                  fontSize: 12.5,
+                  height: 1.4)),
+          const SizedBox(height: 12),
           Text('To be continued…',
               style: TextStyle(
                   color: _ink.withValues(alpha: 0.6),
                   fontFamily: _serif,
                   fontStyle: FontStyle.italic)),
         ],
+            ),
+          ),
+        ),
       ),
     );
   }
