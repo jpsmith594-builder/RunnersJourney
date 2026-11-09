@@ -268,8 +268,7 @@ When prices, limits or the rating formula change, update the answers there too.
 
 ## Planned domain
 
-The app will use **myrunningjournal.co.za** for its email and public pages. Still to do when it is bought: add the
-mailboxes, switch the Supabase SMTP settings to `accounts@myrunningjournal.co.za` (sender for confirm and reset emails).
+The app uses **myrunningjournal.co.za** for its email and public pages. Supabase sends the confirm and reset emails from `support@myrunningjournal.co.za` (so replies reach a monitored inbox). `accounts@` can be used instead later.
 
 ## Clubs
 
@@ -328,5 +327,5 @@ After a race is saved the app compares the races before and after (`detectCelebr
 
 `website/` is the whole public site for `https://myrunningjournal.co.za`: upload its contents to the web root of the hosting account (`index.html`, `privacy.html`, `delete-account.html`, `404.html`, `robots.txt`, `sitemap.xml`, `og-image.png`, `favicon.ico`, `apple-touch-icon.png`). `docs/` keeps older copies of the three legal pages; `website/` is the one to edit and upload.
 
-Mailboxes (project of Sustainovate): `support@` is shown publicly (help, data and deletion requests), `accounts@` is the sender for sign-in emails (Supabase SMTP), `info@` is for clubs, race organisers and general enquiries.
+Mailboxes (project of Sustainovate): `support@` is shown publicly (help, data and deletion requests), `accounts@` is reserved (not in use yet; sign-in emails currently go out from `support@`), `info@` is for clubs, race organisers and general enquiries.
 In env.json: `PRIVACY_URL=https://myrunningjournal.co.za/privacy.html`, `SUPPORT_EMAIL=support@myrunningjournal.co.za`.
