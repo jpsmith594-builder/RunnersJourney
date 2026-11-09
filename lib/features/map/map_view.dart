@@ -10,6 +10,8 @@ import '../bucket/bucket_item.dart';
 import '../bucket/bucket_store.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
+import '../../core/settings.dart';
+import 'journey_trail.dart';
 import 'map_geometry.dart';
 import 'places.dart';
 import 'race_card.dart';
@@ -150,6 +152,32 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     _flyTo(_map.camera.screenOffsetToLatLng(c.center), target);
   }
 
+  /// Races that have a known town, oldest first.
+  List<(Race, Place)> _chronological(List<Race> races) {
+    final out = <(Race, Place)>[];
+    for (final r in races) {
+      final p = placeByName(r.locationName);
+      if (p != null) out.add((r, p));
+    }
+    out.sort((a, b) => a.$1.date.compareTo(b.$1.date));
+    return out;
+  }
+
+  /// The trail legs in screen space: one per pair of consecutive races in
+  /// different towns, lighter when a planned race is involved.
+  List<TrailLeg> _trailLegs(List<Race> races) {
+    final stops = _chronological(races);
+    final legs = <TrailLeg>[];
+    for (var i = 1; i < stops.length; i++) {
+      final a = stops[i - 1], b = stops[i];
+      if (a.$2.key == b.$2.key) continue;
+      final planned = a.$1.status == RaceStatus.planned ||
+          b.$1.status == RaceStatus.planned;
+      legs.add(TrailLeg(_toScreen(a.$2), _toScreen(b.$2), planned: planned));
+    }
+    return legs;
+  }
+
   // ---- interaction --------------------------------------------------------
 
   void _select(String? id) {
@@ -187,7 +215,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: Listenable.merge([widget.store, widget.bucket]),
+      listenable: Listenable.merge([widget.store, widget.bucket, settings]),
       builder: (context, _) {
         final store = widget.store;
         if (store.loading) {
@@ -239,6 +267,12 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     ],
                   ),
                 ),
+                if (settings.showTrail && _ready)
+                  ValueListenableBuilder<int>(
+                    valueListenable: _tick,
+                    builder: (context, _, __) =>
+                        JourneyTrail(legs: _trailLegs(store.races)),
+                  ),
                 ValueListenableBuilder<int>(
                   valueListenable: _tick,
                   builder: (context, _, __) =>

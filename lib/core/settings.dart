@@ -9,6 +9,9 @@ class AppSettings extends ChangeNotifier {
   DistanceUnit unit = DistanceUnit.km;
   ThemeMode themeMode = ThemeMode.system;
 
+  /// The faint dotted trail joining races on the map. Off unless chosen.
+  bool showTrail = false;
+
   bool get miles => unit == DistanceUnit.mi;
 
   /// Reads the saved choices. Without storage the defaults are used.
@@ -16,6 +19,7 @@ class AppSettings extends ChangeNotifier {
     try {
       final p = await SharedPreferences.getInstance();
       unit = p.getString('unit') == 'mi' ? DistanceUnit.mi : DistanceUnit.km;
+      showTrail = p.getBool('trail') ?? false;
       themeMode = switch (p.getString('theme')) {
         'light' => ThemeMode.light,
         'dark' => ThemeMode.dark,
@@ -33,6 +37,15 @@ class AppSettings extends ChangeNotifier {
     try {
       final p = await SharedPreferences.getInstance();
       await p.setString('unit', u == DistanceUnit.mi ? 'mi' : 'km');
+    } catch (_) {}
+  }
+
+  Future<void> setShowTrail(bool on) async {
+    showTrail = on;
+    notifyListeners();
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setBool('trail', on);
     } catch (_) {}
   }
 

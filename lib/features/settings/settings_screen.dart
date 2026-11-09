@@ -48,6 +48,16 @@ class SettingsScreen extends StatelessWidget {
               onSelectionChanged: (s) => settings.setThemeMode(s.first),
             ),
             const SizedBox(height: 24),
+            const _Heading('Map'),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Show journey trail'),
+              subtitle: const Text(
+                  'A faint dotted trail drifts between your races on the map.'),
+              value: settings.showTrail,
+              onChanged: settings.setShowTrail,
+            ),
+            const SizedBox(height: 24),
             const _Heading('Help'),
             ListTile(
               contentPadding: EdgeInsets.zero,

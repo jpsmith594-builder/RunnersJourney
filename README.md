@@ -329,3 +329,7 @@ After a race is saved the app compares the races before and after (`detectCelebr
 
 Mailboxes (project of Sustainovate): `support@` is shown publicly (help, data and deletion requests), `accounts@` is reserved (not in use yet; sign-in emails currently go out from `support@`), `info@` is for clubs, race organisers and general enquiries.
 In env.json: `PRIVACY_URL=https://myrunningjournal.co.za/privacy.html`, `SUPPORT_EMAIL=support@myrunningjournal.co.za`.
+
+## Journey trail
+
+Settings > **Show journey trail** (off by default) draws a faint dotted trail on the map joining races in date order, with the dots drifting slowly from one race to the next (`lib/features/map/journey_trail.dart`). Legs that involve a planned race are lighter and sparser. With the phone's "reduce motion" setting on, the dots stay still. The choice is saved on the phone.
