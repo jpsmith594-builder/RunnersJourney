@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/errors.dart';
@@ -61,16 +63,21 @@ class _LoginScreenState extends State<LoginScreen> {
           password: password,
           // The confirmation link opens the app instead of a web page.
           emailRedirectTo: 'io.runnersjourney.app://login-callback/',
-        );
+        ).timeout(const Duration(seconds: 30));
         if (res.session == null && mounted) {
           _toast('Check your email to confirm your account, then sign in.');
           setState(() => _signUp = false);
         }
       } else {
-        await auth.signInWithPassword(email: email, password: password);
+        await auth
+            .signInWithPassword(email: email, password: password)
+            .timeout(const Duration(seconds: 30));
       }
     } on AuthException catch (e) {
       _toast(e.message);
+    } on TimeoutException {
+      _toast('That is taking too long. Check your signal and try again. '
+          'If you were registering, your confirmation email may still arrive.');
     } catch (e) {
       _toast(failMessage('Something went wrong', e));
     } finally {
