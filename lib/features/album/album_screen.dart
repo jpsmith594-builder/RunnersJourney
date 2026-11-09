@@ -400,7 +400,7 @@ class _CoverPage extends StatelessWidget {
         colors: [Color(0xFF6B2F55), Color(0xFF3E2038), Color(0xFF241326)],
       ),
       child: CustomPaint(
-        painter: _CoverPainter(gold),
+        painter: const _CoverPainter(gold),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(22, 26, 22, 22),
           child: LayoutBuilder(
