@@ -10,6 +10,8 @@ import '../calendar/show_sa_races.dart';
 import '../friends/friends_screen.dart';
 import '../goals/goal_store.dart';
 import '../../core/settings.dart';
+import '../celebrate/celebration_dialog.dart';
+import '../celebrate/celebrations.dart';
 import '../help/faq_screen.dart';
 import '../help/welcome_tour.dart';
 import '../settings/settings_screen.dart';
@@ -86,13 +88,24 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  /// Reloads the races after a save, then celebrates anything new: a personal
+  /// best, a badge, a higher category or a reached goal.
+  Future<void> _afterSave() async {
+    final before = List<Race>.of(_store.races);
+    await _store.load();
+    if (!mounted || _store.error != null) return;
+    final found = detectCelebrations(
+        before: before, after: _store.races, goals: _goals.byYear);
+    if (found.isNotEmpty) await showCelebrations(context, found);
+  }
+
   Future<void> _openForm([Race? race, Place? place]) async {
     final changed = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (_) => RaceFormScreen(race: race, initialPlace: place),
       ),
     );
-    if (changed == true) _store.load();
+    if (changed == true) _afterSave();
   }
 
   void _openCalendar() {
@@ -104,13 +117,13 @@ class _HomeScreenState extends State<HomeScreen> {
               MaterialPageRoute(
                   builder: (_) => RaceFormScreen(initialName: name)),
             );
-            if (changed == true) _store.load();
+            if (changed == true) _afterSave();
           },
           onPlan: (e) async {
             final changed = await Navigator.of(context).push<bool>(
               MaterialPageRoute(builder: (_) => RaceFormScreen(prefill: e)),
             );
-            if (changed == true) _store.load();
+            if (changed == true) _afterSave();
           },
           onBucket: (e) async {
             final messenger = ScaffoldMessenger.of(context);

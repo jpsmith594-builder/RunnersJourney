@@ -320,3 +320,7 @@ Network failures show one friendly message ("No internet connection...") instead
 ## Crash reporting (Sentry)
 
 Set `SENTRY_DSN` in env.json (create a free Flutter project at sentry.io and copy its DSN). Without it nothing is reported. Reports carry only the error, app version and phone model: no personal details, screenshots or typed text, and offline errors are ignored. The privacy policy lists Sentry; in the Play Console Data safety form declare "Crash logs" and "Diagnostics" as collected, not linked to identity.
+
+## Celebration moments
+
+After a race is saved the app compares the races before and after (`detectCelebrations` in `lib/features/celebrate/celebrations.dart`) and shows a confetti popup for each of: a new personal best (5 km, 10 km, half, marathon; needs an earlier time to beat), a newly earned badge, a higher runner-card category, and a yearly goal reached by that save. Several at once are shown one by one.
