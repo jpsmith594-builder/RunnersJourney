@@ -50,9 +50,9 @@ void main() {
   });
 
   test('crossing into a new category is celebrated', () {
-    // 13 races x 6 = 78 points; one more finished race pushes past 80.
-    final before = [for (var i = 0; i < 13; i++) run(1 + i % 12, 3, 1200)];
-    final after = [...before, run(12, 3, 1200)];
+    // 13 short races = 78 + 1 = 79 points; a 14th pushes past 80.
+    final before = [for (var i = 0; i < 13; i++) run(1 + i % 12, 1, 600)];
+    final after = [...before, run(12, 1, 600)];
     final c = detectCelebrations(
         before: before, after: after, goals: const {}, now: now);
     expect(c.any((e) => e.title == 'New category: Rookie'), isTrue);
