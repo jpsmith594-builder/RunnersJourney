@@ -332,4 +332,4 @@ In env.json: `PRIVACY_URL=https://myrunningjournal.co.za/privacy.html`, `SUPPORT
 
 ## Journey trail
 
-Settings > **Show journey trail** (off by default) draws a faint dotted trail on the map joining races in date order, with the dots drifting slowly from one race to the next (`lib/features/map/journey_trail.dart`). Legs that involve a planned race are lighter and sparser. With the phone's "reduce motion" setting on, the dots stay still. The choice is saved on the phone.
+Settings > **Show journey trail** (off by default) draws a faint dotted trail on the map joining races in date order, with the dots drifting slowly from one race to the next (`lib/features/map/journey_trail.dart`). Legs that involve a planned race are lighter and sparser. For busy histories: a year chip row (All years, 2026, 2025...) limits the trail, defaulting to the newest year with at least two races; pins show their number in date order while the trail is on; the first stop is flagged Start and the newest Latest; older legs fade; a route travelled repeatedly is drawn once, a little bolder. With the phone's "reduce motion" setting on, the dots stay still. The choice is saved on the phone.

@@ -7,7 +7,53 @@ class TrailLeg {
 
   /// True when either end is a planned race (drawn lighter and sparser).
   final bool planned;
-  const TrailLeg(this.from, this.to, {this.planned = false});
+
+  /// 0 (oldest) to 1 (newest): older legs fade so the direction is clear.
+  final double strength;
+
+  /// How many times this route was travelled; repeats are drawn once, a
+  /// little bolder.
+  final int repeats;
+  const TrailLeg(this.from, this.to,
+      {this.planned = false, this.strength = 1, this.repeats = 1});
+}
+
+/// A race on the trail, in date order.
+class TrailStop {
+  final String townKey;
+  final Offset screen;
+  final bool planned;
+  const TrailStop(this.townKey, this.screen, {this.planned = false});
+}
+
+/// Joins consecutive stops in different towns. A route travelled more than
+/// once (A to B, later B to A) becomes one leg that follows the newest trip,
+/// and legs fade with age.
+List<TrailLeg> buildLegs(List<TrailStop> stops) {
+  final byRoute = <String, (TrailStop, TrailStop, int, int)>{};
+  var order = 0;
+  for (var i = 1; i < stops.length; i++) {
+    final a = stops[i - 1], b = stops[i];
+    if (a.townKey == b.townKey) continue;
+    final key = a.townKey.compareTo(b.townKey) < 0
+        ? '${a.townKey}|${b.townKey}'
+        : '${b.townKey}|${a.townKey}';
+    final seen = byRoute[key]?.$4 ?? 0;
+    byRoute[key] = (a, b, order++, seen + 1);
+  }
+  final sorted = byRoute.values.toList()
+    ..sort((x, y) => x.$3.compareTo(y.$3));
+  final n = sorted.length;
+  return [
+    for (var i = 0; i < n; i++)
+      TrailLeg(
+        sorted[i].$1.screen,
+        sorted[i].$2.screen,
+        planned: sorted[i].$1.planned || sorted[i].$2.planned,
+        strength: n <= 1 ? 1.0 : 0.25 + 0.75 * i / (n - 1),
+        repeats: sorted[i].$4,
+      ),
+  ];
 }
 
 /// A faint dotted trail joining races in date order. The dots drift slowly
@@ -75,8 +121,10 @@ class TrailPainter extends CustomPainter {
       if (len < 6) continue;
       final dir = d / len;
       final gap = leg.planned ? plannedSpacing : spacing;
-      dot.color = _blue.withValues(alpha: leg.planned ? 0.26 : 0.4);
-      final r = leg.planned ? 1.3 : 1.6;
+      final fade = 0.35 + 0.65 * leg.strength;
+      dot.color =
+          _blue.withValues(alpha: (leg.planned ? 0.26 : 0.4) * fade);
+      final r = (leg.planned ? 1.3 : 1.6) + (leg.repeats > 1 ? 0.5 : 0);
       // Start part-way along, so the dots appear to travel from A to B.
       var t = phase.value * gap;
       // Never draw an unbounded number of dots for a huge off-screen leg.
@@ -92,5 +140,5 @@ class TrailPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(TrailPainter old) => !identical(old.legs, legs);
+  bool shouldRepaint(TrailPainter old) => true;
 }

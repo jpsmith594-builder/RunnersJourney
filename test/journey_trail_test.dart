@@ -58,4 +58,53 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(JourneyTrail), findsOneWidget);
   });
+
+  group('buildLegs', () {
+    TrailStop stop(String town, double x, {bool planned = false}) =>
+        TrailStop(town, Offset(x, 0), planned: planned);
+
+    test('joins consecutive races in different towns', () {
+      final legs = buildLegs([stop('a', 0), stop('b', 10), stop('c', 20)]);
+      expect(legs, hasLength(2));
+      expect(legs.first.from.dx, 0);
+      expect(legs.last.to.dx, 20);
+    });
+
+    test('same-town races are not joined', () {
+      final legs = buildLegs([stop('a', 0), stop('a', 0), stop('b', 10)]);
+      expect(legs, hasLength(1));
+    });
+
+    test('a repeated route is drawn once, bolder, following the newest trip',
+        () {
+      final legs = buildLegs([
+        stop('a', 0),
+        stop('b', 10),
+        stop('c', 20),
+        stop('b', 10),
+        stop('a', 0),
+      ]);
+      // a-b, b-c, c-b, b-a: three distinct routes (a-b twice, b-c twice).
+      expect(legs, hasLength(2));
+      final ab = legs.firstWhere((l) => l.repeats == 2 && l.to.dx == 0);
+      expect(ab.from.dx, 10); // newest trip went b to a
+    });
+
+    test('older legs fade and the newest is strongest', () {
+      final legs =
+          buildLegs([stop('a', 0), stop('b', 10), stop('c', 20), stop('d', 30)]);
+      expect(legs.first.strength, closeTo(0.25, 1e-9));
+      expect(legs.last.strength, 1.0);
+      expect(legs[1].strength, greaterThan(legs.first.strength));
+    });
+
+    test('a planned race makes its leg lighter', () {
+      final legs = buildLegs([stop('a', 0), stop('b', 10, planned: true)]);
+      expect(legs.single.planned, isTrue);
+    });
+
+    test('a single leg is fully strong', () {
+      expect(buildLegs([stop('a', 0), stop('b', 10)]).single.strength, 1.0);
+    });
+  });
 }

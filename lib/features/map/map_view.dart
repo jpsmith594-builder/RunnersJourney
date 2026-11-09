@@ -69,6 +69,11 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   Size _viewport = Size.zero;
   String? _selectedId;
 
+  /// Year shown on the trail (and used for pin numbers); 0 means all years.
+  static const int _allYears = 0;
+  int _trailYear = _allYears;
+  bool _yearChosen = false;
+
   @override
   void dispose() {
     _anim.dispose();
@@ -163,20 +168,35 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     return out;
   }
 
-  /// The trail legs in screen space: one per pair of consecutive races in
-  /// different towns, lighter when a planned race is involved.
-  List<TrailLeg> _trailLegs(List<Race> races) {
-    final stops = _chronological(races);
-    final legs = <TrailLeg>[];
-    for (var i = 1; i < stops.length; i++) {
-      final a = stops[i - 1], b = stops[i];
-      if (a.$2.key == b.$2.key) continue;
-      final planned = a.$1.status == RaceStatus.planned ||
-          b.$1.status == RaceStatus.planned;
-      legs.add(TrailLeg(_toScreen(a.$2), _toScreen(b.$2), planned: planned));
+  /// Years that have races, newest first.
+  List<int> _years(List<Race> races) =>
+      (races.map((r) => r.date.year).toSet().toList()
+        ..sort((a, b) => b.compareTo(a)));
+
+  /// The newest year with at least two races in known towns (so there is a
+  /// trail to follow), else all years.
+  int _defaultYear(List<Race> races) {
+    for (final y in _years(races)) {
+      if (_chronological(races).where((s) => s.$1.date.year == y).length >= 2) {
+        return y;
+      }
     }
-    return legs;
+    return _allYears;
   }
+
+  /// The races on the trail: in known towns, oldest first, for the chosen year.
+  List<(Race, Place)> _trailStops(List<Race> races) {
+    final stops = _chronological(races);
+    if (_trailYear == _allYears) return stops;
+    return [for (final s in stops) if (s.$1.date.year == _trailYear) s];
+  }
+
+  /// The trail legs in screen space.
+  List<TrailLeg> _trailLegs(List<Race> races) => buildLegs([
+        for (final s in _trailStops(races))
+          TrailStop(s.$2.key, _toScreen(s.$2),
+              planned: s.$1.status == RaceStatus.planned),
+      ]);
 
   // ---- interaction --------------------------------------------------------
 
@@ -228,6 +248,11 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
               onRetry: store.load);
         }
 
+        final years = _years(store.races);
+        if (!_yearChosen ||
+            (_trailYear != _allYears && !years.contains(_trailYear))) {
+          _trailYear = _defaultYear(store.races);
+        }
         final season = seasonFor(DateTime.now(), southern: store.southern);
         final grouped = groupRaces(store.races);
         final start = _startView(grouped.groups);
@@ -287,6 +312,31 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     visualDensity: VisualDensity.compact,
                   ),
                 ),
+                if (settings.showTrail && years.length > 1)
+                  Positioned(
+                    top: 48,
+                    left: 8,
+                    right: 8,
+                    height: 40,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        for (final y in [_allYears, ...years])
+                          Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: ChoiceChip(
+                              label: Text(y == _allYears ? 'All years' : '$y'),
+                              selected: _trailYear == y,
+                              visualDensity: VisualDensity.compact,
+                              onSelected: (_) => setState(() {
+                                _trailYear = y;
+                                _yearChosen = true;
+                              }),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 if (grouped.unplaced.isNotEmpty)
                   Positioned(
                     top: 8,
@@ -360,6 +410,17 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     final pinTips = <String, Offset>{};
     final children = <Widget>[];
 
+    // With the trail on, pins carry their number in date order, and the first
+    // and latest stops are labelled.
+    final trailStops =
+        settings.showTrail ? _trailStops(allRaces) : <(Race, Place)>[];
+    String idOf(Race r) => r.id ?? r.name;
+    final numbers = {
+      for (var i = 0; i < trailStops.length; i++) idOf(trailStops[i].$1): i + 1,
+    };
+    final startId = trailStops.length > 1 ? idOf(trailStops.first.$1) : null;
+    final latestId = trailStops.length > 1 ? idOf(trailStops.last.$1) : null;
+
     // Town dots for places without races, revealed by zoom level.
     // Bucket-list races, grouped by town (only those with a known town).
     final bucketByPlace = <String, List<BucketItem>>{};
@@ -386,6 +447,36 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     final pins = <Widget>[];
     Widget racePin(Race r, Offset tip) {
       pinTips[r.id ?? r.name] = tip;
+      final number = numbers[idOf(r)];
+      final label = idOf(r) == startId
+          ? 'Start'
+          : idOf(r) == latestId
+              ? 'Latest'
+              : null;
+      if (label != null) {
+        pins.add(Positioned(
+          left: tip.dx - 30,
+          top: tip.dy - _pinH - 20,
+          width: 60,
+          child: IgnorePointer(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: label == 'Start'
+                    ? const Color(0xFF1FA85A)
+                    : const Color(0xFFE90052),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(label,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800)),
+            ),
+          ),
+        ));
+      }
       return _Pin(
         tip: tip,
         width: _pinW,
@@ -397,11 +488,23 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
           _select(id == _selectedId ? null : id);
         },
         onHover: () => _select(r.id ?? r.name),
-        child: Icon(_statusIcon(r.status),
-            size: 18,
-            color: r.status == RaceStatus.planned
-                ? const Color(0xFF2E7D32)
-                : Colors.black87),
+        child: number != null
+            ? Text('$number',
+                style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: number > 99
+                        ? 10
+                        : number > 9
+                            ? 13
+                            : 15,
+                    color: r.status == RaceStatus.planned
+                        ? const Color(0xFF2E7D32)
+                        : Colors.black87))
+            : Icon(_statusIcon(r.status),
+                size: 18,
+                color: r.status == RaceStatus.planned
+                    ? const Color(0xFF2E7D32)
+                    : Colors.black87),
       );
     }
 
