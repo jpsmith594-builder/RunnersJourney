@@ -113,7 +113,8 @@ grant execute on function public.are_friends(uuid, uuid) to authenticated;
 grant execute on function public.can_see_race(uuid) to authenticated;
 grant execute on function public.my_friendships() to authenticated;
 grant execute on function public.is_subscriber(uuid) to authenticated;
--- gen_friend_code is used as a column default, which runs as the table owner.
+grant execute on function public.gen_friend_code() to authenticated;
+-- gen_friend_code is a column default, so signed-in runners must keep access to it.
 
 -- 4. A photo row may only point at the runner's own race (before this, a
 --    friend could attach rows to someone else's race and use up its photo limit).
