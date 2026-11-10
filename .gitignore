@@ -30,3 +30,12 @@ ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 .DS_Store
 tools/preview*.png
+
+# Signing keys and secrets - never commit
+key.properties
+android/key.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+.env.*

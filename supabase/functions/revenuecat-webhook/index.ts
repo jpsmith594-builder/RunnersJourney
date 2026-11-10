@@ -18,12 +18,28 @@ const ACTIVATE = new Set([
   "TEMPORARY_ENTITLEMENT_GRANT",
 ]);
 
+// Compares two secrets without stopping at the first different character.
+function sameSecret(a: string, b: string): boolean {
+  const x = new TextEncoder().encode(a);
+  const y = new TextEncoder().encode(b);
+  let diff = x.length ^ y.length;
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    diff |= (x[i] ?? 0) ^ (y[i] ?? 0);
+  }
+  return diff === 0;
+}
+
 Deno.serve(async (req) => {
   const secret = Deno.env.get("REVENUECAT_WEBHOOK_SECRET");
-  if (!secret || req.headers.get("Authorization") !== secret) {
+  if (!secret || !sameSecret(req.headers.get("Authorization") ?? "", secret)) {
     return new Response("unauthorized", { status: 401 });
   }
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch (_) {
+    return new Response("bad request", { status: 400 });
+  }
   const e = body.event;
   const userId: string | undefined = e?.app_user_id;
   // Anonymous RevenueCat ids are not our users.
@@ -60,6 +76,9 @@ Deno.serve(async (req) => {
   const { error } = await db.from("subscriptions").upsert(row, {
     onConflict: "user_id",
   });
-  if (error) return new Response(error.message, { status: 500 });
+  if (error) {
+    console.error("subscription upsert failed", error.message);
+    return new Response("error", { status: 500 });
+  }
   return new Response("ok", { status: 200 });
 });

@@ -91,7 +91,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
           ? 'No runner found with that code.'
           : msg.contains('own code')
               ? 'That is your own code.'
-              : 'Could not add friend: $msg');
+              : msg.contains('Too many tries')
+                  ? 'Too many tries. Please wait an hour and try again.'
+                  : 'Could not add friend: $msg');
     }
     if (mounted) setState(() => _busy = false);
   }

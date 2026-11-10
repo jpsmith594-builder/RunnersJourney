@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/errors.dart';
 
+/// Shortest password accepted when creating an account or setting a new one.
+/// Sign-in does not enforce it, so people who registered earlier can still
+/// get in.
+const minPasswordLength = 8;
+
 /// Null when the new password is fine, otherwise what is wrong with it.
 String? passwordProblem(String password, String again) {
-  if (password.length < 6) return 'Use at least 6 characters.';
+  if (password.length < minPasswordLength) {
+    return 'Use at least $minPasswordLength characters.';
+  }
   if (password != again) return 'The two passwords do not match.';
   return null;
 }

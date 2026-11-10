@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/brand.dart';
+import 'set_password_screen.dart' show minPasswordLength;
 import '../../core/errors.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -51,8 +52,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _submit() async {
     final email = _email.text.trim();
     final password = _password.text;
-    if (email.isEmpty || password.length < 6) {
-      _toast('Enter an email and a password of at least 6 characters.');
+    if (email.isEmpty || password.isEmpty) {
+      _toast('Enter your email and password.');
+      return;
+    }
+    if (_signUp && password.length < minPasswordLength) {
+      _toast('Choose a password of at least $minPasswordLength characters.');
       return;
     }
     setState(() => _busy = true);

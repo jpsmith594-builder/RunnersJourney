@@ -61,11 +61,20 @@ class PhotoRepository {
           fileOptions: FileOptions(
               contentType: isPng ? 'image/png' : 'image/jpeg', upsert: false),
         );
-    await _db.from('race_photos').insert({
-      'race_id': raceId,
-      'user_id': uid,
-      'storage_path': path,
-    });
+    try {
+      await _db.from('race_photos').insert({
+        'race_id': raceId,
+        'user_id': uid,
+        'storage_path': path,
+      });
+    } catch (_) {
+      // The record was refused (photo limit, offline...): do not leave the
+      // uploaded file behind with nothing pointing at it.
+      try {
+        await _db.storage.from(_bucket).remove([path]);
+      } catch (_) {}
+      rethrow;
+    }
     _cache.remove(raceId);
   }
 
