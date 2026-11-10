@@ -228,6 +228,20 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     return 'https://api.maptiler.com/maps/${AppConfig.mapStyle}/256/{z}/{x}/{y}.png?key=$key';
   }
 
+  /// Used for any tile the main map service refuses, for example when the
+  /// monthly allowance has run out, so the map never goes blank.
+  static const _fallbackUrl =
+      'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+
+  /// Tiles are kept on the phone for two weeks (up to 300 MB), so panning back
+  /// over places already seen does not ask the map service again.
+  static final _tileProvider = NetworkTileProvider(
+    cachingProvider: BuiltInMapCachingProvider.getOrCreateInstance(
+      maxCacheSize: 300 * 1000 * 1000,
+      overrideFreshAge: const Duration(days: 14),
+    ),
+  );
+
   String get _attribution => AppConfig.mapTilerKey.isEmpty
       ? '\u00A9 OpenStreetMap contributors \u00A9 CARTO'
       : '\u00A9 MapTiler \u00A9 OpenStreetMap contributors';
@@ -285,6 +299,10 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     children: [
                       TileLayer(
                         urlTemplate: _tileUrl,
+                        fallbackUrl: AppConfig.mapTilerKey.isEmpty
+                            ? null
+                            : _fallbackUrl,
+                        tileProvider: _tileProvider,
                         userAgentPackageName: 'com.runnersjourney.runners_journey',
                         retinaMode: RetinaMode.isHighDensity(context),
                         maxNativeZoom: 18,

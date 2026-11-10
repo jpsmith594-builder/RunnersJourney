@@ -341,3 +341,7 @@ Settings > **Show journey trail** (off by default) draws a faint dotted trail on
 ## Journey album look
 
 The album cover is a deep plum leather look with a gold double border, diamond corners, a faint map grid with a dotted route, a pin emblem, your name, the years covered and your race and distance totals. Every inner page has a fine double-line border with corner dots, and the closing page carries the brand message.
+
+## Map tiles: cache and fallback
+
+Map tiles are cached on the phone (flutter_map's built-in cache, kept for 14 days, up to 300 MB), so revisiting an area does not ask MapTiler again. If MapTiler refuses a tile (for example the monthly allowance is used up), the map falls back to the free CARTO Voyager tiles for that tile instead of going blank. Check MapTiler's and CARTO's terms before launch (see the pricing notes in the review): MapTiler's free plan is for non-commercial use, and CARTO's free basemaps are meant as a stop-gap only.
