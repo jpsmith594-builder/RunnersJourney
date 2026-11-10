@@ -225,7 +225,9 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     if (key.isEmpty) {
       return 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
     }
-    return 'https://api.maptiler.com/maps/${AppConfig.mapStyle}/256/{z}/{x}/{y}.png?key=$key';
+    // {r} becomes "@2x" on sharp screens, so MapTiler sends one 512 px tile
+    // per tile. Without it the map asks for four tiles to fill the same space.
+    return 'https://api.maptiler.com/maps/${AppConfig.mapStyle}/256/{z}/{x}/{y}{r}.png?key=$key';
   }
 
   /// Used for any tile the main map service refuses, for example when the
