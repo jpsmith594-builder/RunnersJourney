@@ -1,7 +1,7 @@
 name: runners_journey
 description: A runner's life diary - races pinned on an illustrated map of South Africa.
 publish_to: "none"
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -16,7 +16,7 @@ dependencies:
   latlong2: ^0.9.1
   url_launcher: ^6.3.0
   http: ^1.2.0
-  purchases_flutter: ^8.2.0
+  purchases_flutter: ^11.0.1
   share_plus: ^10.1.4
   shared_preferences: ^2.3.0
   sentry_flutter: ^9.30.1
