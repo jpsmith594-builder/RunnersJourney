@@ -22,6 +22,7 @@ Data types to declare as COLLECTED (none are "shared" with third parties; Supaba
 | Personal info > Name | display name | Optional | App functionality |
 | Personal info > User IDs | account ID, subscription ID | Required | App functionality, Account management |
 | Personal info > Other info | gender, year of birth (runner card) | Optional | App functionality |
+| Location > Approximate location | race towns with map coordinates and optional home town, chosen by the runner (never read from GPS) | Optional | App functionality |
 | Health and fitness > Fitness info | race distance, finish time, pace, position | Optional | App functionality |
 | Photos and videos > Photos | race photos, profile photo | Optional | App functionality |
 | App activity > Other user-generated content | race names, notes, bucket list, friend connections, reactions | Optional | App functionality |
@@ -29,10 +30,10 @@ Data types to declare as COLLECTED (none are "shared" with third parties; Supaba
 | App info and performance > Crash logs | Sentry error reports | Required (if SENTRY_DSN is set) | Analytics (app stability) |
 | App info and performance > Diagnostics | app version, phone model, Android version | Required (if SENTRY_DSN is set) | Analytics (app stability) |
 
-Data types to answer NOT collected: Location (approximate and precise), Contacts, Messages, Audio, Files and docs, Calendar, Web browsing, Device or other IDs, Race and ethnicity, Political or religious beliefs, Sexual orientation, Health info (medical), Financial info other than purchase history.
+Data types to answer NOT collected: Precise location, Contacts, Messages, Audio, Files and docs, Calendar, Web browsing, Device or other IDs, Race and ethnicity, Political or religious beliefs, Sexual orientation, Health info (medical), Financial info other than purchase history.
 
 Judgement calls to be aware of
-- Location: the app never reads the phone's GPS. Race towns are typed by the user. Map tiles and town search go to MapTiler, which sees the map area and search text, plus the IP address. Answering "not collected" is the usual reading, but if you want to be cautious, declare Approximate location as collected for App functionality, not shared.
+- Location: the app never reads the phone's GPS, but it stores the town of each race (with coordinates) and an optional home town. Town-level places are declared as Approximate location (collected, not shared, optional, app functionality) to be on the safe side. MapTiler also sees the map area, search text and IP address while the map loads.
 - Sentry is only active when SENTRY_DSN is supplied at build time. If you ship without it, remove the two crash/diagnostics rows.
 - Showing a runner's profile and races to accepted friends is user-directed, not sharing with third parties.
 
