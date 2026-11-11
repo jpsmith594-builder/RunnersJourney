@@ -3,6 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config.dart';
 import '../../core/settings.dart';
+import '../../core/version.dart';
 import '../help/faq_screen.dart';
 import '../help/welcome_tour.dart';
 
@@ -103,7 +104,7 @@ class SettingsScreen extends StatelessWidget {
               contentPadding: EdgeInsets.zero,
               leading: Icon(Icons.directions_run),
               title: Text('My Running Journal'),
-              subtitle: Text('Version 0.1.0'),
+              subtitle: Text('Version $appVersion'),
             ),
           ],
         ),

@@ -73,7 +73,7 @@ class AppTheme {
     final header = dark ? cardDark : const Color(0xFF1F1F27); // snack bars
     return base.copyWith(
       scaffoldBackgroundColor: canvas,
-      textTheme: t.copyWith(
+      textTheme: t.apply(bodyColor: fg, displayColor: fg).copyWith(
         headlineMedium: t.headlineMedium?.copyWith(fontWeight: FontWeight.w900),
         titleLarge: t.titleLarge?.copyWith(fontWeight: FontWeight.w800),
         titleMedium: t.titleMedium?.copyWith(fontWeight: FontWeight.w700),
@@ -164,8 +164,14 @@ class AppTheme {
           borderRadius: BorderRadius.circular(14),
         ),
       ),
-      listTileTheme: const ListTileThemeData(
-        titleTextStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+      // Colours are set explicitly: a title style without a colour left list
+      // text white on the light theme.
+      listTileTheme: ListTileThemeData(
+        textColor: fg,
+        iconColor: muted,
+        titleTextStyle: TextStyle(
+            fontWeight: FontWeight.w700, fontSize: 16, color: fg),
+        subtitleTextStyle: TextStyle(fontSize: 14, color: muted),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
           color: dark ? cyan : purpleMid),
