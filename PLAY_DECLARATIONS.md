@@ -26,6 +26,7 @@ Data types to declare as COLLECTED (none are "shared" with third parties; Supaba
 | Health and fitness > Fitness info | race distance, finish time, pace, position | Optional | App functionality |
 | Photos and videos > Photos | race photos, profile photo | Optional | App functionality |
 | App activity > Other user-generated content | race names, notes, bucket list, friend connections, reactions | Optional | App functionality |
+| App activity > In-app search history | town names typed into the race search (sent to MapTiler, not saved by the app) | Optional | App functionality |
 | Financial info > Purchase history | subscription status | Optional | App functionality |
 | App info and performance > Crash logs | Sentry error reports | Required (if SENTRY_DSN is set) | Analytics (app stability) |
 | App info and performance > Diagnostics | app version, phone model, Android version | Required (if SENTRY_DSN is set) | Analytics (app stability) |
