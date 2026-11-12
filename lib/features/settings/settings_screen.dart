@@ -6,6 +6,7 @@ import '../../core/settings.dart';
 import '../../core/version.dart';
 import '../help/faq_screen.dart';
 import '../help/welcome_tour.dart';
+import '../map/spike/map_spike_screen.dart';
 
 /// Distance units, appearance, help and about.
 class SettingsScreen extends StatelessWidget {
@@ -100,11 +101,14 @@ class SettingsScreen extends StatelessWidget {
               ),
             const SizedBox(height: 24),
             const _Heading('About'),
-            const ListTile(
+            ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: Icon(Icons.directions_run),
-              title: Text('My Running Journal'),
-              subtitle: Text('Version $appVersion'),
+              leading: const Icon(Icons.directions_run),
+              title: const Text('My Running Journal'),
+              subtitle: const Text('Version $appVersion'),
+              // Hidden developer entry: the OpenFreeMap spike (phase 0).
+              onLongPress: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const MapSpikeScreen())),
             ),
           ],
         ),

@@ -7,7 +7,12 @@ const double vividContrast = 1.1;
 const double vividDarken = 6; // out of 255
 
 /// A gentle colour grade applied to the map artwork so it follows the season.
-ColorFilter seasonFilter(Season s, {bool vivid = false}) {
+ColorFilter seasonFilter(Season s, {bool vivid = false}) =>
+    ColorFilter.matrix(seasonMatrix(s, vivid: vivid));
+
+/// The 4 x 5 colour matrix behind [seasonFilter] (offsets are on a 0 to 255
+/// scale). Also used to recolour vector map styles.
+List<double> seasonMatrix(Season s, {bool vivid = false}) {
   final double sat;
   final double r, g, b;
   switch (s) {
@@ -38,12 +43,12 @@ ColorFilter seasonFilter(Season s, {bool vivid = false}) {
   final off = vivid ? 255 * (0.5 - 0.5 * c) - vividDarken : 0.0;
   const lr = 0.2126, lg = 0.7152, lb = 0.0722;
   final inv = 1 - satV;
-  return ColorFilter.matrix(<double>[
+  return <double>[
     c * r * (lr * inv + satV), c * r * (lg * inv), c * r * (lb * inv), 0, off,
     c * g * (lr * inv), c * g * (lg * inv + satV), c * g * (lb * inv), 0, off,
     c * b * (lr * inv), c * b * (lg * inv), c * b * (lb * inv + satV), 0, off,
     0, 0, 0, 1, 0,
-  ]);
+  ];
 }
 
 String seasonLabel(Season s) {
