@@ -39,9 +39,14 @@ class CardStage extends StatelessWidget {
               stops: [0.0, 0.65, 1.0],
             ),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          child: LayoutBuilder(
+            builder: (context, box) => FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(
+                width: box.maxWidth,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
               const Text('MY RUNNING JOURNAL', style: brand),
               const SizedBox(height: 18),
               child,
@@ -56,7 +61,10 @@ class CardStage extends StatelessWidget {
                   )),
               const SizedBox(height: 16),
               const InviteFooter(),
-            ],
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
