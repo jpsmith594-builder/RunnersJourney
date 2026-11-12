@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +45,8 @@ const _races = <_Race>[
   _Race('10', 'New York Marathon', 'New York', 'Bucket list', 'bucket', 40.71, -74.00, ''),
 ];
 
+typedef AsyncCallbackLike = Future<void> Function(String name, Uint8List bytes);
+
 class _MapSpikeScreenState extends State<MapSpikeScreen> {
   static const _styles = ['liberty', 'bright', 'positron'];
 
@@ -61,6 +65,7 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
   int? _styleMs;
   int _extra = 0;
   _Race? _selected;
+  double _pinScale = 0.34;
   Offset? _cardAt;
   String _lastTap = '-';
   String _lastProjection = '-';
@@ -115,7 +120,7 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
       for (final r in _races)
         {
           'type': 'Feature',
-          'properties': {'id': r.id, 'n': r.number, 'kind': r.kind},
+          'properties': {'id': r.id, 'icon': _iconName(r.kind, r.number)},
           'geometry': {
             'type': 'Point',
             'coordinates': [r.lng, r.lat],
@@ -126,7 +131,7 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
     for (var i = 0; i < _extra; i++) {
       features.add({
         'type': 'Feature',
-        'properties': {'id': 'x$i', 'n': '${i + 1}', 'kind': 'done'},
+        'properties': {'id': 'x$i', 'icon': 'pin-done'},
         'geometry': {
           'type': 'Point',
           'coordinates': [
@@ -139,23 +144,108 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
     return {'type': 'FeatureCollection', 'features': features};
   }
 
+  /// One thin line per leg between finished races in date order; older legs
+  /// are fainter (property "a" drives the opacity), like today's trail.
   Map<String, dynamic> _trailGeoJson() {
-    final done = _races.where((r) => r.kind == 'done');
+    final done = _races.where((r) => r.kind == 'done').toList();
+    final legs = done.length - 1;
     return {
       'type': 'FeatureCollection',
       'features': [
-        {
-          'type': 'Feature',
-          'properties': <String, dynamic>{},
-          'geometry': {
-            'type': 'LineString',
-            'coordinates': [
-              for (final r in done) [r.lng, r.lat]
-            ],
+        for (var i = 0; i < legs; i++)
+          {
+            'type': 'Feature',
+            'properties': {'a': 0.2 + 0.3 * (legs <= 1 ? 1 : i / (legs - 1))},
+            'geometry': {
+              'type': 'LineString',
+              'coordinates': [
+                [done[i].lng, done[i].lat],
+                [done[i + 1].lng, done[i + 1].lat],
+              ],
+            },
           },
-        },
       ],
     };
+  }
+
+  // ----- teardrop pin pictures ---------------------------------------------
+
+  static String _iconName(String kind, String number) =>
+      kind == 'done' && number.isNotEmpty ? 'pin-done-$number' : 'pin-$kind';
+
+  final Map<String, Uint8List> _images = {};
+
+  /// Draws the same teardrop as the current map (36 x 44 points) at 3x.
+  Future<Uint8List> _pinPng(Color color, Color ink, String number) async {
+    const k = 3.0;
+    const w = 36.0 * k, h = 44.0 * k;
+    final rec = ui.PictureRecorder();
+    final canvas = Canvas(rec);
+    const radius = w * 0.42;
+    const cx = w / 2;
+    final path = Path()
+      ..addOval(Rect.fromCircle(center: const Offset(cx, radius), radius: radius))
+      ..moveTo(cx - radius * 0.6, radius + radius * 0.8)
+      ..lineTo(cx, h)
+      ..lineTo(cx + radius * 0.6, radius + radius * 0.8)
+      ..close();
+    canvas.drawPath(path, Paint()..color = color);
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2 * k
+        ..color = Colors.white,
+    );
+    if (number.isNotEmpty) {
+      final tp = TextPainter(
+        text: TextSpan(
+          text: number,
+          style: TextStyle(
+              color: ink,
+              fontSize: 14 * k,
+              fontWeight: FontWeight.w800),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(cx - tp.width / 2, radius - tp.height / 2));
+    }
+    final img = await rec.endRecording().toImage(w.round(), h.round());
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return data!.buffer.asUint8List();
+  }
+
+  Future<void> _addImages(AsyncCallbackLike add) async {
+    Future<void> one(String name, Color color, Color ink, String n) async {
+      final bytes = _images[name] ??= await _pinPng(color, ink, n);
+      await add(name, bytes);
+    }
+
+    const gold = Color(0xFFF5B400), ink = Color(0xFF37003C);
+    await one('pin-done', gold, ink, '');
+    await one('pin-planned', const Color(0xFF7B2FBE), Colors.white, '');
+    await one('pin-bucket', const Color(0xFF9E9E9E), Colors.white, '');
+    for (final r in _races) {
+      if (r.kind == 'done' && r.number.isNotEmpty) {
+        await one('pin-done-${r.number}', gold, ink, r.number);
+      }
+    }
+  }
+
+  Future<void> _addPinLayer() async {
+    final c = _c;
+    if (c == null) return;
+    await c.addSymbolLayer(
+      'pins',
+      'pins-icon',
+      SymbolLayerProperties(
+        iconImage: const ['get', 'icon'],
+        iconSize: _pinScale,
+        iconAnchor: 'bottom',
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
+      ),
+    );
   }
 
   Future<void> _addLayers() async {
@@ -167,49 +257,30 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
         'trail',
         'trail-line',
         const LineLayerProperties(
-          lineColor: '#F5B400',
-          lineWidth: 3.0,
+          lineColor: '#0A3FA8',
+          lineWidth: 1.6,
+          lineOpacity: ['get', 'a'],
           lineCap: 'round',
           lineJoin: 'round',
-          lineDasharray: [1, 2],
+          lineDasharray: [0.2, 3.0],
         ),
       );
+      await _addImages((name, bytes) => c.addImage(name, bytes));
       await c.addGeoJsonSource('pins', _pinsGeoJson());
-      await c.addCircleLayer(
-        'pins',
-        'pins-circle',
-        const CircleLayerProperties(
-          circleRadius: 13.0,
-          circleColor: [
-            'match',
-            ['get', 'kind'],
-            'done',
-            '#F5B400',
-            'planned',
-            '#7B2FBE',
-            'bucket',
-            '#9E9E9E',
-            '#F5B400',
-          ],
-          circleStrokeColor: '#FFFFFF',
-          circleStrokeWidth: 2.5,
-        ),
-      );
-      await c.addSymbolLayer(
-        'pins',
-        'pins-number',
-        const SymbolLayerProperties(
-          textField: ['get', 'n'],
-          textFont: ['Noto Sans Bold'],
-          textSize: 12.0,
-          textColor: '#37003C',
-          textAllowOverlap: true,
-          textIgnorePlacement: true,
-        ),
-      );
+      await _addPinLayer();
       if (mounted) setState(() => _styleMs = _watch.elapsedMilliseconds);
     } catch (e) {
       if (mounted) setState(() => _error = 'Could not add the pins: $e');
+    }
+  }
+
+  Future<void> _rescalePins(double v) async {
+    setState(() => _pinScale = v);
+    try {
+      await _c?.removeLayer('pins-icon');
+      await _addPinLayer();
+    } catch (e) {
+      if (mounted) setState(() => _error = 'Could not resize the pins: $e');
     }
   }
 
@@ -274,8 +345,7 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
     if (c == null) return;
     _lastTap = '${point.x.toStringAsFixed(0)},${point.y.toStringAsFixed(0)}';
     try {
-      final hits = await c.queryRenderedFeatures(
-          point, ['pins-circle', 'pins-number'], null);
+      final hits = await c.queryRenderedFeatures(point, ['pins-icon'], null);
       _Race? found;
       if (hits.isNotEmpty) {
         final props = (hits.first as Map)['properties'] as Map?;
@@ -327,7 +397,7 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
                   : const SizedBox.shrink(),
             ),
           if (_selected != null && _cardAt != null) _card(context),
-          Positioned(left: 8, bottom: 214, child: _credit()),
+          Positioned(left: 8, bottom: 268, child: _credit()),
           Positioned(left: 0, right: 0, bottom: 0, child: _controls()),
           if (_error != null)
             Positioned(
@@ -447,6 +517,21 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
                     onPressed: () => _setExtra(_extra == 0 ? 500 : 0),
                     child: Text(_extra == 0 ? '+500 pins' : 'Remove 500'),
                   ),
+                ],
+              ),
+              Row(
+                children: [
+                  const Text('Pin size'),
+                  Expanded(
+                    child: Slider(
+                      min: 0.15,
+                      max: 1.2,
+                      value: _pinScale,
+                      onChanged: (v) => setState(() => _pinScale = v),
+                      onChangeEnd: _rescalePins,
+                    ),
+                  ),
+                  Text(_pinScale.toStringAsFixed(2)),
                 ],
               ),
               Text(
