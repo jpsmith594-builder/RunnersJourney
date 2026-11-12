@@ -4,6 +4,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// How distances and paces are shown.
 enum DistanceUnit { km, mi }
 
+/// Which map draws the journey screen. MapTiler is the current map;
+/// OpenFreeMap is the one being tested (hidden switch on the spike screen).
+enum MapEngineKind { maptiler, openFreeMap }
+
 /// Settings kept on this phone: distance units and light/dark appearance.
 class AppSettings extends ChangeNotifier {
   DistanceUnit unit = DistanceUnit.km;
@@ -15,6 +19,9 @@ class AppSettings extends ChangeNotifier {
   /// Richer, deeper map colours. On unless switched off.
   bool vividMap = true;
 
+  /// The map engine under the journey screen. Defaults to MapTiler.
+  MapEngineKind mapEngine = MapEngineKind.maptiler;
+
   bool get miles => unit == DistanceUnit.mi;
 
   /// Reads the saved choices. Without storage the defaults are used.
@@ -24,6 +31,9 @@ class AppSettings extends ChangeNotifier {
       unit = p.getString('unit') == 'mi' ? DistanceUnit.mi : DistanceUnit.km;
       showTrail = p.getBool('trail') ?? false;
       vividMap = p.getBool('vivid') ?? true;
+      mapEngine = p.getString('map_engine') == 'openfreemap'
+          ? MapEngineKind.openFreeMap
+          : MapEngineKind.maptiler;
       themeMode = switch (p.getString('theme')) {
         'light' => ThemeMode.light,
         'dark' => ThemeMode.dark,
@@ -59,6 +69,16 @@ class AppSettings extends ChangeNotifier {
     try {
       final p = await SharedPreferences.getInstance();
       await p.setBool('vivid', on);
+    } catch (_) {}
+  }
+
+  Future<void> setMapEngine(MapEngineKind k) async {
+    mapEngine = k;
+    notifyListeners();
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setString(
+          'map_engine', k == MapEngineKind.openFreeMap ? 'openfreemap' : 'maptiler');
     } catch (_) {}
   }
 

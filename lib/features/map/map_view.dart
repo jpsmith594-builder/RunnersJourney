@@ -9,6 +9,7 @@ import '../bucket/bucket_store.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
 import '../../core/settings.dart';
+import 'engine/engines.dart';
 import 'engine/map_engine.dart';
 import 'journey_trail.dart';
 import 'map_geometry.dart';
@@ -57,7 +58,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   static const double _pinW = 36;
   static const double _pinH = 44;
 
-  final MapEngine _engine = FlutterMapEngine();
+  MapEngine _engine = createMapEngine(settings.mapEngine);
+  MapEngineKind _engineKind = settings.mapEngine;
   final ValueNotifier<int> _tick = ValueNotifier<int>(0);
   late final AnimationController _anim = AnimationController(
     vsync: this,
@@ -234,6 +236,15 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
               onRetry: store.load);
         }
 
+        if (_engineKind != settings.mapEngine) {
+          // The hidden map switch was used: start the other engine.
+          final old = _engine;
+          WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
+          _engineKind = settings.mapEngine;
+          _engine = createMapEngine(_engineKind);
+          _ready = false;
+        }
+
         final years = _years(store.races);
         if (!_yearChosen ||
             (_trailYear != _allYears && !years.contains(_trailYear))) {
@@ -250,7 +261,9 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                _engine.build(
+                KeyedSubtree(
+                  key: ValueKey(_engineKind),
+                  child: _engine.build(
                   context,
                   MapEngineParams(
                     center: start.$1,
@@ -262,6 +275,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     onReady: () => setState(() => _ready = true),
                     onCamera: () => _tick.value++,
                     onTap: () => _select(null),
+                  ),
                   ),
                 ),
                 if (settings.showTrail && _ready)

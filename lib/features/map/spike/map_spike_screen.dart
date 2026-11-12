@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:maplibre_gl/maplibre_gl.dart';
 
 import '../../../core/season.dart';
+import '../../../core/settings.dart';
 import '../season_filter.dart';
 import 'style_recolour.dart';
 
@@ -370,7 +371,24 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
   Widget build(BuildContext context) {
     final json = _styleJson;
     return Scaffold(
-      appBar: AppBar(title: const Text('Map spike (OpenFreeMap)')),
+      appBar: AppBar(
+        title: const Text('Map spike (OpenFreeMap)'),
+        actions: [
+          ListenableBuilder(
+            listenable: settings,
+            builder: (context, _) => Row(
+              children: [
+                const Text('Journey uses OpenFreeMap'),
+                Switch(
+                  value: settings.mapEngine == MapEngineKind.openFreeMap,
+                  onChanged: (v) => settings.setMapEngine(
+                      v ? MapEngineKind.openFreeMap : MapEngineKind.maptiler),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           if (json != null)
