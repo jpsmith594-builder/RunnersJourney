@@ -64,7 +64,7 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
   int? _styleMs;
   int _extra = 0;
   _Race? _selected;
-  double _pinScale = 0.34;
+  double _pinScale = 0.9;
   Offset? _cardAt;
   String _lastTap = '-';
   String _lastProjection = '-';
