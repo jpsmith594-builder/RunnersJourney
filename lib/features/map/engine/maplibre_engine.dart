@@ -222,14 +222,34 @@ class MapLibreEngine implements MapEngine {
         ],
       };
 
+  /// The town dot or name nearest a tap, with a generous touch area (the dots
+  /// are small).
+  NativeTown? _townNear(math.Point<double> tap) {
+    final d = _overlay;
+    if (d == null) return null;
+    final cam = camera;
+    NativeTown? best;
+    var bestDist = double.infinity;
+    for (final t in d.towns) {
+      final s = cam.toScreen(t.pos);
+      final dx = tap.x - s.dx, dy = tap.y - s.dy;
+      final dist = math.sqrt(dx * dx + dy * dy);
+      final onName = dx > 0 && dx < 14 + t.name.length * 6.5 && dy.abs() < 12;
+      if ((dist <= 24 || onName) && dist < bestDist) {
+        best = t;
+        bestDist = dist;
+      }
+    }
+    return best;
+  }
+
   Future<void> _onMapClick(math.Point<double> point) async {
     final c = _controller;
     final params = _params;
     if (params == null) return;
     try {
       if (c != null) {
-        final hits =
-            await c.queryRenderedFeatures(point, ['pins', 'towns-dot'], null);
+        final hits = await c.queryRenderedFeatures(point, ['pins'], null);
         if (hits.isNotEmpty) {
           final props = ((hits.first as Map)['properties'] as Map?) ?? {};
           final id = props['id']?.toString();
@@ -237,12 +257,12 @@ class MapLibreEngine implements MapEngine {
             params.onPinTap(id);
             return;
           }
-          final key = props['key']?.toString();
-          if (key != null) {
-            params.onTownTap(key);
-            return;
-          }
         }
+      }
+      final town = _townNear(point);
+      if (town != null) {
+        params.onTownTap(town.key);
+        return;
       }
     } catch (_) {}
     params.onTap();
