@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:runners_journey/core/brand.dart';
+import 'package:runners_journey/core/invite.dart';
 import 'package:runners_journey/core/season.dart';
 import 'package:runners_journey/core/settings.dart';
 import 'package:runners_journey/features/map/season_filter.dart';
@@ -32,5 +33,14 @@ void main() {
       home: CardStage(boundaryKey: GlobalKey(), child: const SizedBox()),
     ));
     expect(find.text(brandMessage), findsOneWidget);
+    expect(find.text(inviteLine), findsOneWidget);
+    expect(find.text(websiteHost), findsOneWidget);
+  });
+
+  test('shared text carries the invitation and the website', () {
+    final t = withInvite('My 2026 in running');
+    expect(t, startsWith('My 2026 in running'));
+    expect(t, contains(websiteUrl));
+    expect(t, contains(inviteLine));
   });
 }

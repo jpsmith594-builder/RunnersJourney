@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/brand.dart';
 import '../../core/errors.dart';
+import '../../core/invite.dart';
 
 /// Puts a runner card on a tall 9:16 "story" stage with the app name. This is
 /// what gets turned into the picture that is shared, so it fits Instagram and
@@ -53,6 +54,8 @@ class CardStage extends StatelessWidget {
                     height: 1.4,
                     fontStyle: FontStyle.italic,
                   )),
+              const SizedBox(height: 16),
+              const InviteFooter(),
             ],
           ),
         ),
@@ -86,7 +89,7 @@ Future<void> shareRunnerCard(
     await Share.shareXFiles(
       [XFile.fromData(bytes, mimeType: 'image/png', name: 'runner_card.png')],
       fileNameOverrides: const ['runner_card.png'],
-      text: message,
+      text: withInvite(message),
     );
   } catch (e) {
     messenger

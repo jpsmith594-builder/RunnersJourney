@@ -5,6 +5,7 @@ import '../profile/share_card.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
 import 'year_review.dart';
+import '../../core/invite.dart';
 import '../../core/units.dart';
 
 /// "My year in running": a shareable poster of the year's numbers.
@@ -256,6 +257,8 @@ class _Poster extends StatelessWidget {
                     letterSpacing: 3,
                     fontWeight: FontWeight.w700)),
           ),
+          const SizedBox(height: 10),
+          const InviteFooter(compact: true),
         ],
       ),
     );
