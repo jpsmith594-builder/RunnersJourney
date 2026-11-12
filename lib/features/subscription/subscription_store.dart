@@ -95,7 +95,7 @@ class SubscriptionStore extends ChangeNotifier {
     message = null;
     notifyListeners();
     try {
-      await Purchases.purchasePackage(package);
+      await Purchases.purchase(PurchaseParams.package(package));
       await _waitForServer();
     } on PlatformException catch (e) {
       final code = PurchasesErrorHelper.getErrorCode(e);
