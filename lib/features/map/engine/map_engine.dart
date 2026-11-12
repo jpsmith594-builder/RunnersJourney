@@ -6,6 +6,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import '../../../core/config.dart';
 import '../../../core/season.dart';
 import '../season_filter.dart';
+import 'map_overlay.dart';
 import 'tile_failures.dart';
 
 /// Where the map camera is and how to turn coordinates into screen positions.
@@ -37,6 +38,12 @@ class MapEngineParams {
   /// The empty map was tapped.
   final VoidCallback onTap;
 
+  /// A marker drawn by the engine was tapped (native overlay engines only).
+  final void Function(String id) onPinTap;
+
+  /// A town marker drawn by the engine was tapped (native overlay engines only).
+  final void Function(String key) onTownTap;
+
   const MapEngineParams({
     required this.center,
     required this.zoom,
@@ -47,6 +54,8 @@ class MapEngineParams {
     required this.onReady,
     required this.onCamera,
     required this.onTap,
+    required this.onPinTap,
+    required this.onTownTap,
   });
 }
 
@@ -61,7 +70,14 @@ abstract class MapEngine {
   /// every frame).
   void move(LatLng centre, double zoom);
 
-  /// The map itself: no pins, no trail.
+  /// True when the engine draws the pins, trail and town dots itself (fed by
+  /// [setOverlay]) so they never lag behind the map. When false the journey
+  /// screen draws them as Flutter widgets over the map.
+  bool get nativeOverlay;
+
+  void setOverlay(MapOverlayData data);
+
+  /// The map itself. With a native overlay it also draws the markers.
   Widget build(BuildContext context, MapEngineParams params);
 
   /// The credit line the map provider requires.
@@ -106,8 +122,10 @@ class FlutterMapEngine implements MapEngine {
       'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
 
   /// Tiles are kept on the phone for two weeks (up to 300 MB), so panning back
-  /// over places already seen does not ask the map service again.
-  static final _tileProvider = NetworkTileProvider(
+  /// over places already seen does not ask the map service again. One provider
+  /// per engine: the map closes its provider when it goes away (leaving the
+  /// tab), so a shared one would be dead the next time the map opened.
+  final _tileProvider = NetworkTileProvider(
     cachingProvider: BuiltInMapCachingProvider.getOrCreateInstance(
       maxCacheSize: 300 * 1000 * 1000,
       overrideFreshAge: const Duration(days: 14),
@@ -118,6 +136,12 @@ class FlutterMapEngine implements MapEngine {
   String get attribution => AppConfig.mapTilerKey.isEmpty
       ? '© OpenStreetMap contributors © CARTO'
       : '© MapTiler © OpenStreetMap contributors';
+
+  @override
+  bool get nativeOverlay => false;
+
+  @override
+  void setOverlay(MapOverlayData data) {}
 
   @override
   MapCam get camera => _Cam(_controller.camera);

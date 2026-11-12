@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart' hide Path;
@@ -9,7 +11,9 @@ import '../../../core/season.dart';
 import '../season_filter.dart';
 import '../spike/style_recolour.dart';
 import 'map_engine.dart';
+import 'map_overlay.dart';
 import 'mercator.dart';
+import 'pin_images.dart';
 
 /// The OpenFreeMap map, drawn by MapLibre. The pins, trail and race card are
 /// still Flutter widgets drawn over it from [camera], which is worked out in
@@ -28,6 +32,222 @@ class MapLibreEngine implements MapEngine {
   ml.MapLibreMapController? _controller;
   DateTime _lastMove = DateTime.fromMillisecondsSinceEpoch(0);
   MapEngineParams? _params;
+
+  // ---- markers drawn by the map itself -----------------------------------
+
+  MapOverlayData? _overlay;
+  bool _layersReady = false;
+  bool _syncing = false;
+  bool _dirty = false;
+  final Set<String> _images = {};
+  double _dpr = 2.7;
+
+  static const _empty = {'type': 'FeatureCollection', 'features': []};
+
+  @override
+  bool get nativeOverlay => true;
+
+  @override
+  void setOverlay(MapOverlayData data) {
+    _overlay = data;
+    unawaited(_sync());
+  }
+
+  Future<void> _addNativeLayers() async {
+    final c = _controller;
+    if (c == null) return;
+    _layersReady = false;
+    _images.clear();
+    await c.addGeoJsonSource('legs-done', _empty);
+    await c.addLineLayer(
+      'legs-done',
+      'legs-done-line',
+      const ml.LineLayerProperties(
+        lineColor: '#0A3FA8',
+        lineOpacity: ['get', 'a'],
+        lineWidth: ['get', 'w'],
+        lineCap: 'round',
+        lineJoin: 'round',
+        lineDasharray: [0.2, 2.6],
+      ),
+    );
+    await c.addGeoJsonSource('legs-planned', _empty);
+    await c.addLineLayer(
+      'legs-planned',
+      'legs-planned-line',
+      const ml.LineLayerProperties(
+        lineColor: '#0A3FA8',
+        lineOpacity: ['get', 'a'],
+        lineWidth: ['get', 'w'],
+        lineCap: 'round',
+        lineJoin: 'round',
+        lineDasharray: [0.2, 4.0],
+      ),
+    );
+    await c.addGeoJsonSource('towns', _empty);
+    await c.addCircleLayer(
+      'towns',
+      'towns-dot',
+      const ml.CircleLayerProperties(
+        circleRadius: 7.0,
+        circleColor: [
+          'match',
+          ['get', 'tier'],
+          1,
+          '#FFD54F',
+          '#FFFFFF',
+        ],
+        circleStrokeColor: '#616161',
+        circleStrokeWidth: 2.0,
+      ),
+    );
+    await c.addSymbolLayer(
+      'towns',
+      'towns-label',
+      const ml.SymbolLayerProperties(
+        textField: ['get', 'name'],
+        textFont: ['Noto Sans Bold'],
+        textSize: 11.0,
+        textAnchor: 'left',
+        textOffset: [1.1, 0.0],
+        textColor: '#222222',
+        textHaloColor: '#FFFFFF',
+        textHaloWidth: 1.5,
+      ),
+    );
+    await c.addGeoJsonSource('pins', _empty);
+    await c.addSymbolLayer(
+      'pins',
+      'pins',
+      ml.SymbolLayerProperties(
+        iconImage: const ['get', 'img'],
+        // Pictures are drawn at [kPinImageScale] pixels per point and the map
+        // shows them at 1 / pixel ratio, so this restores their true size.
+        iconSize: [
+          'case',
+          ['==', ['get', 'sel'], 1],
+          _dpr / kPinImageScale * 1.15,
+          _dpr / kPinImageScale,
+        ],
+        iconAnchor: const ['get', 'anc'],
+        iconAllowOverlap: true,
+        iconIgnorePlacement: true,
+        symbolSortKey: const ['get', 'z'],
+      ),
+    );
+    _layersReady = true;
+  }
+
+  /// Sends the latest markers to the map. Runs one at a time; if more arrive
+  /// while it is busy it goes round again with the newest.
+  Future<void> _sync() async {
+    if (_syncing) {
+      _dirty = true;
+      return;
+    }
+    _syncing = true;
+    try {
+      do {
+        _dirty = false;
+        final c = _controller;
+        final d = _overlay;
+        if (c == null || d == null || !_layersReady) break;
+        for (final p in d.pins) {
+          final key = p.imageKey;
+          if (_images.contains(key)) continue;
+          await c.addImage(key, await renderPinImage(p));
+          _images.add(key);
+        }
+        await c.setGeoJsonSource('pins', {
+          'type': 'FeatureCollection',
+          'features': [
+            for (var i = 0; i < d.pins.length; i++) _pinFeature(d.pins[i], i),
+          ],
+        });
+        await c.setGeoJsonSource('legs-done', _legs(d, planned: false));
+        await c.setGeoJsonSource('legs-planned', _legs(d, planned: true));
+        await c.setGeoJsonSource('towns', {
+          'type': 'FeatureCollection',
+          'features': [
+            for (final t in d.towns)
+              {
+                'type': 'Feature',
+                'properties': {'key': t.key, 'name': t.name, 'tier': t.tier},
+                'geometry': {
+                  'type': 'Point',
+                  'coordinates': [t.pos.longitude, t.pos.latitude],
+                },
+              },
+          ],
+        });
+      } while (_dirty);
+    } catch (e) {
+      debugPrint('Map overlay sync failed: $e');
+    } finally {
+      _syncing = false;
+    }
+  }
+
+  Map<String, dynamic> _pinFeature(NativePin p, int i) => {
+        'type': 'Feature',
+        'properties': {
+          'id': p.id,
+          'img': p.imageKey,
+          'sel': p.selected ? 1 : 0,
+          'anc': p.shape == PinShape.dot ? 'center' : 'bottom',
+          // Later pins draw on top; the selected one always does.
+          'z': i + (p.selected ? 100000 : 0),
+        },
+        'geometry': {
+          'type': 'Point',
+          'coordinates': [p.pos.longitude, p.pos.latitude],
+        },
+      };
+
+  Map<String, dynamic> _legs(MapOverlayData d, {required bool planned}) => {
+        'type': 'FeatureCollection',
+        'features': [
+          for (final l in d.legs)
+            if (l.planned == planned)
+              {
+                'type': 'Feature',
+                'properties': {'a': l.alpha, 'w': l.width},
+                'geometry': {
+                  'type': 'LineString',
+                  'coordinates': [
+                    [l.a.longitude, l.a.latitude],
+                    [l.b.longitude, l.b.latitude],
+                  ],
+                },
+              },
+        ],
+      };
+
+  Future<void> _onMapClick(math.Point<double> point) async {
+    final c = _controller;
+    final params = _params;
+    if (params == null) return;
+    try {
+      if (c != null) {
+        final hits =
+            await c.queryRenderedFeatures(point, ['pins', 'towns-dot'], null);
+        if (hits.isNotEmpty) {
+          final props = ((hits.first as Map)['properties'] as Map?) ?? {};
+          final id = props['id']?.toString();
+          if (id != null) {
+            params.onPinTap(id);
+            return;
+          }
+          final key = props['key']?.toString();
+          if (key != null) {
+            params.onTownTap(key);
+            return;
+          }
+        }
+      }
+    } catch (_) {}
+    params.onTap();
+  }
 
   @override
   String get attribution => 'OpenFreeMap © OpenMapTiles Data from OpenStreetMap';
@@ -73,6 +293,7 @@ class MapLibreEngine implements MapEngine {
   void dispose() {
     _controller?.removeListener(_onControllerChanged);
     _controller = null;
+    _layersReady = false;
   }
 
   /// The style with the season and vivid colours baked in. Falls back to the
@@ -136,6 +357,7 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
   @override
   Widget build(BuildContext context) {
     final e = widget.engine;
+    e._dpr = MediaQuery.devicePixelRatioOf(context);
     final style = _style;
     return LayoutBuilder(builder: (context, box) {
       e._size = Size(box.maxWidth, box.maxHeight);
@@ -164,8 +386,16 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
           e._controller = c;
           c.addListener(e._onControllerChanged);
         },
-        onStyleLoadedCallback: () => widget.params.onReady(),
-        onMapClick: (_, __) => widget.params.onTap(),
+        onStyleLoadedCallback: () async {
+          try {
+            await e._addNativeLayers();
+          } catch (err) {
+            debugPrint('Map overlay layers failed: $err');
+          }
+          widget.params.onReady();
+          unawaited(e._sync());
+        },
+        onMapClick: (point, _) => e._onMapClick(point),
       );
     });
   }
