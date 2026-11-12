@@ -1,16 +1,15 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' hide Path;
 
-import '../../core/config.dart';
 import '../../core/season.dart';
 import '../bucket/bucket_item.dart';
 import '../bucket/bucket_store.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
 import '../../core/settings.dart';
+import 'engine/map_engine.dart';
 import 'journey_trail.dart';
 import 'map_geometry.dart';
 import 'places.dart';
@@ -19,7 +18,6 @@ import 'season_filter.dart';
 import '../../core/units.dart';
 import '../../core/load_error.dart';
 
-const Color _oceanColor = Color(0xFFAAD3DF);
 const LatLng _saCentre = LatLng(-29.0, 24.5);
 
 /// The "Journey" tab: a real, zoomable map of South Africa with the runner's
@@ -59,7 +57,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   static const double _pinW = 36;
   static const double _pinH = 44;
 
-  final MapController _map = MapController();
+  final MapEngine _engine = FlutterMapEngine();
   final ValueNotifier<int> _tick = ValueNotifier<int>(0);
   late final AnimationController _anim = AnimationController(
     vsync: this,
@@ -78,7 +76,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   void dispose() {
     _anim.dispose();
     _tick.dispose();
-    _map.dispose();
+    _engine.dispose();
     super.dispose();
   }
 
@@ -86,7 +84,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
   LatLng _latLng(Place p) => LatLng(p.lat, p.lng);
 
-  Offset _toScreen(Place p) => _map.camera.latLngToScreenOffset(_latLng(p));
+  Offset _toScreen(Place p) => _engine.camera.toScreen(_latLng(p));
 
   bool _onScreen(Offset s, {double margin = 50}) =>
       s.dx > -margin &&
@@ -99,12 +97,12 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   /// Smoothly flies the camera to [centre] at [zoom].
   Future<void> _flyTo(LatLng centre, double zoom) async {
     if (!_ready) return;
-    final from = _map.camera.center;
-    final fromZoom = _map.camera.zoom;
+    final from = _engine.camera.center;
+    final fromZoom = _engine.camera.zoom;
     final toZoom = zoom.clamp(_minZoom, _maxZoom).toDouble();
     void tick() {
       final k = Curves.easeInOut.transform(_anim.value);
-      _map.move(
+      _engine.move(
         LatLng(
           from.latitude + (centre.latitude - from.latitude) * k,
           from.longitude + (centre.longitude - from.longitude) * k,
@@ -125,7 +123,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   }
 
   void _zoomBy(double delta) {
-    _flyTo(_map.camera.center, _map.camera.zoom + delta);
+    _flyTo(_engine.camera.center, _engine.camera.zoom + delta);
   }
 
   void _reset(List<RaceGroup> groups) {
@@ -151,10 +149,10 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   }
 
   void _zoomIntoCluster(MapCluster c) {
-    final zoom = _map.camera.zoom;
+    final zoom = _engine.camera.zoom;
     final singleTown = c.groups.length == 1;
     final target = singleTown ? math.max(_fanZoom + 0.5, zoom + 2) : zoom + 1.6;
-    _flyTo(_map.camera.screenOffsetToLatLng(c.center), target);
+    _flyTo(_engine.camera.toLatLng(c.center), target);
   }
 
   /// Races that have a known town, oldest first.
@@ -220,34 +218,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
 
   // ---- build --------------------------------------------------------------
 
-  String get _tileUrl {
-    const key = AppConfig.mapTilerKey;
-    if (key.isEmpty) {
-      return 'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
-    }
-    // {r} becomes "@2x" on sharp screens, so MapTiler sends one 512 px tile
-    // per tile. Without it the map asks for four tiles to fill the same space.
-    return 'https://api.maptiler.com/maps/${AppConfig.mapStyle}/256/{z}/{x}/{y}{r}.png?key=$key';
-  }
-
-  /// Used for any tile the main map service refuses, for example when the
-  /// monthly allowance has run out, so the map never goes blank.
-  static const _fallbackUrl =
-      'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
-
-  /// Tiles are kept on the phone for two weeks (up to 300 MB), so panning back
-  /// over places already seen does not ask the map service again.
-  static final _tileProvider = NetworkTileProvider(
-    cachingProvider: BuiltInMapCachingProvider.getOrCreateInstance(
-      maxCacheSize: 300 * 1000 * 1000,
-      overrideFreshAge: const Duration(days: 14),
-    ),
-  );
-
-  String get _attribution => AppConfig.mapTilerKey.isEmpty
-      ? '\u00A9 OpenStreetMap contributors \u00A9 CARTO'
-      : '\u00A9 MapTiler \u00A9 OpenStreetMap contributors';
-
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -280,36 +250,18 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                ColorFiltered(
-                  colorFilter: seasonFilter(season, vivid: settings.vividMap),
-                  child: FlutterMap(
-                    mapController: _map,
-                    options: MapOptions(
-                      initialCenter: start.$1,
-                      initialZoom: start.$2,
-                      minZoom: _minZoom,
-                      maxZoom: _maxZoom,
-                      backgroundColor: _oceanColor,
-                      cameraConstraint: const CameraConstraint.unconstrained(),
-                      interactionOptions: const InteractionOptions(
-                        flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-                      ),
-                      onMapReady: () => setState(() => _ready = true),
-                      onPositionChanged: (_, __) => _tick.value++,
-                      onTap: (_, __) => _select(null),
-                    ),
-                    children: [
-                      TileLayer(
-                        urlTemplate: _tileUrl,
-                        fallbackUrl: AppConfig.mapTilerKey.isEmpty
-                            ? null
-                            : _fallbackUrl,
-                        tileProvider: _tileProvider,
-                        userAgentPackageName: 'com.runnersjourney.runners_journey',
-                        retinaMode: RetinaMode.isHighDensity(context),
-                        maxNativeZoom: 18,
-                      ),
-                    ],
+                _engine.build(
+                  context,
+                  MapEngineParams(
+                    center: start.$1,
+                    zoom: start.$2,
+                    minZoom: _minZoom,
+                    maxZoom: _maxZoom,
+                    season: season,
+                    vivid: settings.vividMap,
+                    onReady: () => setState(() => _ready = true),
+                    onCamera: () => _tick.value++,
+                    onTap: () => _select(null),
                   ),
                 ),
                 if (settings.showTrail && _ready)
@@ -375,7 +327,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                   bottom: 2,
                   child: IgnorePointer(
                     child: Text(
-                      _attribution,
+                      _engine.attribution,
                       style: const TextStyle(
                           fontSize: 9,
                           color: Colors.black54,
@@ -425,7 +377,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   Widget _overlay(
       GroupResult grouped, List<Race> allRaces, List<BucketItem> bucket) {
     if (!_ready) return const SizedBox.shrink();
-    final scale = _map.camera.zoom;
+    final scale = _engine.camera.zoom;
     final clusters = clusterGroups(grouped.groups, _toScreen, _clusterRadius);
     final pinTips = <String, Offset>{};
     final children = <Widget>[];
