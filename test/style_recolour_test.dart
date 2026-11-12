@@ -53,8 +53,9 @@ void main() {
     expect((layers[0]['paint'] as Map)['background-opacity'], 1);
     final water = (layers[1]['paint'] as Map)['fill-color'] as List;
     expect(water[0], 'interpolate');
-    expect(water[4], 4);
-    expect((water[5] as String).startsWith('rgba('), isTrue);
-    expect((water[7] as String).endsWith(',0.5)'), isTrue);
+    expect(water[3], 4);
+    expect((water[4] as String).startsWith('rgba('), isTrue);
+    expect(water[5], 10);
+    expect((water[6] as String).endsWith(',0.5)'), isTrue);
   });
 }
