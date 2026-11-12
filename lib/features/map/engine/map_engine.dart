@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart' hide Path;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import '../../../core/config.dart';
 import '../../../core/season.dart';
 import '../season_filter.dart';
+import 'tile_failures.dart';
 
 /// Where the map camera is and how to turn coordinates into screen positions.
 /// Zoom is always in the app's own units (256 px tiles), whatever engine is
@@ -77,6 +79,17 @@ const Color _oceanColor = Color(0xFFAAD3DF);
 class FlutterMapEngine implements MapEngine {
   final MapController _controller = MapController();
 
+  /// Reports (once in a while) when tiles keep failing, so a blank map can be
+  /// diagnosed from Sentry.
+  final TileFailureReporter _failures = TileFailureReporter(
+    send: (template, params) => Sentry.captureMessage(
+      template,
+      level: SentryLevel.warning,
+      template: template,
+      params: params,
+    ),
+  );
+
   String get _tileUrl {
     const key = AppConfig.mapTilerKey;
     if (key.isEmpty) {
@@ -141,6 +154,8 @@ class FlutterMapEngine implements MapEngine {
             userAgentPackageName: 'com.runnersjourney.runners_journey',
             retinaMode: RetinaMode.isHighDensity(context),
             maxNativeZoom: 18,
+            errorTileCallback: (tile, error, stackTrace) =>
+                _failures.record(tile.coordinates.z, error),
           ),
         ],
       ),
