@@ -376,6 +376,8 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
         minMaxZoomPreference: ml.MinMaxZoomPreference(
             widget.params.minZoom - 1, widget.params.maxZoom - 1),
         trackCameraPosition: true,
+        // Taps on our pins must also reach onMapClick (the spike needed this).
+        featureTapsTriggersMapClick: true,
         rotateGesturesEnabled: false,
         tiltGesturesEnabled: false,
         compassEnabled: false,
