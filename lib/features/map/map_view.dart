@@ -730,15 +730,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
     final latestId = trailStops.length > 1 ? idOf(trailStops.last.$1) : null;
 
     final (bucketByPlace, bucketPlaces) = _bucketIndex(bucket);
-    final racePlaces = {
-      for (final g in grouped.groups) g.place.key,
-      ...bucketByPlace.keys,
-    };
-    for (final p in kPlaces) {
-      if (racePlaces.contains(p.key)) continue;
-      if (scale < _tierZoom[p.tier - 1]) continue;
-      towns.add(NativeTown(p.key, p.name, p.tier, _latLng(p)));
-    }
+    // No tappable town dots on this map: OpenFreeMap labels towns itself, and
+    // races are added with the Add race button.
 
     void racePin(Race r, Offset tip) {
       final id = idOf(r);
