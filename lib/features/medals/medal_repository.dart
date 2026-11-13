@@ -76,17 +76,46 @@ class MedalRepository {
     _cache = null;
   }
 
+  /// Changes a medal. Give [png] to swap its picture for a new one.
   Future<void> update(
     Medal medal, {
     String? raceId,
     required MedalMetal metal,
     required MedalRibbon ribbon,
+    Uint8List? png,
   }) async {
-    await _db.from('medal_photos').update({
-      'race_id': raceId,
-      'metal': metal.name,
-      'ribbon': ribbon.name,
-    }).eq('id', medal.id);
+    String? newPath;
+    if (png != null) {
+      final uid = _db.auth.currentUser!.id;
+      newPath = '$uid/${DateTime.now().microsecondsSinceEpoch}.png';
+      await _db.storage.from(_bucket).uploadBinary(
+            newPath,
+            png,
+            fileOptions:
+                const FileOptions(contentType: 'image/png', upsert: false),
+          );
+    }
+    try {
+      await _db.from('medal_photos').update({
+        'race_id': raceId,
+        'metal': metal.name,
+        'ribbon': ribbon.name,
+        if (newPath != null) 'storage_path': newPath,
+      }).eq('id', medal.id);
+    } catch (_) {
+      if (newPath != null) {
+        try {
+          await _db.storage.from(_bucket).remove([newPath]);
+        } catch (_) {}
+      }
+      rethrow;
+    }
+    if (newPath != null) {
+      // The old picture is no longer used.
+      try {
+        await _db.storage.from(_bucket).remove([medal.storagePath]);
+      } catch (_) {}
+    }
     _cache = null;
   }
 

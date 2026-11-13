@@ -1,14 +1,11 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../races/race.dart';
 import '../races/race_store.dart';
-import 'adjust_medal_screen.dart';
 import 'medal.dart';
 import 'medal_edit_screen.dart';
+import 'medal_photo_flow.dart';
 import 'medal_repository.dart';
 import 'medal_widgets.dart';
 
@@ -24,7 +21,6 @@ class MedalWallScreen extends StatefulWidget {
 class _MedalWallScreenState extends State<MedalWallScreen> {
   static const _perRow = 3;
   final _repo = MedalRepository();
-  final _picker = ImagePicker();
   List<Medal> _medals = const [];
   bool _loading = true;
   String? _error;
@@ -62,48 +58,7 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
   }
 
   Future<void> _add() async {
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_camera_outlined),
-              title: const Text('Take a photo'),
-              subtitle: const Text('Use a plain surface and good light'),
-              onTap: () => Navigator.pop(ctx, ImageSource.camera),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Choose from gallery'),
-              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (source == null || !mounted) return;
-    Uint8List bytes;
-    try {
-      final file = await _picker.pickImage(
-        source: source,
-        maxWidth: 1600,
-        maxHeight: 1600,
-        imageQuality: 88,
-      );
-      if (file == null) return;
-      bytes = await file.readAsBytes();
-    } catch (_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Could not open the camera or gallery.')));
-      return;
-    }
-    if (!mounted) return;
-    final cut = await Navigator.of(context).push<Uint8List>(
-      MaterialPageRoute(builder: (_) => AdjustMedalScreen(bytes: bytes)),
-    );
+    final cut = await pickAndAdjustMedalPhoto(context);
     if (cut == null || !mounted) return;
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute(

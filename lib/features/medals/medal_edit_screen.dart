@@ -8,6 +8,7 @@ import '../races/race.dart';
 import '../races/race_store.dart';
 import '../subscription/limits.dart';
 import 'medal.dart';
+import 'medal_photo_flow.dart';
 import 'medal_repository.dart';
 import 'medal_widgets.dart';
 
@@ -34,6 +35,7 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
   late String? _raceId = widget.medal?.raceId;
   late MedalMetal _metal = widget.medal?.metal ?? MedalMetal.gold;
   late MedalRibbon _ribbon = widget.medal?.ribbon ?? MedalRibbon.blue;
+  late Uint8List? _newBytes = widget.bytes;
   bool _busy = false;
 
   bool get _isNew => widget.medal == null;
@@ -47,7 +49,7 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
   }
 
   ImageProvider get _image {
-    final bytes = widget.bytes;
+    final bytes = _newBytes;
     if (bytes != null) return MemoryImage(bytes);
     return NetworkImage(widget.medal!.url);
   }
@@ -75,11 +77,14 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
     setState(() => _busy = true);
     try {
       if (_isNew) {
-        await _repo.add(widget.bytes!,
+        await _repo.add(_newBytes!,
             raceId: _raceId, metal: _metal, ribbon: _ribbon);
       } else {
         await _repo.update(widget.medal!,
-            raceId: _raceId, metal: _metal, ribbon: _ribbon);
+            raceId: _raceId,
+            metal: _metal,
+            ribbon: _ribbon,
+            png: _newBytes);
       }
       if (!mounted) return;
       Navigator.of(context).pop(true);
@@ -90,6 +95,12 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
         _toast('Could not save the medal. Check your connection and try again.');
       }
     }
+  }
+
+  Future<void> _changePhoto() async {
+    final cut = await pickAndAdjustMedalPhoto(context);
+    if (cut == null || !mounted) return;
+    setState(() => _newBytes = cut);
   }
 
   Future<void> _delete() async {
@@ -155,6 +166,12 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
                     image: _image, metal: _metal, ribbon: _ribbon, size: 150),
               ],
             ),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _busy ? null : _changePhoto,
+            icon: const Icon(Icons.add_a_photo_outlined),
+            label: Text(_isNew ? 'Retake or choose another photo' : 'Change photo'),
           ),
           const SizedBox(height: 16),
           SoftCard(
