@@ -323,7 +323,6 @@ PLACES = [
     ("Herold", "Western Cape", -33.82, 22.43, 3),
     ("Klapmuts", "Western Cape", -33.82, 18.87, 3),
     ("Melkbosstrand", "Western Cape", -33.73, 18.44, 3),
-    ("Nature's Valley", "Western Cape", -33.98, 23.56, 3),
     ("Riebeek Wes", "Western Cape", -33.35, 18.87, 3),
     ("Still Bay", "Western Cape", -34.37, 21.43, 3),
     ("Touws River", "Western Cape", -33.34, 20.03, 3),

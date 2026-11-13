@@ -302,7 +302,6 @@ const List<Place> kPlaces = [
   Place('Herold', 'Western Cape', -33.82, 22.43, 3),
   Place('Klapmuts', 'Western Cape', -33.82, 18.87, 3),
   Place('Melkbosstrand', 'Western Cape', -33.73, 18.44, 3),
-  Place('Nature\'s Valley', 'Western Cape', -33.98, 23.56, 3),
   Place('Riebeek Wes', 'Western Cape', -33.35, 18.87, 3),
   Place('Still Bay', 'Western Cape', -34.37, 21.43, 3),
   Place('Touws River', 'Western Cape', -33.34, 20.03, 3),
