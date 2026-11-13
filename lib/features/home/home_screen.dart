@@ -17,6 +17,7 @@ import '../help/welcome_tour.dart';
 import '../settings/settings_screen.dart';
 import '../goals/goal_strip.dart';
 import '../goals/goals_screen.dart';
+import '../medals/medal_wall_screen.dart';
 import '../stats/badges_screen.dart';
 import '../stats/charts_screen.dart';
 import '../stats/year_review_screen.dart';
@@ -199,6 +200,12 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _openMedals() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => MedalWallScreen(store: _store)),
+    );
+  }
+
   void _openResults() {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => ResultsScreen(store: _store)),
@@ -255,6 +262,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (_) => const SettingsScreen()));
                 case 'album':
                   _openAlbum();
+                case 'medals':
+                  _openMedals();
                 case 'results':
                   _openResults();
                 case 'friends':
@@ -343,6 +352,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListTile(
                   leading: Icon(Icons.auto_stories),
                   title: Text('Journey album'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'medals',
+                child: ListTile(
+                  leading: Icon(Icons.military_tech_outlined),
+                  title: Text('My Medals'),
                   contentPadding: EdgeInsets.zero,
                 ),
               ),

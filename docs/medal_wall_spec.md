@@ -1,4 +1,7 @@
-# Medal Wall: spec (draft, 13 Nov 2026)
+# Medal Wall: spec (13 Nov 2026)
+
+**Status:** phase 1 built (menu > My Medals). Needs `supabase/020_medal_wall.sql` run once in the Supabase SQL editor. Code is in `lib/features/medals/`.
+
 
 ## Summary
 A separate menu option opens the "My Medals" wall: a dark purple wall with titanium hanger bars lit from behind by an LED glow. The runner photographs a real medal, the app crops it and hangs it on the wall. Tapping a medal opens the linked race card. The wall delivers the brand line "the medals you've earned" and gives runners something to show and share.

@@ -28,11 +28,11 @@ String? freePlanNotice(int counted, {required bool subscribed}) {
   return null;
 }
 
-/// 'free_limit', 'read_only' or 'photo_limit' when the database refused a
+/// 'free_limit', 'read_only', 'photo_limit' or 'medal_limit' when the database refused a
 /// change because of the plan; otherwise null.
 String? limitKind(Object e) {
   final text = e is PostgrestException ? '${e.message} ${e.details}' : '$e';
-  for (final k in const ['free_limit', 'read_only', 'photo_limit']) {
+  for (final k in const ['free_limit', 'read_only', 'photo_limit', 'medal_limit']) {
     if (text.contains(k)) return k;
   }
   return null;
@@ -54,6 +54,10 @@ bool handleLimitError(BuildContext context, Object e) {
         'You have more than $freeRaceLimit races, so they are locked while you are '
             'not subscribed. Nothing is lost. Subscribe to edit and add again, or '
             'delete races to get back to $freeRaceLimit.'
+      ),
+    'medal_limit' => (
+        'Your wall is full',
+        'The free plan holds 5 medals on the wall. Subscribers can hang many more.'
       ),
     _ => (
         'Photo limit reached',

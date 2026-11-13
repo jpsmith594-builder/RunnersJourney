@@ -21,6 +21,14 @@ class AccountRepository {
             .from('race-photos')
             .remove(paths.sublist(i, math.min(i + 100, paths.length)));
       }
+      final medalRows = await _db.from('medal_photos').select('storage_path');
+      final medalPaths = [
+        for (final r in medalRows as List) r['storage_path'] as String
+      ];
+      for (var i = 0; i < medalPaths.length; i += 100) {
+        await _db.storage.from('medal-photos').remove(
+            medalPaths.sublist(i, math.min(i + 100, medalPaths.length)));
+      }
       final prof = await _db
           .from('profiles')
           .select('avatar_path')
