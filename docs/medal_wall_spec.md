@@ -1,7 +1,7 @@
 # Medal Wall: spec (draft, 13 Nov 2026)
 
 ## Summary
-A separate menu option opens the "My Medals" wall: a dark wall with titanium hanger bars lit from behind by an LED glow. The runner photographs a real medal, the app crops it and hangs it on the wall. Tapping a medal opens the linked race card. The wall delivers the brand line "the medals you've earned" and gives runners something to show and share.
+A separate menu option opens the "My Medals" wall: a dark purple wall with titanium hanger bars lit from behind by an LED glow. The runner photographs a real medal, the app crops it and hangs it on the wall. Tapping a medal opens the linked race card. The wall delivers the brand line "the medals you've earned" and gives runners something to show and share.
 
 ## User flow
 1. Menu > Medal wall. Empty state shows an empty bar and an "Add medal" button.
@@ -12,7 +12,7 @@ A separate menu option opens the "My Medals" wall: a dark wall with titanium han
 6. Tap a medal: race card, with options to replace the photo or remove the medal.
 
 ## Screens
-- **Header plate:** a laser-cut titanium plate across the top with "My Medals" cut out in bold italic letters and an LED light shining through the cut-out and around the plate edge. It is drawn in code (mask over a lit layer), so it stays sharp and costs no image download. See `docs/medal_wall_mockup.png`.
+- **Header:** "My Medals" in bold italic LED letters glowing directly on the wall, with a soft cyan halo. Drawn in code (stacked blurred and sharp text layers), so it stays sharp and costs no image download. See `docs/medal_wall_mockup.png`.
 - **Wall:** scrolling column of hanger bars, 3 medals per bar, new bar after every third medal. Titanium bar and screws drawn in code; LED glow is a blurred light behind each bar plus a faint wash on the wall. Ribbon colour is chosen by the user from a small palette; metal (gold, silver, bronze, titanium) follows the user's pick.
 - **Add medal:** camera, crop, link-to-race, ribbon colour.
 - **Medal detail:** large medal, race card link, replace and remove.
