@@ -351,6 +351,10 @@ class _MapLibreSurface extends StatefulWidget {
 class _MapLibreSurfaceState extends State<_MapLibreSurface> {
   String? _style;
   late String _signature = _sig(widget.params);
+  bool _styleLoaded = false;
+  bool _slow = false;
+  int _attempt = 0;
+  Timer? _slowTimer;
 
   static String _sig(MapEngineParams p) =>
       '${settings.openFreeMapStyle}|${p.season.name}|${p.vivid}';
@@ -358,6 +362,33 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
   @override
   void initState() {
     super.initState();
+    _watchForSlowLoad();
+    _load();
+  }
+
+  @override
+  void dispose() {
+    _slowTimer?.cancel();
+    super.dispose();
+  }
+
+  /// If the map style has not loaded after a while (no signal, a blocked
+  /// connection), say so and offer a retry instead of leaving a blank map.
+  void _watchForSlowLoad() {
+    _slowTimer?.cancel();
+    _styleLoaded = false;
+    _slow = false;
+    _slowTimer = Timer(const Duration(seconds: 12), () {
+      if (mounted && !_styleLoaded) setState(() => _slow = true);
+    });
+  }
+
+  void _retry() {
+    setState(() {
+      _attempt++;
+      _style = null;
+    });
+    _watchForSlowLoad();
     _load();
   }
 
@@ -367,6 +398,7 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
     final s = _sig(widget.params);
     if (s != _signature) {
       _signature = s;
+      _watchForSlowLoad();
       _load();
     }
   }
@@ -386,44 +418,88 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
     final style = _style;
     return LayoutBuilder(builder: (context, box) {
       e._size = Size(box.maxWidth, box.maxHeight);
-      if (style == null) {
-        return const ColoredBox(
-          color: Color(0xFFAAD3DF),
-          child: SizedBox.expand(),
-        );
-      }
-      return ml.MapLibreMap(
-        key: ValueKey(_signature),
-        styleString: style,
-        initialCameraPosition: ml.CameraPosition(
-          target: ml.LatLng(e._center.latitude, e._center.longitude),
-          zoom: e._zoom - 1,
-        ),
-        minMaxZoomPreference: ml.MinMaxZoomPreference(
-            widget.params.minZoom - 1, widget.params.maxZoom - 1),
-        trackCameraPosition: true,
-        // Taps on our pins must also reach onMapClick (the spike needed this).
-        featureTapsTriggersMapClick: true,
-        rotateGesturesEnabled: false,
-        tiltGesturesEnabled: false,
-        compassEnabled: false,
-        myLocationEnabled: false,
-        onMapCreated: (c) {
-          e._controller?.removeListener(e._onControllerChanged);
-          e._controller = c;
-          c.addListener(e._onControllerChanged);
-        },
-        onStyleLoadedCallback: () async {
-          try {
-            await e._addNativeLayers();
-          } catch (err) {
-            debugPrint('Map overlay layers failed: $err');
-          }
-          widget.params.onReady();
-          unawaited(e._sync());
-        },
-        onMapClick: (point, _) => e._onMapClick(point),
+      final Widget map = style == null
+          ? const ColoredBox(
+              color: Color(0xFFAAD3DF),
+              child: SizedBox.expand(),
+            )
+          : _buildMap(style);
+      return Stack(
+        fit: StackFit.expand,
+        children: [
+          map,
+          if (_slow && !_styleLoaded)
+            Positioned(
+              left: 16,
+              right: 16,
+              top: 16,
+              child: Material(
+                elevation: 3,
+                borderRadius: BorderRadius.circular(12),
+                color: Theme.of(context).colorScheme.surface,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 10, 8, 10),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'The map is taking a while to load. Check your connection.',
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _retry,
+                        child: const Text('Try again'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       );
     });
+  }
+
+  Widget _buildMap(String style) {
+    final e = widget.engine;
+    return ml.MapLibreMap(
+      key: ValueKey('$_signature#$_attempt'),
+      styleString: style,
+      initialCameraPosition: ml.CameraPosition(
+        target: ml.LatLng(e._center.latitude, e._center.longitude),
+        zoom: e._zoom - 1,
+      ),
+      minMaxZoomPreference: ml.MinMaxZoomPreference(
+          widget.params.minZoom - 1, widget.params.maxZoom - 1),
+      trackCameraPosition: true,
+      // Taps on our pins must also reach onMapClick (the spike needed this).
+      featureTapsTriggersMapClick: true,
+      rotateGesturesEnabled: false,
+      tiltGesturesEnabled: false,
+      compassEnabled: false,
+      myLocationEnabled: false,
+      onMapCreated: (c) {
+        e._controller?.removeListener(e._onControllerChanged);
+        e._controller = c;
+        c.addListener(e._onControllerChanged);
+      },
+      onStyleLoadedCallback: () async {
+        _slowTimer?.cancel();
+        if (mounted) {
+          setState(() {
+            _styleLoaded = true;
+            _slow = false;
+          });
+        }
+        try {
+          await e._addNativeLayers();
+        } catch (err) {
+          debugPrint('Map overlay layers failed: $err');
+        }
+        widget.params.onReady();
+        unawaited(e._sync());
+      },
+      onMapClick: (point, _) => e._onMapClick(point),
+    );
   }
 }

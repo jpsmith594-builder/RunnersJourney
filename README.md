@@ -13,7 +13,7 @@ for the race card, and see your own football-style runner card.
 - Email sign-up / sign-in
 - Add, edit, delete races: name, date, status (planned / completed / DNF / DNS),
   distance, finish time, positions, town, notes
-- **Journey tab**: the real world map. The town box searches any town in the world (needs the MapTiler key); South African towns also work without it
+- **Journey tab**: the real world map. The town box searches any town in the world from a built-in list on the phone (GeoNames, no key needed); a MapTiler key adds online search for tiny places
   - Races sit on their town. Pinch, scroll, or use the +/- buttons to zoom
   - Major cities always show; regional towns and small towns appear as you zoom in
   - Several races in one town show as a numbered pin; tap it or zoom in and the
@@ -70,12 +70,12 @@ for the race card, and see your own football-style runner card.
 5. `flutter run --dart-define-from-file=env.json`
 
 ## The map
-A real, zoomable world map (flutter_map) with your pins and race cards. Zoom in to reveal towns and, deeper still, Cape
+A real, zoomable world map with your pins and race cards. The default map is OpenFreeMap drawn with MapLibre (no key, no account); the older flutter_map / MapTiler map stays available from the hidden developer screen (long-press the version line in Settings). Zoom in to reveal towns and, deeper still, Cape
 Town suburbs. The map picture follows the season with a colour tint.
 
-- Works out of the box with a free default map (OpenStreetMap / CARTO).
-- For a nicer outdoors / terrain look add a free key from https://cloud.maptiler.com
-  to `env.json` as `MAPTILER_KEY` (optionally `MAP_STYLE`: `outdoor-v2`, `topo-v2`,
+- Works out of the box with OpenFreeMap (OpenStreetMap data, attribution is shown on the map and in Settings > Credits). Ship release builds without `MAPTILER_KEY`.
+- Legacy map only: a free key from https://cloud.maptiler.com
+  in `env.json` as `MAPTILER_KEY` (optionally `MAP_STYLE`: `outdoor-v2`, `topo-v2`,
   `landscape`, `streets-v2`, `satellite`).
 - `tools/gen_places.py` holds the towns by real GPS and writes
   `lib/features/map/places_data.dart`. Place tiers: 1 major city, 2 regional town,

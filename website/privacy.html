@@ -17,7 +17,7 @@ a{color:#1D5BD6}small,.muted{color:#6b6b78}li{margin:4px 0}
 <li><b>Account:</b> your email address and a password (stored only as a secure hash by our sign-in provider).</li>
 <li><b>Profile you choose to fill in:</b> display name, club, home town, favourite distance, gender, year of birth (used for the age on your runner card) and a profile photo.</li>
 <li><b>Races you add:</b> race name, date, status, distance, finish time, positions, medal, notes, and the town and country with its map position.</li>
-<li><b>Photos</b> you attach to races.</li>
+<li><b>Photos</b> you attach to races, and the pictures of your medals that you hang on your medal wall.</li>
 <li><b>Race bucket list</b> entries and <b>friends</b> connections you make in the app.</li>
 <li><b>Subscription status</b> if you subscribe (see Payments).</li>
 </ul>
@@ -37,7 +37,7 @@ a{color:#1D5BD6}small,.muted{color:#6b6b78}li{margin:4px 0}
 <h2>Services we use</h2>
 <ul>
 <li><b>Supabase</b>: sign-in, database and photo storage.</li>
-<li><b>MapTiler</b>: map pictures and town search. The place text you type, and the map area you view, are sent to it.</li>
+<li><b>OpenFreeMap</b>: the map pictures. While the map is open, the app asks it for the map area you are viewing, so it sees that area and your IP address. It does not receive your account, your races or anything you type. Town search runs on your phone from a built-in list of towns.</li>
 <li><b>Sentry</b>: crash reports. If the app crashes, it sends the error details, the app version and the phone model and Android version. It does not send your name, email, races, photos or screenshots.</li>
 <li><b>RevenueCat and Google Play</b>: subscriptions. Google handles your payment details; we never see your card number.</li>
 </ul>
@@ -47,7 +47,7 @@ a{color:#1D5BD6}small,.muted{color:#6b6b78}li{margin:4px 0}
 <p>If you tap share, the app makes a picture and hands it to the app you choose (for example WhatsApp or Instagram). What happens next is governed by that app.</p>
 
 <h2>How long we keep it</h2>
-<p>We keep your data until you delete your account. Deleting your account removes your profile, races, photos, bucket list, friends and sign-in record. See <a href="delete-account.html">how to delete your account</a>. Subscription and payment records held by Google and RevenueCat follow their own retention rules.</p>
+<p>We keep your data until you delete your account. Deleting your account removes your profile, races, photos, medals, bucket list, friends and sign-in record. See <a href="delete-account.html">how to delete your account</a>. Subscription and payment records held by Google and RevenueCat follow their own retention rules.</p>
 
 <h2>Your choices and rights</h2>
 <ul>

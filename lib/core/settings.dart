@@ -22,8 +22,9 @@ class AppSettings extends ChangeNotifier {
   /// Which OpenFreeMap look to use: liberty, bright or positron.
   String openFreeMapStyle = 'liberty';
 
-  /// The map engine under the journey screen. Defaults to MapTiler.
-  MapEngineKind mapEngine = MapEngineKind.maptiler;
+  /// The map engine under the journey screen. Defaults to OpenFreeMap; the
+  /// MapTiler map stays available from the hidden developer screen.
+  MapEngineKind mapEngine = MapEngineKind.openFreeMap;
 
   bool get miles => unit == DistanceUnit.mi;
 
@@ -38,9 +39,9 @@ class AppSettings extends ChangeNotifier {
       if (st == 'liberty' || st == 'bright' || st == 'positron') {
         openFreeMapStyle = st!;
       }
-      mapEngine = p.getString('map_engine') == 'openfreemap'
-          ? MapEngineKind.openFreeMap
-          : MapEngineKind.maptiler;
+      mapEngine = p.getString('map_engine') == 'maptiler'
+          ? MapEngineKind.maptiler
+          : MapEngineKind.openFreeMap;
       themeMode = switch (p.getString('theme')) {
         'light' => ThemeMode.light,
         'dark' => ThemeMode.dark,

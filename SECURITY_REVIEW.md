@@ -19,7 +19,7 @@ Limits: this was a source review. I could not run the app, attack the live Supab
 | 9 | Low | Minimum password length was 6 | Raised to 8 for new passwords (sign-in unchanged). Also set the same minimum in Supabase |
 | 10 | Low | No limits on text length in the database | Fixed in 019 (checks apply to new and changed rows) |
 | 11 | Low | The .gitignore did not list signing keys | Fixed: key.properties, *.jks, *.keystore, *.pem, *.p12 added |
-| 12 | Info | The MapTiler key ships inside the app and can be extracted. The Supabase anon key and the RevenueCat public key are meant to be public | Your action: restrict the MapTiler key and watch usage |
+| 12 | Info | (Goes away when release builds ship without MAPTILER_KEY, the default map is now OpenFreeMap.) The MapTiler key ships inside the app and can be extracted. The Supabase anon key and the RevenueCat public key are meant to be public | Your action: restrict the MapTiler key and watch usage |
 | 13 | Info | Photo and profile data are safe from other runners: row-level security is on every table and photos use private storage with short-lived links | Good |
 
 What is already good: row-level security on every table; the free-plan limits and race limits are enforced on the server, not only in the app; `account_type` is protected from self-promotion; all SQL functions set `search_path`; the account deletion function is restricted to signed-in users; Sentry sends no personal details or screenshots; there are no ads or trackers; no secrets are committed; HTTPS everywhere.
@@ -31,7 +31,7 @@ What is already good: row-level security on every table; the free-plan limits an
 3. Redeploy the webhook: `supabase functions deploy revenuecat-webhook --no-verify-jwt`.
 4. In `android/app/src/main/AndroidManifest.xml` set `android:allowBackup="false"` on the `<application>` tag (and confirm `android:debuggable` is not set). Rebuild.
 5. Build releases with `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols` and keep the symbols folder (upload it to Sentry so crashes stay readable).
-6. Restrict the MapTiler key in the MapTiler account and set a usage alert.
+6. Build releases without `MAPTILER_KEY` (OpenFreeMap needs no key). If you keep a key, restrict it in the MapTiler account and set a usage alert.
 7. After uploading, open the Play Console pre-launch report and fix anything it flags.
 8. Back up `upload-keystore.jks` and `key.properties` somewhere private and offline.
 

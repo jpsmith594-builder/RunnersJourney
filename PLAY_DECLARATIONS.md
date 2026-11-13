@@ -1,6 +1,6 @@
 # Play Console declarations: answers for My Running Journal
 
-Drafted from what the app does (Supabase sign-in/database/storage, MapTiler maps, Sentry crash reports, RevenueCat + Google Play subscriptions, no ads, no live GPS). Re-check against the real forms: Google reorders and renames questions. If you add an SDK or a field, update this file and the privacy page together.
+Drafted from what the app does (Supabase sign-in/database/storage, OpenFreeMap maps, Sentry crash reports, RevenueCat + Google Play subscriptions, no ads, no live GPS). Re-check against the real forms: Google reorders and renames questions. If you add an SDK or a field, update this file and the privacy page together.
 
 ## 1. App content > Privacy policy
 https://myrunningjournal.co.za/privacy.html
@@ -9,12 +9,12 @@ https://myrunningjournal.co.za/privacy.html
 
 Top-level questions
 - Does your app collect or share any of the required user data types? **Yes**
-- Is all of the user data collected by your app encrypted in transit? **Yes** (HTTPS to Supabase, MapTiler, Sentry, RevenueCat)
+- Is all of the user data collected by your app encrypted in transit? **Yes** (HTTPS to Supabase, OpenFreeMap, Sentry, RevenueCat)
 - Do you provide a way for users to request that their data is deleted? **Yes**
   - In app: Profile > Edit profile > Delete my account
   - Web link to give Play: https://myrunningjournal.co.za/delete-account.html
 
-Data types to declare as COLLECTED (none are "shared" with third parties; Supabase, MapTiler, Sentry and RevenueCat act as service providers processing data on your behalf, which Google does not count as sharing)
+Data types to declare as COLLECTED (none are "shared" with third parties; Supabase, OpenFreeMap, Sentry and RevenueCat act as service providers processing data on your behalf, which Google does not count as sharing)
 
 | Category > type | What it is | Optional? | Purpose |
 |---|---|---|---|
@@ -24,9 +24,9 @@ Data types to declare as COLLECTED (none are "shared" with third parties; Supaba
 | Personal info > Other info | gender, year of birth (runner card) | Optional | App functionality |
 | Location > Approximate location | race towns with map coordinates and optional home town, chosen by the runner (never read from GPS) | Optional | App functionality |
 | Health and fitness > Fitness info | race distance, finish time, pace, position | Optional | App functionality |
-| Photos and videos > Photos | race photos, profile photo | Optional | App functionality |
+| Photos and videos > Photos | race photos, medal photos, profile photo | Optional | App functionality |
 | App activity > Other user-generated content | race names, notes, bucket list, friend connections, reactions | Optional | App functionality |
-| App activity > In-app search history | town names typed into the race search (sent to MapTiler, not saved by the app) | Optional | App functionality |
+| App activity > In-app search history | NOT collected once the build has no MapTiler key: town search runs on the phone from a built-in list and nothing typed leaves the phone. Declare this row only if you ship a build with MAPTILER_KEY set | Optional | App functionality |
 | Financial info > Purchase history | subscription status | Optional | App functionality |
 | App info and performance > Crash logs | Sentry error reports | Required (if SENTRY_DSN is set) | Analytics (app stability) |
 | App info and performance > Diagnostics | app version, phone model, Android version | Required (if SENTRY_DSN is set) | Analytics (app stability) |
@@ -34,7 +34,7 @@ Data types to declare as COLLECTED (none are "shared" with third parties; Supaba
 Data types to answer NOT collected: Precise location, Contacts, Messages, Audio, Files and docs, Calendar, Web browsing, Device or other IDs, Race and ethnicity, Political or religious beliefs, Sexual orientation, Health info (medical), Financial info other than purchase history.
 
 Judgement calls to be aware of
-- Location: the app never reads the phone's GPS, but it stores the town of each race (with coordinates) and an optional home town. Town-level places are declared as Approximate location (collected, not shared, optional, app functionality) to be on the safe side. MapTiler also sees the map area, search text and IP address while the map loads.
+- Location: the app never reads the phone's GPS, but it stores the town of each race (with coordinates) and an optional home town. Town-level places are declared as Approximate location (collected, not shared, optional, app functionality) to be on the safe side. OpenFreeMap sees the map area and IP address while the map loads (no account, no search text, no key).
 - Sentry is only active when SENTRY_DSN is supplied at build time. If you ship without it, remove the two crash/diagnostics rows.
 - Showing a runner's profile and races to accepted friends is user-directed, not sharing with third parties.
 
