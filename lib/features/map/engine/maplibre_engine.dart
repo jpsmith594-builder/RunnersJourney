@@ -7,12 +7,14 @@ import 'package:latlong2/latlong.dart' hide Path;
 import 'package:maplibre_gl/maplibre_gl.dart' as ml;
 
 import '../../../core/season.dart';
+import '../../../core/settings.dart';
 import '../season_filter.dart';
 import '../spike/style_recolour.dart';
 import 'map_engine.dart';
 import 'map_overlay.dart';
 import 'mercator.dart';
 import 'pin_images.dart';
+import 'style_tweaks.dart';
 
 /// The OpenFreeMap map, drawn by MapLibre. The pins, trail and race card are
 /// still Flutter widgets drawn over it from [camera], which is worked out in
@@ -21,9 +23,9 @@ import 'pin_images.dart';
 /// MapLibre's zoom is one lower than the app's (it uses 512 px tiles), so the
 /// engine converts in both directions.
 class MapLibreEngine implements MapEngine {
-  static const _styleName = 'liberty';
-  static const _styleUrl = 'https://tiles.openfreemap.org/styles/$_styleName';
-  static String? _rawStyle; // kept for the life of the app
+  static String _styleUrl(String name) =>
+      'https://tiles.openfreemap.org/styles/$name';
+  static final Map<String, String> _rawStyles = {}; // kept for the app's life
 
   LatLng _center = const LatLng(-29.0, 24.5);
   double _zoom = 4.9; // app units
@@ -315,22 +317,24 @@ class MapLibreEngine implements MapEngine {
     _layersReady = false;
   }
 
-  /// The style with the season and vivid colours baked in. Falls back to the
-  /// plain style address if the style cannot be fetched.
-  static Future<String> _styleFor(Season season, bool vivid) async {
+  /// The style with English place names and the season and vivid colours
+  /// baked in. Falls back to the plain style address if it cannot be fetched.
+  static Future<String> _styleFor(
+      String name, Season season, bool vivid) async {
     try {
-      var raw = _rawStyle;
+      var raw = _rawStyles[name];
       if (raw == null) {
         final r = await http
-            .get(Uri.parse(_styleUrl))
+            .get(Uri.parse(_styleUrl(name)))
             .timeout(const Duration(seconds: 15));
         if (r.statusCode != 200) throw 'status ${r.statusCode}';
         raw = r.body;
-        _rawStyle = raw;
+        _rawStyles[name] = raw;
       }
-      return recolourStyle(raw, seasonMatrix(season, vivid: vivid));
+      return recolourStyle(
+          localiseLabels(raw), seasonMatrix(season, vivid: vivid));
     } catch (_) {
-      return _styleUrl;
+      return _styleUrl(name);
     }
   }
 }
@@ -348,7 +352,8 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
   String? _style;
   late String _signature = _sig(widget.params);
 
-  static String _sig(MapEngineParams p) => '${p.season.name}|${p.vivid}';
+  static String _sig(MapEngineParams p) =>
+      '${settings.openFreeMapStyle}|${p.season.name}|${p.vivid}';
 
   @override
   void initState() {
@@ -368,7 +373,8 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
 
   Future<void> _load() async {
     final p = widget.params;
-    final style = await MapLibreEngine._styleFor(p.season, p.vivid);
+    final style = await MapLibreEngine._styleFor(
+        settings.openFreeMapStyle, p.season, p.vivid);
     if (!mounted || _signature != _sig(widget.params)) return;
     setState(() => _style = style);
   }

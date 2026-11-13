@@ -19,6 +19,9 @@ class AppSettings extends ChangeNotifier {
   /// Richer, deeper map colours. On unless switched off.
   bool vividMap = true;
 
+  /// Which OpenFreeMap look to use: liberty, bright or positron.
+  String openFreeMapStyle = 'liberty';
+
   /// The map engine under the journey screen. Defaults to MapTiler.
   MapEngineKind mapEngine = MapEngineKind.maptiler;
 
@@ -31,6 +34,10 @@ class AppSettings extends ChangeNotifier {
       unit = p.getString('unit') == 'mi' ? DistanceUnit.mi : DistanceUnit.km;
       showTrail = p.getBool('trail') ?? false;
       vividMap = p.getBool('vivid') ?? true;
+      final st = p.getString('ofm_style');
+      if (st == 'liberty' || st == 'bright' || st == 'positron') {
+        openFreeMapStyle = st!;
+      }
       mapEngine = p.getString('map_engine') == 'openfreemap'
           ? MapEngineKind.openFreeMap
           : MapEngineKind.maptiler;
@@ -69,6 +76,15 @@ class AppSettings extends ChangeNotifier {
     try {
       final p = await SharedPreferences.getInstance();
       await p.setBool('vivid', on);
+    } catch (_) {}
+  }
+
+  Future<void> setOpenFreeMapStyle(String name) async {
+    openFreeMapStyle = name;
+    notifyListeners();
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setString('ofm_style', name);
     } catch (_) {}
   }
 

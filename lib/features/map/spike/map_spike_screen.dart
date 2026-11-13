@@ -378,7 +378,21 @@ class _MapSpikeScreenState extends State<MapSpikeScreen> {
             listenable: settings,
             builder: (context, _) => Row(
               children: [
-                const Text('Journey uses OpenFreeMap'),
+                DropdownButton<String>(
+                  value: settings.openFreeMapStyle,
+                  underline: const SizedBox.shrink(),
+                  items: const [
+                    DropdownMenuItem(value: 'liberty', child: Text('liberty')),
+                    DropdownMenuItem(value: 'bright', child: Text('bright')),
+                    DropdownMenuItem(
+                        value: 'positron', child: Text('positron')),
+                  ],
+                  onChanged: (v) {
+                    if (v != null) settings.setOpenFreeMapStyle(v);
+                  },
+                ),
+                const SizedBox(width: 6),
+                const Text('Journey: OFM'),
                 Switch(
                   value: settings.mapEngine == MapEngineKind.openFreeMap,
                   onChanged: (v) => settings.setMapEngine(
