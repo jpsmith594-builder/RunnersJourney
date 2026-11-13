@@ -6,6 +6,7 @@ import 'places_data.dart';
 export 'geo_search.dart';
 export 'place.dart';
 export 'places_data.dart';
+export 'world_places.dart';
 
 final Map<String, Place> _byName = {
   for (final p in kPlaces) p.name.toLowerCase(): p,

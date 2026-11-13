@@ -110,6 +110,14 @@ class SettingsScreen extends StatelessWidget {
               onLongPress: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => const MapSpikeScreen())),
             ),
+            const ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(Icons.info_outline),
+              title: Text('Credits'),
+              subtitle: Text(
+                  'Map data \u00A9 OpenStreetMap contributors. Town list from '
+                  'GeoNames (geonames.org), CC BY 4.0.'),
+            ),
           ],
         ),
       ),

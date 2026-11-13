@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'places.dart';
 
-/// Town or city box. Suggests the built-in towns straight away and, when a
-/// MapTiler key is set, towns from anywhere in the world as the runner types.
+/// Town or city box. Suggests towns from the built-in South African list and
+/// the world town list as the runner types, and also asks the online search
+/// while a MapTiler key is set.
 class PlaceField extends StatefulWidget {
   final String initialText;
   final Place? place; // the currently picked place, for the helper text
@@ -33,15 +34,24 @@ class PlaceField extends StatefulWidget {
 class _PlaceFieldState extends State<PlaceField> {
   int _seq = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    WorldPlaces.warmUp();
+  }
+
   Future<Iterable<Place>> _options(TextEditingValue v) async {
     final q = v.text.trim();
     final local = searchPlaces(q);
-    if (q.length < 3 || !GeoSearch.enabled) return local;
+    if (q.length < 2) return local;
     final mine = ++_seq;
+    // Built-in South African list first, then towns from the world list on
+    // the phone, then (while a MapTiler key is set) the online search.
+    final found = mergePlaces(local, await WorldPlaces.search(q));
+    if (mine != _seq || q.length < 3 || !GeoSearch.enabled) return found;
     await Future<void>.delayed(const Duration(milliseconds: 350));
-    if (mine != _seq) return local; // the runner kept typing
-    final remote = await GeoSearch.search(q);
-    return mergePlaces(local, remote);
+    if (mine != _seq) return found; // the runner kept typing
+    return mergePlaces(found, await GeoSearch.search(q));
   }
 
   @override
