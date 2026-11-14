@@ -36,7 +36,7 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
       final medals = await _repo.list(refresh: refresh);
       if (!mounted) return;
       setState(() {
-        _medals = medals;
+        _medals = _byDate(medals);
         _loading = false;
         _error = null;
       });
@@ -47,6 +47,12 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
         _error = 'Could not load your medals. Check your connection and try again.';
       });
     }
+  }
+
+  /// Oldest first, by race date; medals with no race use the day they were added.
+  List<Medal> _byDate(List<Medal> medals) {
+    DateTime when(Medal m) => _raceOf(m)?.date ?? m.createdAt;
+    return [...medals]..sort((a, b) => when(a).compareTo(when(b)));
   }
 
   Race? _raceOf(Medal m) {
