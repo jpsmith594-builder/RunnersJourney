@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../friends/friend_entry.dart';
 import '../map/distance_colours.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
@@ -12,8 +13,22 @@ import 'medal_widgets.dart';
 
 /// "My Medals": photographed medals hung from titanium bars on a purple wall.
 class MedalWallScreen extends StatefulWidget {
-  final RaceStore store;
-  const MedalWallScreen({super.key, required this.store});
+  /// The signed-in runner's own races (own wall only).
+  final RaceStore? store;
+
+  /// Set when looking at a friend's wall: read-only.
+  final FriendEntry? friend;
+  final List<Race> friendRaces;
+
+  const MedalWallScreen({super.key, required RaceStore this.store})
+      : friend = null,
+        friendRaces = const [];
+
+  const MedalWallScreen.friend({
+    super.key,
+    required FriendEntry this.friend,
+    required this.friendRaces,
+  }) : store = null;
 
   @override
   State<MedalWallScreen> createState() => _MedalWallScreenState();
@@ -23,6 +38,7 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
   static const _perRow = 3;
   final _repo = MedalRepository();
   List<Medal> _medals = const [];
+  bool _shared = true;
   bool _loading = true;
   String? _error;
 
@@ -30,11 +46,31 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
   void initState() {
     super.initState();
     _load();
+    if (widget.friend == null) {
+      _repo.sharedWithFriends().then((v) {
+        if (mounted) setState(() => _shared = v);
+      }).catchError((_) {});
+    }
+  }
+
+  Future<void> _setShared(bool v) async {
+    setState(() => _shared = v);
+    try {
+      await _repo.setSharedWithFriends(v);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _shared = !v);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Could not change that. Check your connection.')));
+    }
   }
 
   Future<void> _load({bool refresh = false}) async {
     try {
-      final medals = await _repo.list(refresh: refresh);
+      final f = widget.friend;
+      final medals = f == null
+          ? await _repo.list(refresh: refresh)
+          : await _repo.listOf(f.otherId);
       if (!mounted) return;
       setState(() {
         _medals = _byDate(medals);
@@ -58,7 +94,7 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
 
   Race? _raceOf(Medal m) {
     if (m.raceId == null) return null;
-    for (final r in widget.store.races) {
+    for (final r in widget.store?.races ?? widget.friendRaces) {
       if (r.id == m.raceId) return r;
     }
     return null;
@@ -69,7 +105,7 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
     if (cut == null || !mounted) return;
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-          builder: (_) => MedalEditScreen(store: widget.store, bytes: cut)),
+          builder: (_) => MedalEditScreen(store: widget.store!, bytes: cut)),
     );
     if (saved == true) await _load(refresh: true);
   }
@@ -77,7 +113,7 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
   Future<void> _open(Medal m) async {
     final changed = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-          builder: (_) => MedalEditScreen(store: widget.store, medal: m)),
+          builder: (_) => MedalEditScreen(store: widget.store!, medal: m)),
     );
     if (changed == true) await _load(refresh: true);
   }
@@ -97,11 +133,13 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _add,
-        icon: const Icon(Icons.add_a_photo_outlined),
-        label: const Text('Add medal'),
-      ),
+      floatingActionButton: widget.friend != null
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: _add,
+              icon: const Icon(Icons.add_a_photo_outlined),
+              label: const Text('Add medal'),
+            ),
       body: Container(
         decoration: wallGradient,
         width: double.infinity,
@@ -113,18 +151,30 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(16, 24, 16, 120),
               children: [
-                const LedTitle('My Medals'),
+                LedTitle(widget.friend == null
+                    ? 'My Medals'
+                    : "${widget.friend!.name.split(' ').first}'s Medals"),
                 const SizedBox(height: 10),
                 Text(
                   _loading
-                      ? 'Loading your medals...'
+                      ? 'Loading medals...'
                       : _medals.length == 1
                           ? '1 medal'
                           : '${_medals.length} medals',
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Color(0xFFBBA8E2)),
                 ),
-                const SizedBox(height: 36),
+                if (widget.friend == null)
+                  SwitchListTile(
+                    value: _shared,
+                    onChanged: _setShared,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                    dense: true,
+                    activeTrackColor: const Color(0xFF2FD8FF),
+                    title: const Text('Friends can see my wall',
+                        style: TextStyle(color: Color(0xFFD9CCF2))),
+                  ),
+                const SizedBox(height: 28),
                 if (_error != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 24),
@@ -144,12 +194,14 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
                   ),
                 for (var row = 0; row < rowCount; row++) _buildRow(row),
                 if (!_loading && _error == null && _medals.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 8),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
                     child: Text(
-                      'Photograph a medal on a plain surface and hang it here.',
+                      widget.friend == null
+                          ? 'Photograph a medal on a plain surface and hang it here.'
+                          : 'No medals to show. They may not have hung any yet, or keep their wall private.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xFFA592CF)),
+                      style: const TextStyle(color: Color(0xFFA592CF)),
                     ),
                   ),
               ],
@@ -199,7 +251,7 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
       label: 'Medal, $title $date',
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => _open(m),
+        onTap: widget.friend != null ? null : () => _open(m),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Column(

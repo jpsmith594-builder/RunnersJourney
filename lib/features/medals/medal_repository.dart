@@ -42,6 +42,47 @@ class MedalRepository {
     return medals;
   }
 
+  /// A friend's wall, oldest first. Empty when they keep it private.
+  Future<List<Medal>> listOf(String userId) async {
+    final rows = await _db
+        .from('medal_photos')
+        .select()
+        .eq('user_id', userId)
+        .order('created_at');
+    return Future.wait((rows as List).map((r) async {
+      final m = r as Map<String, dynamic>;
+      final path = m['storage_path'] as String;
+      final url =
+          await _db.storage.from(_bucket).createSignedUrl(path, _urlSeconds);
+      return Medal(
+        id: m['id'] as String,
+        raceId: m['race_id'] as String?,
+        storagePath: path,
+        url: url,
+        metal: metalFrom(m['metal'] as String?),
+        ribbon: ribbonFrom(m['ribbon'] as String?),
+        createdAt: DateTime.parse(m['created_at'] as String),
+      );
+    }));
+  }
+
+  /// Whether friends may see the signed-in runner's wall.
+  Future<bool> sharedWithFriends() async {
+    final row = await _db
+        .from('profiles')
+        .select('medals_visible_to_friends')
+        .eq('id', _db.auth.currentUser!.id)
+        .maybeSingle();
+    return (row?['medals_visible_to_friends'] as bool?) ?? true;
+  }
+
+  Future<void> setSharedWithFriends(bool value) async {
+    await _db
+        .from('profiles')
+        .update({'medals_visible_to_friends': value}).eq(
+            'id', _db.auth.currentUser!.id);
+  }
+
   /// Uploads the cut-out picture and hangs a new medal on the wall.
   Future<void> add(
     Uint8List png, {

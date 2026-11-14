@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../medals/medal_wall_screen.dart';
 import '../profile/profile.dart';
 import '../profile/profile_repository.dart';
 import '../profile/runner_card.dart';
@@ -94,6 +95,17 @@ class _FriendCardScreenState extends State<FriendCardScreen> {
                       age: p.age,
                       avatarUrl: d.avatarUrl,
                       stats: stats,
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => MedalWallScreen.friend(
+                              friend: widget.entry, friendRaces: d.races),
+                        ),
+                      ),
+                      icon: const Icon(Icons.emoji_events_outlined),
+                      label: const Text('See their medal wall'),
                     ),
                     const SizedBox(height: 20),
                     Align(

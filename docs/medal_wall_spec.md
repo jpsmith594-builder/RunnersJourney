@@ -2,6 +2,8 @@
 
 **Status:** phase 1 built (menu > My Medals). Needs `supabase/020_medal_wall.sql` run once in the Supabase SQL editor. Code is in `lib/features/medals/`.
 
+**Friends can see the wall:** run `supabase/021_medal_sharing.sql` once. A switch on the wall ("Friends can see my wall", on by default) controls it; a friend's wall opens read-only from their runner card.
+
 
 ## Summary
 A separate menu option opens the "My Medals" wall: a dark purple wall with titanium hanger bars lit from behind by an LED glow. The runner photographs a real medal, the app crops it and hangs it on the wall. Tapping a medal opens the linked race card. The wall delivers the brand line "the medals you've earned" and gives runners something to show and share.
