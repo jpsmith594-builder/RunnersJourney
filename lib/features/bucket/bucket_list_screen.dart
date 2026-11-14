@@ -80,7 +80,15 @@ class BucketListScreen extends StatelessWidget {
                         : null,
                   ),
                   subtitle: sub.isEmpty ? null : Text(sub),
-                  trailing: const Icon(Icons.chevron_right),
+                  trailing: IconButton(
+                    tooltip: 'Remove from bucket list',
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () async {
+                      if (await confirmRemoveBucketItem(context, it)) {
+                        store.delete(it);
+                      }
+                    },
+                  ),
                   onTap: () => _open(context, it),
                 ),
               );

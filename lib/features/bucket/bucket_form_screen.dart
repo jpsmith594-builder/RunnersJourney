@@ -73,6 +73,21 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
     }
   }
 
+  Future<void> _remove() async {
+    final ok = await confirmRemoveBucketItem(context, widget.item!);
+    if (!ok || !mounted) return;
+    setState(() => _saving = true);
+    try {
+      await widget.store.delete(widget.item!);
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Could not remove it. Check your connection.')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     const gap = SizedBox(height: 12);
@@ -177,10 +192,39 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
                       child: CircularProgressIndicator(strokeWidth: 2))
                   : const Text('Save'),
             ),
+            if (widget.item?.id != null) ...[
+              const SizedBox(height: 8),
+              TextButton.icon(
+                onPressed: _saving ? null : _remove,
+                icon: const Icon(Icons.delete_outline),
+                label: const Text('Remove from bucket list'),
+                style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
+              ),
+            ],
           ],
         ),
       ),
       ),
     );
   }
+}
+
+/// Asks before taking a race off the bucket list. True when they agree.
+Future<bool> confirmRemoveBucketItem(BuildContext context, BucketItem item) async {
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Remove from bucket list?'),
+      content: Text('${item.name} will come off your list and the map.'),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Keep')),
+        TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Remove')),
+      ],
+    ),
+  );
+  return ok ?? false;
 }
