@@ -33,6 +33,11 @@ flutter:
   assets:
     - assets/places/world.csv
 
+  fonts:
+    - family: Pacifico
+      fonts:
+        - asset: assets/fonts/Pacifico-Regular.ttf
+
 flutter_launcher_icons:
   android: true
   ios: false

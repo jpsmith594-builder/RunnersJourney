@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 
 import 'medal.dart';
@@ -13,33 +15,94 @@ const wallGradient = BoxDecoration(
   ),
 );
 
-/// Bold italic LED letters that glow against the wall.
+const _neon = LinearGradient(
+  colors: [Color(0xFFFF5FD2), Color(0xFFFFB02E), Color(0xFF2FD8FF)],
+);
+
+/// The wall header: cursive neon letters over two curved LED track lanes.
 class LedTitle extends StatelessWidget {
   final String text;
   const LedTitle(this.text, {super.key});
 
+  Widget _letters({required bool glow}) {
+    final t = Text(
+      text,
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontFamily: 'Pacifico',
+        fontSize: 48,
+        height: 1.1,
+        color: Colors.white,
+      ),
+    );
+    final lit = ShaderMask(
+      blendMode: BlendMode.srcIn,
+      shaderCallback: (r) => _neon.createShader(r),
+      child: t,
+    );
+    return glow
+        ? ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8), child: lit)
+        : lit;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 40,
-          fontWeight: FontWeight.w800,
-          fontStyle: FontStyle.italic,
-          letterSpacing: 3,
-          color: Color(0xFFEFFDFF),
-          shadows: [
-            Shadow(color: Color(0xFFBFF6FF), blurRadius: 3),
-            Shadow(color: Color(0xFF2FD8FF), blurRadius: 14),
-            Shadow(color: Color(0xAA2FD8FF), blurRadius: 34),
-          ],
+    return Semantics(
+      header: true,
+      label: text,
+      child: ExcludeSemantics(
+        child: SizedBox(
+          height: 118,
+          child: Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              const Positioned.fill(child: CustomPaint(painter: _LanesPainter())),
+              Positioned(
+                top: 0,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [_letters(glow: true), _letters(glow: false)],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _LanesPainter extends CustomPainter {
+  const _LanesPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    for (final dy in [74.0, 98.0]) {
+      final path = Path()
+        ..moveTo(0, dy)
+        ..quadraticBezierTo(size.width / 2, dy - 56, size.width, dy);
+      final glow = Paint()
+        ..shader = _neon.createShader(rect)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+      final line = Paint()
+        ..shader = _neon.createShader(rect)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round;
+      canvas.drawPath(path, glow);
+      canvas.drawPath(path, line);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter old) => false;
 }
 
 /// A titanium hanger bar lit from behind by an LED strip.
