@@ -68,4 +68,14 @@ void main() {
         (layers[1]['paint'] as Map)['background-color'] as String)!;
     expect(lum(bg), lessThan(0.3));
   });
+
+  test('road badge layers are removed', () {
+    final out = jsonDecode(darkenStyle(jsonEncode({
+      'layers': [
+        {'id': 'road_shield', 'paint': {}},
+        {'id': 'water', 'paint': {'fill-color': '#aad3df'}},
+      ],
+    }))) as Map;
+    expect((out['layers'] as List).length, 1);
+  });
 }

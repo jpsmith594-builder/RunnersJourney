@@ -17,6 +17,11 @@ String darkenStyle(String styleJson) {
   final style = jsonDecode(styleJson) as Map<String, dynamic>;
   final layers = style['layers'];
   if (layers is List) {
+    // Road-number badges (M3, N2) are pictures with a white card; they cannot
+    // be recoloured, so they are left out of the dark map.
+    layers.removeWhere((l) =>
+        l is Map<String, dynamic> &&
+        (l['id']?.toString().contains('shield') ?? false));
     for (final layer in layers) {
       if (layer is! Map<String, dynamic>) continue;
       final paint = layer['paint'];
@@ -75,7 +80,7 @@ Rgba darkenColour(Rgba c, DarkRole role) {
   switch (role) {
     case DarkRole.fill:
       nl = 0.04 + 0.20 * math.pow(l, 6);
-      ns = neutral ? 0.18 : math.min(1.0, s * 0.85);
+      ns = neutral ? 0.18 : math.min(1.0, s * 0.5);
     case DarkRole.label:
       nl = 1 - 0.78 * l;
       ns = neutral ? 0.12 : s * 0.7;

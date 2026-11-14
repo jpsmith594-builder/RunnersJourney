@@ -290,7 +290,10 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     season: season,
                     vivid: settings.vividMap,
                     dark: Theme.of(context).brightness == Brightness.dark,
-                    onReady: () => setState(() => _ready = true),
+                    onReady: () {
+                      setState(() => _ready = true);
+                      _syncNative();
+                    },
                     onCamera: _onCameraMoved,
                     onTap: () => _select(null),
                     onPinTap: _onPinTap,
@@ -789,15 +792,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
       if (onlyGroup != null &&
           onlyGroup.races.length > 1 &&
           scale >= _fanZoom) {
-        pins.add(NativePin(
-          id: 'dot:${onlyGroup.place.key}',
-          pos: geo(cl.center),
-          shape: PinShape.dot,
-          w: 10,
-          h: 10,
-          fill: const Color(0xFFE90052),
-          ink: Colors.white,
-        ));
         final offsets = fanOffsets(onlyGroup.races.length);
         for (var i = 0; i < onlyGroup.races.length; i++) {
           racePin(onlyGroup.races[i], cl.center + offsets[i]);
