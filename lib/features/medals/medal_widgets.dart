@@ -19,31 +19,44 @@ const _neon = LinearGradient(
   colors: [Color(0xFFFF5FD2), Color(0xFFFFB02E), Color(0xFF2FD8FF)],
 );
 
-/// The wall header: cursive neon letters over two curved LED track lanes.
+/// The wall header: bold italic neon-outlined letters over two curved LED track lanes.
 class LedTitle extends StatelessWidget {
   final String text;
   const LedTitle(this.text, {super.key});
 
   Widget _letters({required bool glow}) {
-    final t = Text(
-      text,
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontFamily: 'Pacifico',
-        fontSize: 48,
-        height: 1.1,
-        color: Colors.white,
-      ),
+    const base = TextStyle(
+      fontSize: 46,
+      height: 1.1,
+      fontWeight: FontWeight.w900,
+      fontStyle: FontStyle.italic,
+      letterSpacing: 2,
     );
-    final lit = ShaderMask(
-      blendMode: BlendMode.srcIn,
-      shaderCallback: (r) => _neon.createShader(r),
-      child: t,
+    if (glow) {
+      return ImageFiltered(
+        imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: ShaderMask(
+          blendMode: BlendMode.srcIn,
+          shaderCallback: (r) => _neon.createShader(r),
+          child: Text(text, style: base.copyWith(color: Colors.white)),
+        ),
+      );
+    }
+    // Dark letter faces with a neon outline, as if the glow comes from behind.
+    return Stack(
+      children: [
+        Text(
+          text,
+          style: base.copyWith(
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2.5
+              ..shader = _neon.createShader(const Rect.fromLTWH(0, 0, 300, 50)),
+          ),
+        ),
+        Text(text, style: base.copyWith(color: const Color(0xFF2A2430))),
+      ],
     );
-    return glow
-        ? ImageFiltered(
-            imageFilter: ImageFilter.blur(sigmaX: 8, sigmaY: 8), child: lit)
-        : lit;
   }
 
   @override

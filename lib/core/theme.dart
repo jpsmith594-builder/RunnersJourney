@@ -17,7 +17,7 @@ class AppTheme {
       ? const Color(0xFF4ADE80)
       : const Color(0xFF16A34A);
 
-  static const Color canvasLight = Color(0xFFF2F3F8);
+  static const Color canvasLight = Color(0xFFE7E1F4);
   static const Color canvasDark = Color(0xFF0B0B10);
   static const Color cardDark = Color(0xFF1C1C24);
 
