@@ -65,7 +65,7 @@ const faqSections = <FaqSection>[
         'Unlimited finished races and up to 10 photos per race. Everything '
             'else stays the same.'),
     FaqItem('How much does it cost?',
-        'In South Africa it is R50 a month or R400 a year. In other countries '
+        'In South Africa it is R49 a month or R499 a year. In other countries '
             'it is about \$3 a month or \$25 a year. The exact price for your '
             'country is shown on the Go unlimited screen, and the yearly plan '
             'saves about a third.'),

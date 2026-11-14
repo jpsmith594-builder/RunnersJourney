@@ -6,7 +6,7 @@ import '../growth/code_screen.dart';
 import 'limits.dart';
 import 'subscription_store.dart';
 
-/// Shows the plans (R50 a month or R400 a year in South Africa; $3 or $25 elsewhere) and starts the purchase.
+/// Shows the plans (R49 a month or R499 a year in South Africa; $3 or $25 elsewhere) and starts the purchase.
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key});
 
@@ -231,8 +231,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 ),
               );
             }
-            final yearlyPrice = s.yearly?.storeProduct.priceString ?? 'R400';
-            final monthlyPrice = s.monthly?.storeProduct.priceString ?? 'R50';
+            final yearlyPrice = s.yearly?.storeProduct.priceString ?? 'R499';
+            final monthlyPrice = s.monthly?.storeProduct.priceString ?? 'R49';
             final chosen = _yearly ? s.yearly : s.monthly;
             return ListView(
               padding: const EdgeInsets.all(20),
@@ -259,8 +259,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   selected: _yearly,
                   title: 'Yearly',
                   price: '$yearlyPrice / year',
-                  note: 'Best value, about R21 a month',
-                  badge: 'SAVE 30%',
+                  note: 'Best value, about R42 a month',
+                  badge: 'SAVE 15%',
                   onTap: () => setState(() => _yearly = true),
                 ),
                 _plan(

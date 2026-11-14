@@ -11,7 +11,7 @@ help, and keep the rules simple enough to explain in one line each.
 
 **Club code** (made by you, handed to a club contact)
 - New subscribers get **15% off the first year** of the yearly plan. After 12
-  months the price returns to normal (R400 / $25).
+  months the price returns to normal (R499 / $25).
 - The club contact earns **a free year at 10 paid sign-ups**, and another free
   year at 25.
 
@@ -73,8 +73,8 @@ App
    - Offer 1: tag **`club15`**. Eligibility: *Developer determined*. Phase: one
      billing period (1 year) at 15% off the base price, then the normal price.
    - Offer 2: tag **`ref10`**. Same, with 10% off.
-   Set regional prices (R340 / R360 style) so rand and dollar prices match the
-   percentage. Activate both offers.
+   Set regional prices so rand and dollar prices match the percentage (about
+   R424 for 15% off and R449 for 10% off R499, entered before VAT in the Console). Activate both offers.
 4. In RevenueCat the yearly package already points at the same product; the app
    picks the offer by its tag.
 5. Optional: schedule `select public.sync_all_rewards()` nightly with pg_cron
