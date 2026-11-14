@@ -41,6 +41,9 @@ class MapLibreEngine implements MapEngine {
   bool _layersReady = false;
   bool _syncing = false;
   bool _dirty = false;
+  // Bumped whenever a new map (new controller) is created, so a send that was
+  // still waiting on the old map is abandoned instead of blocking all later ones.
+  int _gen = 0;
   final Set<String> _images = {};
   double _dpr = 2.7;
 
@@ -60,6 +63,7 @@ class MapLibreEngine implements MapEngine {
     if (c == null) return;
     _layersReady = false;
     _images.clear();
+    final gen = _gen;
     await c.addGeoJsonSource('legs-done', _empty);
     await c.addLineLayer(
       'legs-done',
@@ -137,7 +141,7 @@ class MapLibreEngine implements MapEngine {
         symbolSortKey: const ['get', 'z'],
       ),
     );
-    _layersReady = true;
+    if (gen == _gen) _layersReady = true;
   }
 
   /// Sends the latest markers to the map. Runs one at a time; if more arrive
@@ -148,6 +152,7 @@ class MapLibreEngine implements MapEngine {
       return;
     }
     _syncing = true;
+    final gen = _gen;
     try {
       do {
         _dirty = false;
@@ -157,9 +162,13 @@ class MapLibreEngine implements MapEngine {
         for (final p in d.pins) {
           final key = p.imageKey;
           if (_images.contains(key)) continue;
-          await c.addImage(key, await renderPinImage(p));
+          final img = await renderPinImage(p);
+          if (gen != _gen) return;
+          await c.addImage(key, img);
+          if (gen != _gen) return;
           _images.add(key);
         }
+        if (gen != _gen) return;
         await c.setGeoJsonSource('pins', {
           'type': 'FeatureCollection',
           'features': [
@@ -186,7 +195,7 @@ class MapLibreEngine implements MapEngine {
     } catch (e) {
       debugPrint('Map overlay sync failed: $e');
     } finally {
-      _syncing = false;
+      if (gen == _gen) _syncing = false;
     }
   }
 
@@ -484,6 +493,11 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
       myLocationEnabled: false,
       onMapCreated: (c) {
         e._controller?.removeListener(e._onControllerChanged);
+        e._gen++;
+        e._syncing = false;
+        e._dirty = false;
+        e._layersReady = false;
+        e._images.clear();
         e._controller = c;
         c.addListener(e._onControllerChanged);
       },
