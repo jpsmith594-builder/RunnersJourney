@@ -17,6 +17,7 @@ import '../help/welcome_tour.dart';
 import '../settings/settings_screen.dart';
 import '../goals/goal_strip.dart';
 import '../goals/goals_screen.dart';
+import '../growth/invite_screen.dart';
 import '../medals/medal_wall_screen.dart';
 import '../stats/badges_screen.dart';
 import '../stats/charts_screen.dart';
@@ -264,6 +265,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   _openAlbum();
                 case 'medals':
                   _openMedals();
+                case 'invite':
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const InviteScreen()));
                 case 'results':
                   _openResults();
                 case 'friends':
@@ -396,6 +400,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const PopupMenuItem(
+                value: 'invite',
+                child: ListTile(
+                  leading: Icon(Icons.card_giftcard_outlined),
+                  title: Text('Invite and earn'),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ),
+              const PopupMenuItem(
                 value: 'plan',
                 child: ListTile(
                   leading: Icon(Icons.workspace_premium_outlined),
@@ -429,7 +441,8 @@ class _HomeScreenState extends State<HomeScreen> {
             listenable: Listenable.merge([_store, subscription]),
             builder: (context, _) {
               final note = freePlanNotice(countedRaces(_store.races),
-                  subscribed: subscription.active);
+                  subscribed: subscription.active,
+                  limit: freeRaceLimit + subscription.bonusSlots);
               return Column(
                 children: [
                   if (note != null)

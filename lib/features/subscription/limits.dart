@@ -14,16 +14,17 @@ int countedRaces(Iterable<Race> races) =>
     races.where((r) => r.status != RaceStatus.planned).length;
 
 /// A short note for the home screen, or null when there is nothing to say.
-String? freePlanNotice(int counted, {required bool subscribed}) {
+String? freePlanNotice(int counted,
+    {required bool subscribed, int limit = freeRaceLimit}) {
   if (subscribed) return null;
-  if (counted > freeRaceLimit) {
+  if (counted > limit) {
     return 'Your races are read-only. Subscribe to add and edit again.';
   }
-  if (counted == freeRaceLimit) {
-    return 'You have used all $freeRaceLimit free races. Subscribe to add more.';
+  if (counted == limit) {
+    return 'You have used all $limit free races. Subscribe to add more, or invite friends for extra slots.';
   }
-  if (counted >= freeRaceLimit - 2) {
-    return '$counted of $freeRaceLimit free races used.';
+  if (counted >= limit - 2) {
+    return '$counted of $limit free races used.';
   }
   return null;
 }

@@ -80,5 +80,17 @@ Deno.serve(async (req) => {
     console.error("subscription upsert failed", error.message);
     return new Response("error", { status: 500 });
   }
+
+  // Club / friend code bookkeeping (see docs/growth_spec.md).
+  if (e.type === "INITIAL_PURCHASE") {
+    await db.from("code_redemptions")
+      .update({ purchased_at: new Date().toISOString(), product_id: e.product_id ?? null })
+      .eq("user_id", userId)
+      .is("purchased_at", null);
+  }
+  // A refund voids the referral, so it never counts towards credit.
+  if (e.type === "CANCELLATION" && e.cancel_reason === "CUSTOMER_SUPPORT") {
+    await db.from("code_redemptions").update({ voided: true }).eq("user_id", userId);
+  }
   return new Response("ok", { status: 200 });
 });

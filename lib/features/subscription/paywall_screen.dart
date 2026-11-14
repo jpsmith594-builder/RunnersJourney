@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme.dart';
+import '../growth/code_screen.dart';
 import 'limits.dart';
 import 'subscription_store.dart';
 
@@ -107,6 +108,60 @@ class _PaywallScreenState extends State<PaywallScreen> {
     );
   }
 
+  /// Shows the applied club or friend code, or a link to enter one.
+  Widget _codeSection(SubscriptionStore s) {
+    final code = s.code;
+    if (code == null) {
+      return Align(
+        alignment: Alignment.centerLeft,
+        child: TextButton.icon(
+          style: TextButton.styleFrom(foregroundColor: AppTheme.cyan),
+          onPressed: () async {
+            await Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const CodeScreen()));
+            if (mounted) setState(() {});
+          },
+          icon: const Icon(Icons.confirmation_number_outlined),
+          label: const Text('Have a club or friend code?'),
+        ),
+      );
+    }
+    final missingOffer = s.storeAvailable &&
+        s.yearly != null &&
+        s.offerWithTag(s.yearly, code.offerTag) == null;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white12,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppTheme.cyan),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.check_circle, color: AppTheme.cyan),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(code.headline,
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.w800)),
+                Text(
+                  missingOffer
+                      ? 'Your discount is not available in this build yet.'
+                      : '${code.discountPct}% off the first year of the yearly plan. Then the normal price.',
+                  style: const TextStyle(color: Colors.white70),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,7 +252,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     'Up to 10 photos per race (free: 1)'),
                 _benefit(Icons.edit_outlined,
                     'Keep editing every race, always'),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
+                _codeSection(s),
+                const SizedBox(height: 12),
                 _plan(
                   selected: _yearly,
                   title: 'Yearly',
@@ -232,8 +289,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     backgroundColor: Colors.white,
                     foregroundColor: AppTheme.purple,
                   ),
-                  onPressed:
-                      (s.busy || chosen == null) ? null : () => s.purchase(chosen),
+                  onPressed: (s.busy || chosen == null)
+                      ? null
+                      : () => s.purchase(chosen,
+                          offerTag: (_yearly && s.code != null)
+                              ? s.code!.offerTag
+                              : null),
                   child: s.busy
                       ? const SizedBox(
                           width: 22,

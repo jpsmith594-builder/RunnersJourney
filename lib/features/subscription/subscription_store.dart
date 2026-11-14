@@ -6,6 +6,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config.dart';
+import '../growth/growth_repository.dart';
 
 /// The one subscription state for the whole app.
 ///
@@ -19,6 +20,11 @@ class SubscriptionStore extends ChangeNotifier {
   String accountType = 'free';
   bool get isAdmin => accountType == 'admin';
   bool get hasGift => accountType == 'premium' || accountType == 'admin';
+  /// Extra free-plan race slots earned by inviting friends (0 to 5).
+  int bonusSlots = 0;
+
+  /// The club or friend code this runner has used, if any.
+  CodeResult? code;
   bool busy = false;
   String? message;
   Package? monthly;
@@ -61,6 +67,15 @@ class SubscriptionStore extends ChangeNotifier {
           .eq('id', uid)
           .maybeSingle();
       accountType = (prof?['account_type'] as String?) ?? 'free';
+      try {
+        bonusSlots =
+            ((await _db.rpc('bonus_slots', params: {'uid': uid})) as num?)
+                    ?.toInt() ??
+                0;
+        code = await GrowthRepository().myRedemption();
+      } catch (_) {
+        // Not set up yet (older database): no extras.
+      }
       active = on || hasGift;
     } catch (_) {
       // Keep the last known state when offline.
@@ -89,13 +104,27 @@ class SubscriptionStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> purchase(Package? package) async {
+  /// The Play offer on [package] that carries [tag] (e.g. 'club15'), if the
+  /// offer has been set up in the Play Console.
+  SubscriptionOption? offerWithTag(Package? package, String tag) {
+    final options = package?.storeProduct.subscriptionOptions;
+    if (options == null) return null;
+    for (final o in options) {
+      if (o.tags.contains(tag)) return o;
+    }
+    return null;
+  }
+
+  Future<void> purchase(Package? package, {String? offerTag}) async {
     if (package == null) return;
     busy = true;
     message = null;
     notifyListeners();
     try {
-      await Purchases.purchase(PurchaseParams.package(package));
+      final offer = offerTag == null ? null : offerWithTag(package, offerTag);
+      await Purchases.purchase(offer != null
+          ? PurchaseParams.subscriptionOption(offer)
+          : PurchaseParams.package(package));
       await _waitForServer();
     } on PlatformException catch (e) {
       final code = PurchasesErrorHelper.getErrorCode(e);
@@ -138,6 +167,8 @@ class SubscriptionStore extends ChangeNotifier {
   Future<void> reset() async {
     active = false;
     accountType = 'free';
+    bonusSlots = 0;
+    code = null;
     monthly = null;
     yearly = null;
     message = null;
