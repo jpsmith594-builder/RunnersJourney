@@ -147,6 +147,10 @@ class MedalView extends StatelessWidget {
   final ImageProvider image;
   final MedalMetal metal;
   final MedalRibbon ribbon;
+
+  /// When set (the medal's race has a known distance) this replaces the
+  /// ribbon colour, so ribbons use the same colours as the map pins.
+  final Color? ribbonColour;
   final double size;
 
   const MedalView({
@@ -154,6 +158,7 @@ class MedalView extends StatelessWidget {
     required this.image,
     required this.metal,
     required this.ribbon,
+    this.ribbonColour,
     this.size = 92,
   });
 
@@ -176,9 +181,12 @@ class MedalView extends StatelessWidget {
             width: ribbonWidth,
             height: _ribbonDrop + 14,
             child: Container(
-              color: ribbon.color,
+              color: ribbonColour ?? ribbon.color,
               alignment: Alignment.center,
-              child: Container(width: 8, color: ribbon.stripe),
+              child: Container(
+                  width: 8,
+                  color: ribbonColour != null ? Colors.white : ribbon.stripe,
+                ),
             ),
           ),
           Positioned(

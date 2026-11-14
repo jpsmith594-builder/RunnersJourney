@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/tiles.dart';
+import '../map/distance_colours.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
 import '../subscription/limits.dart';
@@ -57,6 +58,14 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  /// The colour of the linked race's distance group, if it has a distance.
+  DistanceBand? get _raceBand {
+    for (final r in widget.store.races) {
+      if (r.id == _raceId) return distanceBand(r.distanceKm);
+    }
+    return null;
   }
 
   void _pickRace(String? id) {
@@ -163,7 +172,11 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
               children: [
                 const SizedBox(width: 220, height: 12, child: HangerBar()),
                 MedalView(
-                    image: _image, metal: _metal, ribbon: _ribbon, size: 150),
+                    image: _image,
+                    metal: _metal,
+                    ribbon: _ribbon,
+                    ribbonColour: _raceBand?.color,
+                    size: 150),
               ],
             ),
           ),
@@ -216,7 +229,26 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
                 const SizedBox(height: 20),
                 Text('Ribbon', style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
-                Wrap(
+                if (_raceBand != null)
+                  Row(
+                    children: [
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: BoxDecoration(
+                            color: _raceBand!.color, shape: BoxShape.circle),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'The ribbon uses the ${_raceBand!.label} colour, '
+                          'the same as on the map.',
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  Wrap(
                   spacing: 12,
                   runSpacing: 12,
                   children: [

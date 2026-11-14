@@ -42,5 +42,6 @@ void main() {
     expect(t, startsWith('My 2026 in running'));
     expect(t, contains(websiteUrl));
     expect(t, contains(inviteLine));
+    expect(t, contains(playStoreUrl));
   });
 }

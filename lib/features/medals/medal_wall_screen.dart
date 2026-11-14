@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../map/distance_colours.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
 import 'medal.dart';
@@ -209,6 +210,7 @@ class _MedalWallScreenState extends State<MedalWallScreen> {
                     image: NetworkImage(m.url),
                     metal: m.metal,
                     ribbon: m.ribbon,
+                    ribbonColour: distanceColour(race?.distanceKm),
                     size: box.maxWidth < 92 ? box.maxWidth : 92,
                   ),
                 ),

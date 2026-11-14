@@ -5,6 +5,7 @@ import '../friends/reactions.dart';
 import '../photos/photo_widgets.dart';
 import '../races/race.dart';
 import '../../core/units.dart';
+import 'distance_colours.dart';
 
 /// Small summary card shown when a race pin is tapped (or hovered on desktop).
 class RaceCard extends StatelessWidget {
@@ -82,8 +83,29 @@ class RaceCard extends StatelessWidget {
               style: t.bodySmall,
             ),
             const SizedBox(height: 6),
-            Text(_statusLabel,
-                style: t.labelMedium?.copyWith(fontWeight: FontWeight.w600)),
+            Row(
+              children: [
+                if (distanceBand(race.distanceKm) case final b?) ...[
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: b.color,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(b.label,
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800)),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+                Text(_statusLabel,
+                    style:
+                        t.labelMedium?.copyWith(fontWeight: FontWeight.w600)),
+              ],
+            ),
             if (stats.isNotEmpty) ...[
               const SizedBox(height: 4),
               Text(stats.join(' · '), style: t.bodyMedium),

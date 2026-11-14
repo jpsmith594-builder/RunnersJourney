@@ -69,6 +69,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
   final Map<String, (LatLng, bool)> _clusterTargets = {};
   double _layoutZoom = -1;
   GroupResult? _lastGrouped;
+  DistanceBand? _bandFilter; // legend: show only this distance group
   List<Race> _lastRaces = const [];
   List<BucketItem> _lastBucket = const [];
   final ValueNotifier<int> _tick = ValueNotifier<int>(0);
@@ -264,10 +265,16 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
           _trailYear = _defaultYear(store.races);
         }
         final season = seasonFor(DateTime.now(), southern: store.southern);
-        final grouped = groupRaces(store.races);
+        // The legend can narrow the map to one distance group.
+        final shown = _bandFilter == null
+            ? store.races
+            : store.races
+                .where((r) => distanceBand(r.distanceKm) == _bandFilter)
+                .toList();
+        final grouped = groupRaces(shown);
         final start = _startView(grouped.groups);
         _lastGrouped = grouped;
-        _lastRaces = store.races;
+        _lastRaces = shown;
         _lastBucket = widget.bucket.open;
         if (_engine.nativeOverlay && _ready) _syncNative();
 
@@ -311,12 +318,12 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     ValueListenableBuilder<int>(
                       valueListenable: _tick,
                       builder: (context, _, __) =>
-                          JourneyTrail(legs: _trailLegs(store.races)),
+                          JourneyTrail(legs: _trailLegs(shown)),
                     ),
                   ValueListenableBuilder<int>(
                     valueListenable: _tick,
                     builder: (context, _, __) =>
-                        _overlay(grouped, store.races, widget.bucket.open),
+                        _overlay(grouped, shown, widget.bucket.open),
                   ),
                 ],
                 Positioned(
@@ -379,10 +386,18 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     ),
                   ),
                 ),
-                const Positioned(
+                Positioned(
                   left: 64,
                   bottom: 16,
-                  child: DistanceLegend(),
+                  child: DistanceLegend(
+                    selected: _bandFilter,
+                    onSelect: (b) {
+                      setState(() => _bandFilter = b);
+                      // Pins are laid out again for the shown races.
+                      WidgetsBinding.instance
+                          .addPostFrameCallback((_) => _syncNative());
+                    },
+                  ),
                 ),
                 Positioned(
                   left: 12,
