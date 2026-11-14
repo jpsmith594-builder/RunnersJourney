@@ -11,6 +11,7 @@ import '../../../core/settings.dart';
 import '../season_filter.dart';
 import '../spike/style_recolour.dart';
 import 'map_engine.dart';
+import 'dark_style.dart';
 import 'map_overlay.dart';
 import 'mercator.dart';
 import 'pin_images.dart';
@@ -320,7 +321,7 @@ class MapLibreEngine implements MapEngine {
   /// The style with English place names and the season and vivid colours
   /// baked in. Falls back to the plain style address if it cannot be fetched.
   static Future<String> _styleFor(
-      String name, Season season, bool vivid) async {
+      String name, Season season, bool vivid, bool dark) async {
     try {
       var raw = _rawStyles[name];
       if (raw == null) {
@@ -331,8 +332,9 @@ class MapLibreEngine implements MapEngine {
         raw = r.body;
         _rawStyles[name] = raw;
       }
-      return recolourStyle(
+      final seasonal = recolourStyle(
           localiseLabels(raw), seasonMatrix(season, vivid: vivid));
+      return dark ? darkenStyle(seasonal) : seasonal;
     } catch (_) {
       return _styleUrl(name);
     }
@@ -357,7 +359,7 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
   Timer? _slowTimer;
 
   static String _sig(MapEngineParams p) =>
-      '${settings.openFreeMapStyle}|${p.season.name}|${p.vivid}';
+      '${settings.openFreeMapStyle}|${p.season.name}|${p.vivid}|${p.dark}';
 
   @override
   void initState() {
@@ -406,7 +408,7 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
   Future<void> _load() async {
     final p = widget.params;
     final style = await MapLibreEngine._styleFor(
-        settings.openFreeMapStyle, p.season, p.vivid);
+        settings.openFreeMapStyle, p.season, p.vivid, p.dark);
     if (!mounted || _signature != _sig(widget.params)) return;
     setState(() => _style = style);
   }
@@ -419,9 +421,11 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
     return LayoutBuilder(builder: (context, box) {
       e._size = Size(box.maxWidth, box.maxHeight);
       final Widget map = style == null
-          ? const ColoredBox(
-              color: Color(0xFFAAD3DF),
-              child: SizedBox.expand(),
+          ? ColoredBox(
+              color: widget.params.dark
+                  ? const Color(0xFF14202B)
+                  : const Color(0xFFAAD3DF),
+              child: const SizedBox.expand(),
             )
           : _buildMap(style);
       return Stack(

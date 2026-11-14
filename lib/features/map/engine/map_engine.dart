@@ -29,6 +29,9 @@ class MapEngineParams {
   final Season season;
   final bool vivid;
 
+  /// Draw the dark version of the map (vector map only).
+  final bool dark;
+
   /// The map has been drawn once; the camera can be used from now on.
   final VoidCallback onReady;
 
@@ -51,6 +54,7 @@ class MapEngineParams {
     required this.maxZoom,
     required this.season,
     required this.vivid,
+    this.dark = false,
     required this.onReady,
     required this.onCamera,
     required this.onTap,

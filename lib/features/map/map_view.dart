@@ -289,6 +289,7 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     maxZoom: _maxZoom,
                     season: season,
                     vivid: settings.vividMap,
+                    dark: Theme.of(context).brightness == Brightness.dark,
                     onReady: () => setState(() => _ready = true),
                     onCamera: _onCameraMoved,
                     onTap: () => _select(null),

@@ -25,7 +25,7 @@ String recolourStyle(String styleJson, List<double> m) {
 dynamic _walk(dynamic v, List<double> m) {
   if (v is String) {
     final c = parseCssColour(v);
-    return c == null ? v : _format(_apply(c, m));
+    return c == null ? v : formatCssColour(_apply(c, m));
   }
   if (v is List) return v.map((e) => _walk(e, m)).toList();
   if (v is Map<String, dynamic>) {
@@ -50,7 +50,8 @@ Rgba _apply(Rgba c, List<double> m) {
   return Rgba(ch(0), ch(1), ch(2), c.a);
 }
 
-String _format(Rgba c) =>
+/// CSS text for a colour, e.g. rgba(10,20,30,0.5).
+String formatCssColour(Rgba c) =>
     'rgba(${c.r.round()},${c.g.round()},${c.b.round()},${_trim(c.a)})';
 
 String _trim(double a) {
