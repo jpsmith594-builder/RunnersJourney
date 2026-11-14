@@ -66,7 +66,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: Listenable.merge([profileStore, raceStore]),
         builder: (context, _) {
           if (profileStore.loading) {
@@ -134,6 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           );
         },
+      ),
       ),
     );
   }

@@ -126,7 +126,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
             colors: [AppTheme.purple, AppTheme.purpleMid],
           ),
         ),
-        child: ListenableBuilder(
+        child: SafeArea(
+          top: false,
+          left: false,
+          right: false,
+          child: ListenableBuilder(
           listenable: subscription,
           builder: (context, _) {
             final s = subscription;
@@ -250,6 +254,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               ],
             );
           },
+        ),
         ),
       ),
     );

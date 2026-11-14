@@ -79,7 +79,11 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
     return Scaffold(
       appBar: AppBar(
           title: Text(widget.item == null ? 'Add to bucket list' : 'Edit')),
-      body: Form(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -175,6 +179,7 @@ class _BucketFormScreenState extends State<BucketFormScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

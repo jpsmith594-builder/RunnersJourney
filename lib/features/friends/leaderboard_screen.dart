@@ -95,7 +95,11 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Leaderboard')),
-      body: FutureBuilder<List<_Row>>(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: FutureBuilder<List<_Row>>(
         future: _rows,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
@@ -180,6 +184,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             ],
           );
         },
+      ),
       ),
     );
   }

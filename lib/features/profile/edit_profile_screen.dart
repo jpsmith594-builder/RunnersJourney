@@ -251,7 +251,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Runner profile')),
-      body: Form(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -373,6 +377,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

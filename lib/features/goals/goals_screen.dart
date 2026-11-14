@@ -91,7 +91,11 @@ class GoalsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: Listenable.merge([races, goals]),
         builder: (context, _) {
           final g = goalProgress(races.races, year,
@@ -289,6 +293,7 @@ class GoalsScreen extends StatelessWidget {
             ],
           );
         },
+      ),
       ),
     );
   }

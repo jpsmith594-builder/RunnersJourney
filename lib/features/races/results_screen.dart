@@ -109,7 +109,11 @@ class _ResultsScreenState extends State<ResultsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('My results')),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: widget.store,
         builder: (context, _) {
           final all = widget.store.races
@@ -281,6 +285,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
             ],
           );
         },
+      ),
       ),
     );
   }

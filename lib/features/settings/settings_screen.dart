@@ -16,7 +16,11 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: settings,
         builder: (context, _) => ListView(
           padding: const EdgeInsets.all(16),
@@ -120,6 +124,7 @@ class SettingsScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -137,7 +137,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
           ),
         ],
       ),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: widget.store,
         builder: (context, _) {
           final s = widget.store;
@@ -295,6 +299,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
             ),
           );
         },
+      ),
       ),
     );
   }

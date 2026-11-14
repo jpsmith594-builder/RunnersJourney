@@ -20,7 +20,11 @@ class BucketListScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Race bucket list')),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: store,
         builder: (context, _) {
           if (store.loading) {
@@ -83,6 +87,7 @@ class BucketListScreen extends StatelessWidget {
             },
           );
         },
+      ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _open(context),

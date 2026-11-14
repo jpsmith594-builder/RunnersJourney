@@ -126,7 +126,11 @@ class ChartsScreen extends StatelessWidget {
     final green = AppTheme.runGreen(Theme.of(context).brightness);
     return Scaffold(
       appBar: AppBar(title: const Text('Charts')),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: store,
         builder: (context, _) {
           final s = ChartStats.from(store.races);
@@ -222,6 +226,7 @@ class ChartsScreen extends StatelessWidget {
             ],
           );
         },
+      ),
       ),
     );
   }

@@ -69,7 +69,11 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('New password')),
-      body: ListView(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           const Text('Choose a new password for your account.'),
@@ -111,6 +115,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 : const Text('Save new password'),
           ),
         ],
+      ),
       ),
     );
   }

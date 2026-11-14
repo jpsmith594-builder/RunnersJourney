@@ -64,7 +64,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final t = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(title: const Text('South African races')),
-      body: Column(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
@@ -128,6 +132,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -214,7 +214,11 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
     const gap = SizedBox(height: 12);
     return Scaffold(
       appBar: AppBar(title: Text(editing ? 'Edit race' : 'Add race')),
-      body: Form(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -430,6 +434,7 @@ class _RaceFormScreenState extends State<RaceFormScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

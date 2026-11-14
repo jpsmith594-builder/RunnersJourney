@@ -55,7 +55,11 @@ class _YearReviewScreenState extends State<YearReviewScreen> {
             ),
         ],
       ),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: widget.store,
         builder: (context, _) {
           final years = yearsWithRaces(widget.store.races);
@@ -140,6 +144,7 @@ class _YearReviewScreenState extends State<YearReviewScreen> {
             ],
           );
         },
+      ),
       ),
     );
   }

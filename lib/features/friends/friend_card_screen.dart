@@ -47,7 +47,11 @@ class _FriendCardScreenState extends State<FriendCardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.entry.name)),
-      body: FutureBuilder<_FriendData>(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: FutureBuilder<_FriendData>(
         future: _data,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
@@ -136,6 +140,7 @@ class _FriendCardScreenState extends State<FriendCardScreen> {
             ),
           );
         },
+      ),
       ),
     );
   }

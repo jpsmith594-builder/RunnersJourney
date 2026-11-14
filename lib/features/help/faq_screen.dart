@@ -148,7 +148,11 @@ class FaqScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Frequently asked questions')),
-      body: ListView(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
         children: [
           for (final section in faqSections) ...[
@@ -183,6 +187,7 @@ class FaqScreen extends StatelessWidget {
             ),
           ],
         ],
+      ),
       ),
     );
   }

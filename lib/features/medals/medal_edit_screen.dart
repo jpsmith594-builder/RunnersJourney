@@ -159,7 +159,11 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
             ),
         ],
       ),
-      body: ListView(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Container(
@@ -294,6 +298,7 @@ class _MedalEditScreenState extends State<MedalEditScreen> {
                 : Text(_isNew ? 'Hang on the wall' : 'Save'),
           ),
         ],
+      ),
       ),
     );
   }

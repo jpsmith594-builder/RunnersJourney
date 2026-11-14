@@ -60,7 +60,11 @@ class BadgesScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Badges')),
-      body: ListenableBuilder(
+      body: SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: ListenableBuilder(
         listenable: store,
         builder: (context, _) {
           final all = computeBadges(store.races);
@@ -166,6 +170,7 @@ class BadgesScreen extends StatelessWidget {
             ],
           );
         },
+      ),
       ),
     );
   }
