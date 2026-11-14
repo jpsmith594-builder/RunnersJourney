@@ -66,9 +66,9 @@ const faqSections = <FaqSection>[
             'else stays the same.'),
     FaqItem('How much does it cost?',
         'In South Africa it is R49 a month or R499 a year. In other countries '
-            'it is about \$3 a month or \$25 a year. The exact price for your '
+            'it is about \$3 a month or \$29 a year. The exact price for your '
             'country is shown on the Go unlimited screen, and the yearly plan '
-            'saves about a third.'),
+            'saves about 15%.'),
     FaqItem('Do planned races count towards the 5 free races?',
         'No. Only finished races count. You can plan as many races as you '
             'like.'),

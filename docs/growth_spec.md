@@ -11,7 +11,7 @@ help, and keep the rules simple enough to explain in one line each.
 
 **Club code** (made by you, handed to a club contact)
 - New subscribers get **15% off the first year** of the yearly plan. After 12
-  months the price returns to normal (R499 / $25).
+  months the price returns to normal (R499 / $29).
 - The club contact earns **a free year at 10 paid sign-ups**, and another free
   year at 25.
 

@@ -49,7 +49,7 @@ Either way the one-off registration fee is about US$25 [CONFIRM]. If you plan to
 3. Add two base plans (auto-renewing):
    - `monthly`, billing period 1 month
    - `yearly`, billing period 1 year
-4. Prices: set South Africa to **R49** and **R499**. In the console South Africa prices are entered before VAT and Google adds 15%, so enter about **R42.61** and **R433.91** to land on R49 and R499 (check the final price shown, the console rounds to price points). Set every other country to **US$3** and **US$25** (the console converts to each currency, check the rounding and edit any odd ones). Do the default first and then "Update prices" per country.
+4. Prices: set South Africa to **R49** and **R499**. In the console South Africa prices are entered before VAT and Google adds 15%, so enter about **R42.61** and **R433.91** to land on R49 and R499 (check the final price shown, the console rounds to price points). Set every other country to **US$2.89** and **US$28.99** (the console converts to each currency, check the rounding and edit any odd ones). Do the default first and then "Update prices" per country.
 5. Optional: add an offer (for example a 7-day free trial) once you are happy with the basics. Free trials are the biggest conversion lever, but wait until after the first test.
 6. Activate both base plans. A subscription can only be activated once the app (with the billing library) has been uploaded to a track, so upload your first build (section 4) before activating if the console blocks you.
 7. Google's service fee on subscriptions is about 15% [CONFIRM current rate].

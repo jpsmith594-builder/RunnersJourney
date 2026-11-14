@@ -6,7 +6,7 @@ import '../growth/code_screen.dart';
 import 'limits.dart';
 import 'subscription_store.dart';
 
-/// Shows the plans (R49 a month or R499 a year in South Africa; $3 or $25 elsewhere) and starts the purchase.
+/// Shows the plans (R49 a month or R499 a year in South Africa; $3 or $29 elsewhere) and starts the purchase.
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({super.key});
 

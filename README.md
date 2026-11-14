@@ -112,7 +112,7 @@ tools/         gen_places.py
 
 - **Free**: up to 5 finished races (completed, DNF or DNS), 1 photo per race. Planned races and the
   bucket list are always free.
-- **Subscriber** (South Africa: R49 a month or R499 a year; everywhere else: $3 a month or $25 a year, set per country in the Play Console): unlimited races, up to 10 photos per race.
+- **Subscriber** (South Africa: R49 a month or R499 a year; everywhere else: about $3 a month or $29 a year, set per country in the Play Console): unlimited races, up to 10 photos per race.
 - **After cancelling**: when the paid period ends, a runner with more than 5 races keeps all of them,
   but they are read-only (viewing and deleting still work) until they subscribe again or delete down to 5.
 - The limits are enforced in the database (`supabase/009_subscriptions.sql`), so the app cannot get
