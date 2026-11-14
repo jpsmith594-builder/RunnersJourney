@@ -476,7 +476,9 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
   Widget _buildMap(String style) {
     final e = widget.engine;
     return ml.MapLibreMap(
-      key: ValueKey('$_signature#$_attempt'),
+      // One map for the life of the screen: a new style (theme, season) is
+      // applied in place, so the camera and its listener are never replaced.
+      key: ValueKey('map#$_attempt'),
       styleString: style,
       initialCameraPosition: ml.CameraPosition(
         target: ml.LatLng(e._center.latitude, e._center.longitude),
@@ -509,6 +511,11 @@ class _MapLibreSurfaceState extends State<_MapLibreSurface> {
             _slow = false;
           });
         }
+        // A new style wipes our layers and pictures; drop any send aimed at
+        // the old one and start clean.
+        e._gen++;
+        e._syncing = false;
+        e._dirty = false;
         try {
           await e._addNativeLayers();
         } catch (err) {
