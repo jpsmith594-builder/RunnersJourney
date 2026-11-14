@@ -759,7 +759,6 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
           fontSize: 10,
         ));
       }
-      final planned = r.status == RaceStatus.planned;
       pins.add(NativePin(
         id: id,
         pos: at,
