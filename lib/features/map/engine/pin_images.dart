@@ -56,8 +56,8 @@ void _teardrop(Canvas canvas, NativePin p, double pad) {
     path,
     Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2
-      ..color = Colors.white,
+      ..strokeWidth = p.ring == null ? 2 : 3
+      ..color = p.ring ?? Colors.white,
   );
   final centre = Offset(cx, top + radius);
   final icon = p.icon;

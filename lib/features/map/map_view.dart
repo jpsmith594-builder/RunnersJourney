@@ -9,6 +9,7 @@ import '../bucket/bucket_store.dart';
 import '../races/race.dart';
 import '../races/race_store.dart';
 import '../../core/settings.dart';
+import 'distance_colours.dart';
 import 'engine/engines.dart';
 import 'engine/map_engine.dart';
 import 'engine/map_overlay.dart';
@@ -374,6 +375,11 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                     ),
                   ),
                 ),
+                const Positioned(
+                  left: 64,
+                  bottom: 16,
+                  child: DistanceLegend(),
+                ),
                 Positioned(
                   left: 12,
                   bottom: 16,
@@ -485,7 +491,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
         tip: tip,
         width: _pinW,
         height: _pinH,
-        color: _statusColor(r.status),
+        color: _pinFill(r),
+        ring: _pinRing(r),
         selected: (r.id ?? r.name) == _selectedId,
         onTap: () {
           final id = r.id ?? r.name;
@@ -501,14 +508,8 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
                         : number > 9
                             ? 13
                             : 15,
-                    color: r.status == RaceStatus.planned
-                        ? const Color(0xFF2E7D32)
-                        : Colors.black87))
-            : Icon(_statusIcon(r.status),
-                size: 18,
-                color: r.status == RaceStatus.planned
-                    ? const Color(0xFF2E7D32)
-                    : Colors.black87),
+                    color: _pinInk(r)))
+            : Icon(_statusIcon(r.status), size: 18, color: _pinInk(r)),
       );
     }
 
@@ -765,8 +766,9 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
         shape: PinShape.teardrop,
         w: _pinW,
         h: _pinH,
-        fill: _statusColor(r.status),
-        ink: planned ? const Color(0xFF2E7D32) : Colors.black87,
+        fill: _pinFill(r),
+        ink: _pinInk(r),
+        ring: _pinRing(r),
         text: number == null ? '' : '$number',
         fontSize: number == null
             ? 15
@@ -900,6 +902,28 @@ class _MapViewState extends State<MapView> with SingleTickerProviderStateMixin {
         children: [if (card != null) card]);
   }
 
+  /// Pin body: the distance colour for finished races, white for planned
+  /// ones, grey for a race that was not started.
+  Color _pinFill(Race r) {
+    if (r.status == RaceStatus.dns) return _statusColor(r.status);
+    if (r.status == RaceStatus.planned) return Colors.white;
+    return distanceColour(r.distanceKm) ?? _statusColor(r.status);
+  }
+
+  /// Number or icon colour on the pin.
+  Color _pinInk(Race r) {
+    if (r.status == RaceStatus.planned) {
+      return distanceColour(r.distanceKm) ?? const Color(0xFF2E7D32);
+    }
+    return distanceColour(r.distanceKm) != null && r.status != RaceStatus.dns
+        ? Colors.white
+        : Colors.black87;
+  }
+
+  /// Planned pins are outlined in their distance colour.
+  Color? _pinRing(Race r) =>
+      r.status == RaceStatus.planned ? distanceColour(r.distanceKm) : null;
+
   Color _statusColor(RaceStatus s) {
     switch (s) {
       case RaceStatus.completed:
@@ -933,6 +957,7 @@ class _Pin extends StatelessWidget {
   final double width;
   final double height;
   final Color color;
+  final Color? ring;
   final bool selected;
   final VoidCallback onTap;
   final VoidCallback? onHover;
@@ -943,6 +968,7 @@ class _Pin extends StatelessWidget {
     required this.width,
     required this.height,
     required this.color,
+    this.ring,
     required this.selected,
     required this.onTap,
     required this.onHover,
@@ -973,7 +999,7 @@ class _Pin extends StatelessWidget {
               children: [
                 Positioned.fill(
                   child: CustomPaint(
-                      painter: _PinPainter(color: color, radius: circle)),
+                      painter: _PinPainter(color: color, ring: ring, radius: circle)),
                 ),
                 Positioned(
                   top: 0,
@@ -993,8 +1019,9 @@ class _Pin extends StatelessWidget {
 
 class _PinPainter extends CustomPainter {
   final Color color;
+  final Color? ring;
   final double radius;
-  const _PinPainter({required this.color, required this.radius});
+  const _PinPainter({required this.color, this.ring, required this.radius});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -1012,14 +1039,14 @@ class _PinPainter extends CustomPainter {
       path,
       Paint()
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2
-        ..color = Colors.white,
+        ..strokeWidth = ring == null ? 2 : 3
+        ..color = ring ?? Colors.white,
     );
   }
 
   @override
   bool shouldRepaint(covariant _PinPainter old) =>
-      old.color != color || old.radius != radius;
+      old.color != color || old.ring != ring || old.radius != radius;
 }
 
 class _CentreDot extends StatelessWidget {

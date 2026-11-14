@@ -20,6 +20,9 @@ class NativePin {
   final IconData? icon;
   final bool selected;
 
+  /// Outline colour; white when null.
+  final Color? ring;
+
   const NativePin({
     required this.id,
     required this.pos,
@@ -32,11 +35,12 @@ class NativePin {
     this.fontSize = 15,
     this.icon,
     this.selected = false,
+    this.ring,
   });
 
   /// Pins that look the same share one picture.
   String get imageKey =>
-      '${shape.name}|$w|$h|${fill.toARGB32()}|${ink.toARGB32()}|$text|$fontSize|${icon?.codePoint}';
+      '${shape.name}|$w|$h|${fill.toARGB32()}|${ink.toARGB32()}|${ring?.toARGB32()}|$text|$fontSize|${icon?.codePoint}';
 }
 
 /// One leg of the trail between two races.
