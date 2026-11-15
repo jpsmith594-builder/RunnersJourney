@@ -36,7 +36,7 @@ create policy "own medals" on public.medal_photos
     )
   );
 
--- Free plan: 5 medals on the wall. Subscribers: up to 200.
+-- Free plan: 5 medals on the wall. Subscribers: up to 500.
 create or replace function public.enforce_medal_limit()
 returns trigger
 language plpgsql
@@ -47,7 +47,7 @@ declare
   lim int;
 begin
   if auth.uid() is null then return new; end if;
-  lim := case when public.is_subscriber(new.user_id) then 200 else 5 end;
+  lim := case when public.is_subscriber(new.user_id) then 500 else 5 end;
   select count(*) into cnt from public.medal_photos where user_id = new.user_id;
   if cnt >= lim then raise exception 'medal_limit'; end if;
   return new;

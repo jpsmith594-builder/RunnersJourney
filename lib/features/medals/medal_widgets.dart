@@ -212,7 +212,9 @@ class MedalView extends StatelessWidget {
               ),
               child: ClipOval(
                 child: Image(
-                  image: image,
+                  // Decode at wall size, not the 800 px original: keeps memory
+                  // low on a wall of hundreds.
+                  image: ResizeImage.resizeIfNeeded(300, null, image),
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) =>
                       const ColoredBox(color: Color(0x33FFFFFF)),

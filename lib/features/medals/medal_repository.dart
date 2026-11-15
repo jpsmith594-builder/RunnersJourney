@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,23 +24,39 @@ class MedalRepository {
       return hit.medals;
     }
     final rows = await _db.from('medal_photos').select().order('created_at');
-    final medals = await Future.wait((rows as List).map((r) async {
-      final m = r as Map<String, dynamic>;
-      final path = m['storage_path'] as String;
-      final url =
-          await _db.storage.from(_bucket).createSignedUrl(path, _urlSeconds);
-      return Medal(
-        id: m['id'] as String,
-        raceId: m['race_id'] as String?,
-        storagePath: path,
-        url: url,
-        metal: metalFrom(m['metal'] as String?),
-        ribbon: ribbonFrom(m['ribbon'] as String?),
-        createdAt: DateTime.parse(m['created_at'] as String),
-      );
-    }));
+    final medals = await _medalsFrom(rows as List);
     _cache = (at: DateTime.now(), medals: medals);
     return medals;
+  }
+
+  /// Builds medals from rows, signing every photo URL in one batched call
+  /// (a wall of 400 medals would otherwise mean 400 requests).
+  Future<List<Medal>> _medalsFrom(List rows) async {
+    if (rows.isEmpty) return const [];
+    final paths = [for (final r in rows) (r as Map)['storage_path'] as String];
+    final urls = <String, String>{};
+    for (var i = 0; i < paths.length; i += 100) {
+      final chunk = paths.sublist(i, math.min(i + 100, paths.length));
+      final signed =
+          await _db.storage.from(_bucket).createSignedUrls(chunk, _urlSeconds);
+      for (final s in signed) {
+        final u = s.signedUrl;
+        if (u.isNotEmpty) urls[s.path] = u;
+      }
+    }
+    return [
+      for (final r in rows)
+        if (urls[(r as Map)['storage_path']] != null)
+          Medal(
+            id: r['id'] as String,
+            raceId: r['race_id'] as String?,
+            storagePath: r['storage_path'] as String,
+            url: urls[r['storage_path']]!,
+            metal: metalFrom(r['metal'] as String?),
+            ribbon: ribbonFrom(r['ribbon'] as String?),
+            createdAt: DateTime.parse(r['created_at'] as String),
+          ),
+    ];
   }
 
   /// A friend's wall, oldest first. Empty when they keep it private.
@@ -49,21 +66,7 @@ class MedalRepository {
         .select()
         .eq('user_id', userId)
         .order('created_at');
-    return Future.wait((rows as List).map((r) async {
-      final m = r as Map<String, dynamic>;
-      final path = m['storage_path'] as String;
-      final url =
-          await _db.storage.from(_bucket).createSignedUrl(path, _urlSeconds);
-      return Medal(
-        id: m['id'] as String,
-        raceId: m['race_id'] as String?,
-        storagePath: path,
-        url: url,
-        metal: metalFrom(m['metal'] as String?),
-        ribbon: ribbonFrom(m['ribbon'] as String?),
-        createdAt: DateTime.parse(m['created_at'] as String),
-      );
-    }));
+    return _medalsFrom(rows as List);
   }
 
   /// Whether friends may see the signed-in runner's wall.
