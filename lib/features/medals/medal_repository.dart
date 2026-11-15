@@ -37,11 +37,14 @@ class MedalRepository {
     final urls = <String, String>{};
     for (var i = 0; i < paths.length; i += 100) {
       final chunk = paths.sublist(i, math.min(i + 100, paths.length));
-      final signed =
-          await _db.storage.from(_bucket).createSignedUrls(chunk, _urlSeconds);
-      for (final s in signed) {
-        final u = s.signedUrl;
-        if (u.isNotEmpty) urls[s.path] = u;
+      final signed = await _db.storage
+          .from(_bucket)
+          .createSignedUrlsResult(chunk, _urlSeconds);
+      for (final r in signed) {
+        // A path that no longer exists comes back as a failure: skip it.
+        if (r is SignedUrlSuccess && r.signedUrl.isNotEmpty) {
+          urls[r.path] = r.signedUrl;
+        }
       }
     }
     return [
