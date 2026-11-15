@@ -69,14 +69,17 @@ class _PaywallScreenState extends State<PaywallScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(children: [
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
                     Text(title,
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 17,
                             color: selected ? AppTheme.purple : Colors.white)),
                     if (badge != null) ...[
-                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 2),
@@ -91,17 +94,28 @@ class _PaywallScreenState extends State<PaywallScreen> {
                       ),
                     ],
                   ]),
+                  const SizedBox(height: 2),
                   Text(note,
+                      softWrap: true,
                       style: TextStyle(
                           color: selected ? Colors.black54 : Colors.white70)),
                 ],
               ),
             ),
-            Text(price,
-                style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    fontSize: 18,
-                    color: selected ? AppTheme.purple : Colors.white)),
+            const SizedBox(width: 12),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 110),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Text(price,
+                    maxLines: 1,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 18,
+                        color: selected ? AppTheme.purple : Colors.white)),
+              ),
+            ),
           ],
         ),
       ),
