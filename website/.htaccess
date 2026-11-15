@@ -1,0 +1,40 @@
+# My Running Journal: security headers and HTTPS (Apache / cPanel).
+# Upload next to index.html in public_html.
+
+# Force HTTPS and the bare domain
+RewriteEngine On
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://myrunningjournal.co.za%{REQUEST_URI} [L,R=301]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteRule ^ https://myrunningjournal.co.za%{REQUEST_URI} [L,R=301]
+
+# Friendly 404
+ErrorDocument 404 /404.html
+
+# No directory listings
+Options -Indexes
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  Header always set X-Frame-Options "DENY"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  # The pages use one inline script and inline styles, so 'unsafe-inline'
+  # is needed for those. Everything else must come from this site.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+</IfModule>
+
+# Long caching for fonts and images
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 month"
+</IfModule>
+
+# Never serve dotfiles or source leftovers
+<FilesMatch "^\.|\.(md|bak|sql|env)$">
+  Require all denied
+</FilesMatch>
