@@ -69,6 +69,12 @@ const faqSections = <FaqSection>[
             'it is about \$3 a month or \$29 a year. The exact price for your '
             'country is shown on the Go unlimited screen, and the yearly plan '
             'saves about 15%.'),
+    FaqItem('How do club and invite codes work?',
+        'A club code gives 15% off your first year of the yearly plan, and a '
+            'friend\'s invite code gives 10%. Use only one, and only when you '
+            'first subscribe. The discount is for the first year only. After '
+            'that the subscription renews at the normal price. Enter the code '
+            'on the Go unlimited screen.'),
     FaqItem('Do planned races count towards the 5 free races?',
         'No. Only finished races count. You can plan as many races as you '
             'like.'),
