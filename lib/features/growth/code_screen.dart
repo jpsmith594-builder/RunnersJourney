@@ -63,7 +63,9 @@ class _CodeScreenState extends State<CodeScreen> {
             const SizedBox(height: 8),
             const Text(
               'Club codes give 15% off. Friend codes give 10% off. Only one '
-              'code can be used, and codes are for new subscribers.',
+              'code can be used, and codes are for new subscribers. The '
+              'discount applies to the first year only. After that the '
+              'subscription renews at the normal price.',
               style: TextStyle(color: Colors.black54),
             ),
             const SizedBox(height: 20),

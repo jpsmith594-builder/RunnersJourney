@@ -40,7 +40,7 @@ class _InviteScreenState extends State<InviteScreen> {
   Future<void> _share(ReferralSummary s) {
     return Share.share(
       'Join me on My Running Journal. Use my code ${s.code} when you '
-      'subscribe and get 10% off your first year.\n\n$websiteUrl\n'
+      'subscribe and get 10% off your first year (then the normal price).\n\n$websiteUrl\n'
       'Google Play: $playStoreUrl',
     );
   }
@@ -161,7 +161,11 @@ class _InviteScreenState extends State<InviteScreen> {
                     const SizedBox(height: 16),
                     const Text(
                       'Only new paid subscribers count, once they have kept '
-                      'their subscription for 30 days. Refunds do not count.',
+                      'their subscription for 30 days. Refunds do not count. '
+                      'Your friends\' 10% off applies to their first year only, '
+                      'then their subscription renews at the normal price. '
+                      'Free months you earn are a one-time reward, not a '
+                      'permanent discount.',
                       style: TextStyle(color: Colors.black54, fontSize: 12.5),
                     ),
                   ],
