@@ -100,9 +100,15 @@ class SubscriptionStore extends ChangeNotifier {
       yearly = offerings.current?.annual;
     } catch (e) {
       // Keep the real reason so a tester can read it (and tell us).
-      final detail = e is PlatformException
-          ? (e.message ?? e.code)
-          : e.toString();
+      var detail = e.toString();
+      if (e is PlatformException) {
+        detail = e.message ?? e.code;
+        final d = e.details;
+        if (d is Map) {
+          final under = d['underlyingErrorMessage'] ?? d['readableErrorCode'];
+          if (under != null) detail = '$detail\n$under';
+        }
+      }
       debugPrint('Store setup failed: $e');
       message = 'The store is not available right now.\n$detail';
     }
