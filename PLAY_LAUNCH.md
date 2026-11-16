@@ -104,3 +104,46 @@ Because the app never reads GPS, do not declare precise location.
 - Production review: a few days, sometimes more for a first app.
 
 Plan roughly 4 to 6 weeks from today to a public listing.
+
+## 8. Launch-week checklist
+
+Tick these off in order. Plain subscription, club code (`club15`) and friend code (`ref10`) have all been tested end to end.
+
+### Back end
+- [ ] `supabase/021_medal_sharing.sql`, `022_growth_codes.sql` and `023_medal_limit_500.sql` have all been run in the SQL editor.
+- [ ] The RevenueCat webhook Edge Function has the latest `index.ts`, with Verify JWT off and `REVENUECAT_WEBHOOK_SECRET` set; a test event returns 200.
+- [ ] Test data removed: `CLUB-TEST`, `REF-TEST01`, and test rows in `code_redemptions` and `subscriptions`.
+- [ ] First real club codes created with `select public.create_club_code('CLUB-NAME', 'Club name', 'contact@email', 'note');`
+
+### Play Console and RevenueCat
+- [ ] Base plans `monthly` and `yearly` are Active; offers `club15` (15% off, tag `club15`) and `ref10` (10% off, tag `ref10`) are Active on `yearly`, developer determined.
+- [ ] South Africa prices are R49 and R499 (entered ex-VAT); USD prices checked.
+- [ ] RevenueCat: offering `default` is Current, with Monthly = `premium:monthly` and Annual = `premium:yearly`; both products attached to the `premium` entitlement; credentials show Valid.
+- [ ] Store listing complete: screenshots, feature graphic, icon, description; Data safety form and privacy policy link done.
+- [ ] Production release review status checked (and whether Google requires a closed test first for your account type).
+
+### App build
+- [ ] `git pull`, then `flutter pub get`, `flutter analyze`, `flutter test` all clean.
+- [ ] Version above the last upload (build 11 or higher).
+- [ ] `env.json`: RevenueCat key starts with `goog_`; MapTiler key removed.
+- [ ] Release build uses `--obfuscate --split-debug-info=build/symbols`; the `symbols` folder is kept and uploaded to Sentry.
+- [ ] Upload keystore and its password backed up somewhere safe.
+- [ ] Installed once from the Play testing link on a real phone and checked: sign up, add a race, medal wall, paywall prices, code screen.
+
+### Website
+- [ ] Everything in `website/` uploaded to `public_html`: pages, `fonts/`, `.htaccess`, `.well-known/security.txt`, `sitemap.xml`.
+- [ ] Checked in a private window: fonts, medal section, FAQ, privacy, terms, delete-account.
+- [ ] Add the official "Get it on Google Play" badge and the real Play link once the listing is public.
+
+### Marketing
+- [ ] Social handles reserved; teaser posts using the coming-soon flyers (no Play link until live).
+- [ ] Runner on the flyer's sample card has agreed to the photo being used, or the card is replaced.
+- [ ] Club intro email sent with the flyer; club codes ready for replies.
+- [ ] On launch day: swap to the "available now" flyers with the Google badge, and update the social bios.
+
+### After launch
+- [ ] Check Sentry and the Supabase logs after the first installs.
+- [ ] Reply to Play reviews.
+- [ ] Check RevenueCat for the first real purchases, and `code_redemptions.purchased_at` fills in for coded sign-ups.
+- [ ] Referral credit payouts are manual: when a runner earns free months, extend their subscription in RevenueCat or Play, then run `select public.mark_credits_applied('<user id>');`
+- [ ] Register the trademark "My Running Journal" with CIPC.
