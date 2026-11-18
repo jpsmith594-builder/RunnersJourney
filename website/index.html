@@ -114,6 +114,7 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 /* tiers */
 .tiers{background:linear-gradient(170deg,var(--purple),var(--navy) 75%);overflow:hidden}
 .tiers:before{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 90% 0,rgba(0,255,133,.2),transparent 70%)}
+.cardtop{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:48px;align-items:center}.rcard{width:290px;height:auto;display:block;border-radius:30px;transform:rotate(3deg);box-shadow:0 30px 70px rgba(0,0,0,.5),0 0 60px rgba(0,255,133,.18)}
 .ladder{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-top:44px;align-items:end}
 .t{border-radius:18px;padding:16px 8px 14px;text-align:center;font:900 13px Outfit,sans-serif;letter-spacing:.06em;transition:transform .2s;box-shadow:0 12px 24px rgba(0,0,0,.3)}
 .t:hover{transform:translateY(-8px) scale(1.05)}
@@ -190,6 +191,7 @@ footer a{text-decoration:none}footer a:hover{color:#fff}
   .stage{height:620px}
   .links a:not(.btn){display:none}
   .ladder{grid-template-columns:repeat(7,minmax(74px,1fr));overflow-x:auto;padding-bottom:10px}
+  .cardtop{grid-template-columns:1fr;gap:28px}.rcard{margin:0 auto;width:min(260px,100%)}
   section{padding:68px 0}
   .shield{width:120px;height:152px;right:0;top:30px}
   .sticker{left:4px;bottom:-6px;font-size:13px}
@@ -357,9 +359,14 @@ footer a{text-decoration:none}footer a:hover{color:#fff}
 
 <section class="tiers" id="card">
   <div class="wrap" style="position:relative">
-    <span class="eyebrow rv">Runner card</span>
-    <h2 class="rv">From <span class="grad">Novice</span> to Elite.<br>It takes years.</h2>
-    <p class="lead rv">Your runner card has a rating from 0 to 1000. It grows with every finished race, every new town, every country, every medal, and every time you beat your own earlier times. Slower runners climb just as fast as quicker ones, because improving counts.</p>
+    <div class="cardtop">
+      <div>
+        <span class="eyebrow rv">Runner card</span>
+        <h2 class="rv">From <span class="grad">Novice</span> to Elite.<br>It takes years.</h2>
+        <p class="lead rv">Your runner card has a rating from 0 to 1000. It grows with every finished race, every new town, every country, every medal, and every time you beat your own earlier times. Slower runners climb just as fast as quicker ones, because improving counts.</p>
+      </div>
+      <img class="rcard rv" src="runner-card.webp" width="638" height="1136" alt="A My Running Journal runner card: a rating of 587, Veteran category, with a profile photo, races, kilometres, towns and best times.">
+    </div>
     <div class="ladder rv">
       <div class="t t1"><span>1</span>NOVICE<small>0+</small></div>
       <div class="t t2"><span>2</span>ROOKIE<small>80+</small></div>
