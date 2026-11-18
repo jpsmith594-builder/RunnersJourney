@@ -228,11 +228,10 @@ footer a{text-decoration:none}footer a:hover{color:#fff}
 .mrow{display:flex;justify-content:space-around;margin:0 0 22px}
 .m{width:30%;text-align:center;position:relative}
 .m u{display:block;width:22px;height:34px;margin:0 auto;box-shadow:0 3px 6px rgba(0,0,0,.5)}
-.m s{display:block;width:62px;height:62px;border-radius:50%;margin:-4px auto 6px;border:2px solid rgba(255,255,255,.4);box-shadow:0 6px 12px rgba(0,0,0,.5)}
-.m s.gold{background:radial-gradient(circle at 35% 30%,#FBE7A0,#D9A73A 55%,#8F6416)}
-.m s.silver{background:radial-gradient(circle at 35% 30%,#F6F8FB,#B4BCC8 55%,#6C7583)}
-.m s.bronze{background:radial-gradient(circle at 35% 30%,#F0C192,#C0803F 55%,#78431B)}
-.m s.titan{background:radial-gradient(circle at 35% 30%,#DFE5EC,#8E99A7 55%,#4C5662)}
+.m s{display:block;width:92px;height:92px;border-radius:50%;margin:-4px auto 8px;border:3px solid rgba(255,255,255,.45);box-shadow:0 8px 16px rgba(0,0,0,.55);overflow:hidden;background:#E7E1F4}
+.m s img{display:block;width:100%;height:100%;object-fit:cover}
+.m s.gold{border-color:#E8B84A}.m s.silver{border-color:#C9D0DA}.m s.bronze{border-color:#C98A4B}
+.m b{display:block;color:#fff;font:700 13px Outfit,sans-serif;line-height:1.2}
 .m small{display:block;color:#D9CCF2;font-size:11.5px;font-weight:600}
 @media (max-width:900px){.neon{font-size:34px}}
 </style>
@@ -349,20 +348,20 @@ footer a{text-decoration:none}footer a:hover{color:#fff}
         <li><span><b>You decide.</b> One switch hides your wall from everyone.</span></li>
       </ul>
     </div>
-    <div class="wall rv" aria-hidden="true">
+    <div class="wall rv">
       <div class="neon">My Medals</div>
       <div class="lanes"></div>
       <div class="bar"></div>
       <div class="mrow">
-        <div class="m"><u style="background:#7B3FBF"></u><s class="gold"></s><small>Half marathon</small></div>
-        <div class="m"><u style="background:#2E9E5B"></u><s class="silver"></s><small>Sunrise 10</small></div>
-        <div class="m"><u style="background:#8E1B3A"></u><s class="gold"></s><small>Marathon</small></div>
+        <div class="m"><u style="background:#7B3FBF"></u><s class="silver"><img src="medals/two-oceans-2000.webp" width="240" height="240" loading="lazy" alt="Old Mutual Two Oceans half marathon medal, 2000"></s><b>Two Oceans</b><small>Half marathon, 2000</small></div>
+        <div class="m"><u style="background:#7B3FBF"></u><s class="silver"><img src="medals/paarlberg.webp" width="240" height="240" loading="lazy" alt="Paarlberg half marathon medal shaped like a wine bottle"></s><b>Paarlberg</b><small>Half marathon</small></div>
+        <div class="m"><u style="background:#7B3FBF"></u><s class="silver"><img src="medals/gun-run-2001.webp" width="240" height="240" loading="lazy" alt="Cape Argus Gun Run half marathon medal, 2001"></s><b>Cape Argus Gun Run</b><small>Half marathon, 2001</small></div>
       </div>
       <div class="bar"></div>
       <div class="mrow">
-        <div class="m"><u style="background:#F28C28"></u><s class="bronze"></s><small>Parkrun</small></div>
-        <div class="m"><u style="background:#0E9AA7"></u><s class="silver"></s><small>15K trail</small></div>
-        <div class="m"><u style="background:#1F63D6"></u><s class="titan"></s><small>Ultra</small></div>
+        <div class="m"><u style="background:#7B3FBF"></u><s class="bronze"><img src="medals/cape-town-2001.webp" width="240" height="240" loading="lazy" alt="Old Mutual Cape Town half marathon medal, 2001"></s><b>Cape Town</b><small>Half marathon, 2001</small></div>
+        <div class="m"><u style="background:#7B3FBF"></u><s class="silver"><img src="medals/varsity-old-boys.webp" width="240" height="240" loading="lazy" alt="Varsity Old Boys Running Club half marathon medal"></s><b>Varsity Old Boys</b><small>Half marathon</small></div>
+        <div class="m"><u style="background:#7B3FBF"></u><s class="gold"><img src="medals/sandveld.webp" width="240" height="240" loading="lazy" alt="Sandveld Redelinghuys half marathon medal"></s><b>Sandveld</b><small>Half marathon</small></div>
       </div>
     </div>
   </div>
@@ -647,7 +646,7 @@ footer a{text-decoration:none}footer a:hover{color:#fff}
         <span class="badge">UNLIMITED</span>
         <h3>Go unlimited</h3>
         <div class="price">R49<small> / month</small></div>
-        <div class="alt">or <s style="opacity:.7">R588</s> <b>R499</b> a year in South Africa <span style="color:var(--gold2);font-weight:700">(save R89, 15%)</span><br>Everywhere else: about $3 a month or $29 a year</div>
+        <div class="alt">or <s style="opacity:.7">R588</s> <b>R499</b> a year in South Africa <span style="color:var(--gold2);font-weight:700">(save R89, 15%)</span></div>
         <ul><li>Unlimited finished races</li><li>Up to 10 photos per race</li><li>A big medal wall (up to 500 medals)</li><li>Everything in Free</li><li>Cancel any time in Google Play</li></ul>
       </div>
     </div>
