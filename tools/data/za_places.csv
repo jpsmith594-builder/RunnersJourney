@@ -1,0 +1,811 @@
+name,province,lat,lng,postal_code
+Aberdeen,Eastern Cape,-32.47310,24.01993,6270
+Adelaide,Eastern Cape,-32.68963,26.28414,5760
+Alice,Eastern Cape,-32.78910,26.80724,5700
+Alicedale,Eastern Cape,-33.32283,26.07490,6135
+Aston Bay,Eastern Cape,-34.08159,24.90168,6332
+Bathurst,Eastern Cape,-33.48162,26.75969,6166
+Baziya,Eastern Cape,-31.61710,28.42157,5109
+Beachview,Eastern Cape,-34.00201,25.32368,6011
+Bedford,Eastern Cape,-32.68497,26.09566,5780
+Berlin,Eastern Cape,-32.88252,27.57639,5660
+Bethelsdorp,Eastern Cape,-33.88287,25.49169,6003
+Blue Horizon Bay,Eastern Cape,-33.97222,25.24923,6011
+Boknesstrand,Eastern Cape,-33.73196,26.57016,6189
+Bontrug,Eastern Cape,-33.39938,25.48118,6120
+Breidbach,Eastern Cape,-32.89001,27.44392,5601
+Butterworth,Eastern Cape,-32.32155,28.15604,4960
+Cambridge,Eastern Cape,-32.97664,27.88149,5206
+Cape St Francis,Eastern Cape,-34.20232,24.82991,6313
+Cathcart,Eastern Cape,-32.29751,27.14135,5310
+Cedarville,Eastern Cape,-30.38535,29.02953,4720
+Centerton,Eastern Cape,-33.83059,24.86964,6350
+Cintsa East,Eastern Cape,-32.82414,28.10939,5275
+Clewer,Eastern Cape,-25.90665,29.12829,1036
+Coalville,Eastern Cape,-26.03154,29.15723,1033
+Coldstream,Eastern Cape,-33.96174,23.70454,6311
+Cookhouse,Eastern Cape,-32.74078,25.80085,5820
+Coronation,Eastern Cape,-25.85029,29.20998,3107
+Culunca,Eastern Cape,-31.16067,28.72498,5180
+Cumakala,Eastern Cape,-32.56168,27.44318,4930
+Despatch,Eastern Cape,-33.80442,25.46003,6219
+Dimbaza,Eastern Cape,-32.83540,27.21080,5671
+Dohne,Eastern Cape,-32.51909,27.44852,4930
+Duncan Village,Eastern Cape,-33.00627,27.87523,5216
+Elliotdale,Eastern Cape,-31.96694,28.67727,5070
+Enon,Eastern Cape,-33.40711,25.53638,6125
+Ezibeleni,Eastern Cape,-31.89608,26.96743,5326
+Flagstaff,Eastern Cape,-31.08020,29.47556,4810
+Fort Beaufort,Eastern Cape,-32.77492,26.58799,5720
+Gqeberha (Port Elizabeth),Eastern Cape,-33.81978,25.38899,6000
+Grahamstown,Eastern Cape,-33.31762,26.52005,6140
+Haga Haga,Eastern Cape,-32.76223,28.25287,5272
+Hamburg,Eastern Cape,-33.29115,27.45414,5641
+Hankey,Eastern Cape,-33.83213,24.85721,6350
+Harry Gwala Park,Eastern Cape,-30.32422,28.78328,4730
+Herschel,Eastern Cape,-30.61475,27.15940,9756
+Hlalanikahle,Eastern Cape,-25.84201,29.11506,1045
+Idutywa,Eastern Cape,-32.09725,28.31065,5000
+Ilitha,Eastern Cape,-32.89494,27.53437,5606
+Jansenville,Eastern Cape,-32.94362,24.65741,6265
+Joubertina,Eastern Cape,-33.83290,23.86768,6410
+Kabah,Eastern Cape,-33.76046,25.39182,6229
+Kambi,Eastern Cape,-31.48551,28.65963,5100
+Kareedouw,Eastern Cape,-33.95537,24.29109,6400
+Keiskammahoek,Eastern Cape,-32.68260,27.13326,5670
+Kendal,Eastern Cape,-26.06676,28.94494,2225
+Kentani,Eastern Cape,-32.50760,28.31397,4980
+Kidd's Beach,Eastern Cape,-33.15147,27.68743,5264
+King Williams Town,Eastern Cape,-32.87925,27.39306,5600
+Kirkwood,Eastern Cape,-33.40422,25.46701,6120
+Klarinet,Eastern Cape,-25.84297,29.19789,1019
+Kleinemonde,Eastern Cape,-33.53665,27.03732,6172
+Klipplaat,Eastern Cape,-33.01870,24.33681,6255
+Komga,Eastern Cape,-32.58391,27.88256,4950
+KwaNonzame,Eastern Cape,-31.51253,25.00378,5900
+Kwadwesi,Eastern Cape,-33.84196,25.50198,6004
+Kwanobuhle,Eastern Cape,-33.81222,25.36582,6242
+Kwanomzamo,Eastern Cape,-34.03878,24.77509,6300
+Kwelera,Eastern Cape,-32.80538,27.95438,5259
+Lady Frere,Eastern Cape,-31.70178,27.22558,5410
+Lady Grey,Eastern Cape,-30.71446,27.20300,9755
+Libode,Eastern Cape,-31.53384,29.01133,5160
+Lingelethu,Eastern Cape,-32.69466,26.30305,5760
+Lingelihle,Eastern Cape,-32.18643,25.63610,5881
+Loerie,Eastern Cape,-33.87409,25.02423,6370
+Louterwater,Eastern Cape,-33.79129,23.62361,6435
+Luhewini,Eastern Cape,-31.71058,28.12864,5056
+Lupindo,Eastern Cape,-30.49576,28.66474,5100
+Lusikisiki,Eastern Cape,-31.36317,29.56600,4820
+Macleantown,Eastern Cape,-32.78911,27.74412,5280
+Maluti,Eastern Cape,-30.26055,28.78888,4740
+Mazeppa Bay,Eastern Cape,-32.47360,28.64103,4960
+Mbalisweni,Eastern Cape,-31.22921,28.47306,5180
+Mhluzi,Eastern Cape,-25.75419,29.41554,1053
+Middledrift,Eastern Cape,-32.80365,26.97292,5685
+Mlungisi,Eastern Cape,-31.91683,26.85126,5321
+Molteno,Eastern Cape,-31.39117,26.35301,5500
+Mombeni,Eastern Cape,-30.77797,29.34292,3814
+Morgans Bay,Eastern Cape,-32.70442,28.33485,5292
+Motherwell,Eastern Cape,-33.81003,25.56832,6213
+Mount Ayliff,Eastern Cape,-30.81454,29.35935,4735
+Mount Frere,Eastern Cape,-30.89666,28.96684,5090
+Mpeko,Eastern Cape,-33.37752,27.08098,5644
+Mqanduli,Eastern Cape,-31.81604,28.75971,5080
+Mqekezweni,Eastern Cape,-31.74141,28.46550,5106
+Mtebele,Eastern Cape,-31.71300,27.94587,4990
+Mtshanyana,Eastern Cape,-31.81516,27.66414,5380
+Murraysburg,Eastern Cape,-31.96460,23.75929,6995
+Mzongwana,Eastern Cape,-30.52106,28.83090,4744
+Ncora,Eastern Cape,-31.78915,27.72656,5403
+Ndindini,Eastern Cape,-31.33425,29.78652,4820
+Needs Camp,Eastern Cape,-32.99707,27.64179,5201
+Ngqubusini,Eastern Cape,-31.83116,28.20214,5170
+Nqadu,Eastern Cape,-32.22897,28.40593,5020
+Nqamakwe,Eastern Cape,-32.19983,27.93550,4990
+Ogies,Eastern Cape,-26.04981,29.04892,2230
+Oviston,Eastern Cape,-30.69644,25.76498,9798
+Oyster Bay,Eastern Cape,-34.16771,24.64600,6301
+Paradise Beach,Eastern Cape,-34.10453,24.88269,6300
+Park Ridge,Eastern Cape,-33.01657,27.87726,5209
+Patensie,Eastern Cape,-33.75713,24.80905,6335
+Paterson,Eastern Cape,-33.43844,25.96740,6130
+Pearston,Eastern Cape,-32.58109,25.13748,5860
+Peddie,Eastern Cape,-33.19645,27.10880,5640
+Pefferville,Eastern Cape,-33.01018,27.88051,5220
+Pellsrus,Eastern Cape,-34.06137,24.91678,6330
+Pine Ridge,Eastern Cape,-25.81797,29.19833,1048
+Pirie,Eastern Cape,-32.79255,27.24584,5605
+Qamata,Eastern Cape,-31.97660,27.43451,5327
+Qolora,Eastern Cape,-32.57314,28.28312,4960
+Queenstown,Eastern Cape,-31.91260,26.85680,5320
+Qumbu,Eastern Cape,-31.16192,28.86932,5180
+Reeston,Eastern Cape,-32.98115,27.79004,5247
+Riebeek East,Eastern Cape,-33.20605,26.15500,5805
+Rossouw,Eastern Cape,-31.16840,27.27758,5437
+Sada,Eastern Cape,-32.19874,26.80944,5630
+Seymour,Eastern Cape,-32.55545,26.75735,5750
+Sidbury,Eastern Cape,-33.43184,26.17775,6131
+Sonwabile,Eastern Cape,-31.07513,28.35875,5480
+Sterkstroom,Eastern Cape,-31.55809,26.54956,5425
+Steynsburg,Eastern Cape,-31.29865,25.81974,5920
+Steytlerville,Eastern Cape,-33.33401,24.33927,6250
+Stormsrivier,Eastern Cape,-33.97017,23.87879,6308
+Tabankulu,Eastern Cape,-30.96134,29.30480,5130
+Thembalesizwe,Eastern Cape,-32.48799,24.06112,6270
+Thubelihle,Eastern Cape,-26.21395,29.28582,2276
+Ugie,Eastern Cape,-31.20271,28.23214,5470
+Uitenhage,Eastern Cape,-33.75693,25.38197,6230
+Venterstad,Eastern Cape,-30.77370,25.79535,9798
+Vosman,Eastern Cape,-25.86897,29.13810,1034
+Weston,Eastern Cape,-33.98608,24.82600,6350
+Whittlesea,Eastern Cape,-32.17062,26.81262,5360
+Willowmore,Eastern Cape,-33.28258,23.48890,6445
+Willowvale,Eastern Cape,-32.26420,28.50334,5040
+Witbank,Eastern Cape,-25.88853,29.22640,1035
+Witelsbos,Eastern Cape,-33.99511,24.11813,6304
+Young Park,Eastern Cape,-33.91649,25.57071,6001
+uMasizakhe,Eastern Cape,-32.23893,24.53786,6280
+Arlington,Free State,-28.02716,27.84663,9602
+Bethulie,Free State,-30.50393,25.95858,9992
+Bohlokong,Free State,-28.19320,28.32014,9702
+Boitumelong,Free State,-27.64056,25.56627,2662
+Bolata,Free State,-28.56938,28.78456,9869
+Bolokanang,Free State,-29.12933,25.41910,9932
+Boshof,Free State,-28.54230,25.20860,8340
+Brandfort,Free State,-28.68604,26.44583,9400
+Clocolan,Free State,-28.90647,27.53662,9735
+Cornelia,Free State,-27.24189,28.84871,9850
+Dealesville,Free State,-28.67286,25.74984,9348
+Deneysville,Free State,-26.90135,28.06838,1932
+Dewetsdorp,Free State,-29.58087,26.66245,9940
+Ditlhake,Free State,-29.39195,24.99345,9986
+Edenville,Free State,-27.56005,27.66065,9535
+Fauresmith,Free State,-29.75285,25.31982,9978
+Goedgedacht,Free State,-27.67518,27.22732,9499
+Hennenman,Free State,-27.97651,27.02204,9445
+Hertzogville,Free State,-28.12521,25.49697,9482
+Hlohlolwane,Free State,-28.90658,27.55533,9735
+Hobhouse,Free State,-29.52758,27.14148,9740
+Holly Country,Free State,-26.93229,27.91851,1946
+Hoopstad,Free State,-27.83871,25.92113,9479
+Ikgomotseng,Free State,-28.73565,26.11210,9358
+Intabazwe,Free State,-28.23979,29.10074,9880
+Jacobsdal,Free State,-29.13341,24.76590,8710
+Jagersfontein,Free State,-29.76141,25.43023,9974
+Kestell,Free State,-28.31068,28.68640,9860
+Kgotsong,Free State,-27.37665,26.64298,9660
+Koffiefontein,Free State,-29.40177,24.99095,9986
+Kwakwatsi,Free State,-27.22869,27.58730,9540
+Lephoi,Free State,-30.50163,25.97558,9992
+Leratswana,Free State,-28.02215,27.84288,9602
+Lindley,Free State,-27.90747,27.90969,9630
+Luckhoff,Free State,-29.74760,24.77987,9982
+Mabolela,Free State,-28.51854,28.82350,9869
+Madikgetla,Free State,-30.02656,25.77582,9913
+Mafahlaneng,Free State,-27.54764,28.51109,9820
+Makeleketla,Free State,-28.53119,26.99457,9421
+Malebogo,Free State,-28.12027,25.49022,9482
+Mamafubedu,Free State,-27.66445,28.12652,9640
+Maphodi,Free State,-30.26119,25.71542,9917
+Marquard,Free State,-28.67170,27.41589,9610
+Masilo,Free State,-28.41697,26.69379,9414
+Matlakeng,Free State,-30.29259,27.09712,9869
+Matwabeng,Free State,-28.34142,27.63094,9485
+Mautse,Free State,-28.51041,27.92000,9720
+Meqheleng,Free State,-28.89882,27.86838,9732
+Moemaneng,Free State,-28.67854,27.41311,9610
+Mokwallo,Free State,-27.00360,27.38093,9595
+Monontsha,Free State,-28.56166,28.72396,9869
+Monyakeng,Free State,-27.82629,26.36826,9682
+Morojaneng,Free State,-29.58620,26.67737,9940
+Ntha,Free State,-27.88389,27.90183,9630
+Opkoms,Free State,-29.14728,26.25376,9301
+Oppermansdorp,Free State,-29.41177,24.73964,9987
+Oranjeville,Free State,-26.98390,28.19773,1995
+Paul Roux,Free State,-28.29656,27.95367,9800
+Petrus Steyn,Free State,-27.65451,28.12369,9640
+Petrusburg,Free State,-29.11990,25.41562,9932
+Petsana,Free State,-27.80311,28.44832,9810
+Phiritona,Free State,-27.26534,27.97119,9651
+Qalabotjha,Free State,-27.02053,28.62162,9840
+Qibing,Free State,-29.71638,27.01724,9944
+Ratanang,Free State,-29.11845,24.75372,8710
+Reddersburg,Free State,-29.65088,26.16806,9904
+Relebohile,Free State,-29.74337,24.77939,9982
+Rodenbeck,Free State,-29.18387,26.28103,9328
+Soutpan,Free State,-28.74818,26.04353,9356
+Springfontein,Free State,-30.26340,25.70396,9917
+Thaba Phatshwa,Free State,-29.31468,27.11231,9771
+Theunissen,Free State,-28.40468,26.70218,9410
+Tikwana,Free State,-27.84078,25.91870,9489
+Tlholong,Free State,-28.32747,28.69237,9860
+Tumahole,Free State,-26.91946,27.47626,9585
+Tweespruit,Free State,-29.19118,27.02645,9770
+Vanderkloof,Free State,-30.00132,24.74073,8771
+Ventersburg,Free State,-28.08496,27.13889,9450
+Verkeerdevlei,Free State,-28.83490,26.77361,9401
+Viljoenskroon,Free State,-27.21491,26.94695,9520
+Villiers,Free State,-27.02913,28.60665,9840
+Vrede,Free State,-27.42331,29.16232,9835
+Vredefort,Free State,-27.00554,27.36782,9595
+Warden,Free State,-27.85344,28.96258,9890
+Wesselsbron,Free State,-27.83663,26.36668,9680
+Zamani,Free State,-27.66899,29.55558,2970
+Alexandra,Gauteng,-26.10568,28.09356,2014
+Atteridgeville,Gauteng,-25.78363,28.04712,0006
+Bapsfontein,Gauteng,-25.99866,28.42155,1510
+Baviaanspoort,Gauteng,-25.66962,28.36350,0039
+Bekkersdal,Gauteng,-26.28003,27.69693,1772
+Blair Atholl,Gauteng,-25.90793,27.90718,1739
+Blybank,Gauteng,-26.33042,27.47708,2499
+Boipatong,Gauteng,-26.67034,27.84770,1901
+Bon Accord,Gauteng,-25.61910,28.19348,0009
+Bophelong,Gauteng,-26.69645,27.77205,1913
+Carletonville,Gauteng,-26.38107,27.34756,2500
+Cerutiville,Gauteng,-26.44219,28.50942,1491
+Chartwell,Gauteng,-25.98219,27.96355,2055
+Dainfern,Gauteng,-25.98557,27.99558,2055
+Dilopye,Gauteng,-25.38383,28.19039,0424
+Dlamini,Gauteng,-26.26484,27.85458,1818
+Duduza,Gauteng,-26.37059,28.40174,1494
+Ebony Park,Gauteng,-26.00315,28.17214,1690
+Ekangala,Gauteng,-25.67875,28.73297,1021
+Ennerdale,Gauteng,-26.41688,27.82613,1826
+Fochville,Gauteng,-26.47229,27.46600,2515
+Ga-Rankuwa,Gauteng,-25.58660,27.99583,0221
+Ivory Park,Gauteng,-25.99961,28.18723,1689
+Kaalfontein,Gauteng,-25.98875,28.16812,2498
+Katlehong,Gauteng,-26.36493,28.14510,1432
+Kokosi,Gauteng,-26.50306,27.46376,2515
+KwaMhlanga,Gauteng,-25.42984,28.70286,1022
+KwaThema,Gauteng,-26.29765,28.38535,1563
+Lammermoor,Gauteng,-25.95912,27.87402,1747
+Lanseria,Gauteng,-25.93841,27.91650,1748
+Laudium,Gauteng,-25.78779,28.08341,0037
+Lawley,Gauteng,-26.38181,27.80331,1824
+Leeufontein,Gauteng,-25.65380,28.37729,0449
+Leeupoort,Gauteng,-24.92249,27.63761,0486
+Lehae,Gauteng,-26.34885,27.88108,1821
+Lenasia South,Gauteng,-26.39655,27.85299,1835
+Letsatsing,Gauteng,-26.37376,27.45765,2503
+Mabopane,Gauteng,-25.51183,28.03978,0190
+Mandela Section,Gauteng,-26.27629,27.69389,1782
+Marokolong,Gauteng,-25.37729,28.28583,0434
+Mayibuye,Gauteng,-26.03343,28.18062,1632
+Modderfontein,Gauteng,-26.10222,28.13770,1645
+Mogogelo,Gauteng,-25.35059,28.13526,0422
+Mohlakeng,Gauteng,-26.23591,27.68298,1766
+Munsieville,Gauteng,-26.07315,27.75216,1775
+Naledi,Gauteng,-26.25741,27.81862,1861
+Nancefield,Gauteng,-26.30628,27.89610,1808
+Nellmapius,Gauteng,-25.73714,28.35912,0122
+New Eersterus,Gauteng,-25.41773,28.13336,0429
+Oberholzer,Gauteng,-26.34646,27.37929,2502
+Orange Farm,Gauteng,-26.46725,27.85506,1805
+Pienaarsrivier,Gauteng,-25.21360,28.29423,0420
+Rabie Ridge,Gauteng,-26.02508,28.16936,1688
+Ramotse,Gauteng,-25.36982,28.28392,0407
+Randvaal,Gauteng,-26.48971,28.04976,1873
+Ratanda,Gauteng,-26.55804,28.31621,1443
+Rayton,Gauteng,-25.74115,28.53206,1001
+Refilwe,Gauteng,-25.63961,28.52315,1003
+Rethabile,Gauteng,-25.71024,28.37573,0112
+Rethabiseng,Gauteng,-25.72112,28.71181,1026
+Saulsville,Gauteng,-25.77443,28.05468,0125
+Sebokeng,Gauteng,-26.57011,27.83370,1982
+Sharpeville,Gauteng,-26.68669,27.86799,1933
+Stretford,Gauteng,-26.49419,27.84535,1805
+Suurman,Gauteng,-25.36663,28.22114,0428
+Temba,Gauteng,-25.37896,28.26489,0407
+Thulwe,Gauteng,-25.23120,28.20209,0419
+Tsakane,Gauteng,-26.36363,28.36530,1548
+Tshepiso,Gauteng,-26.68568,27.87119,1933
+Tshepisong,Gauteng,-26.19089,27.79567,1754
+Walkerville,Gauteng,-26.41561,27.95516,1876
+Waterpan,Gauteng,-26.34789,27.68533,1779
+Wattville,Gauteng,-26.22123,28.29738,1516
+Wedela,Gauteng,-26.46494,27.37998,2497
+Welverdiend,Gauteng,-26.37597,27.27939,2495
+Winterveld,Gauteng,-25.48103,28.03848,0198
+Zakariyya Park,Gauteng,-26.36742,27.89335,1821
+Zithobeni,Gauteng,-25.78079,28.71824,1024
+Zwavelpoort,Gauteng,-25.83347,28.37116,0036
+Adams Mission,KwaZulu-Natal,-30.03102,30.80952,4100
+Anerley,KwaZulu-Natal,-30.67157,30.49662,4230
+Ashdown,KwaZulu-Natal,-29.63881,30.32723,3216
+Babanango,KwaZulu-Natal,-28.37935,31.07900,3850
+Bhekuzulu,KwaZulu-Natal,-27.78199,30.81574,3100
+Bhongweni,KwaZulu-Natal,-30.54533,29.43469,4693
+Bizana,KwaZulu-Natal,-30.85030,29.83029,4800
+Blythedale Beach,KwaZulu-Natal,-29.37134,31.34816,4450
+Bothas Hill,KwaZulu-Natal,-29.75702,30.73932,3660
+Bulwer,KwaZulu-Natal,-29.79925,29.75221,3244
+Camperdown,KwaZulu-Natal,-29.73354,30.51141,3720
+Clansthal,KwaZulu-Natal,-30.23871,30.78055,4170
+Clermont,KwaZulu-Natal,-29.79321,30.89841,3602
+Colenso,KwaZulu-Natal,-28.74870,29.82156,3360
+Cool Air,KwaZulu-Natal,-29.36082,30.62921,3236
+Creighton,KwaZulu-Natal,-30.02810,29.83929,3263
+Dalton,KwaZulu-Natal,-29.34070,30.62998,3236
+Darnall,KwaZulu-Natal,-29.26888,31.36254,4480
+Donnybrook,KwaZulu-Natal,-29.92839,29.87413,3237
+Drummond,KwaZulu-Natal,-29.75685,30.68091,3626
+Dukuduku,KwaZulu-Natal,-28.09927,32.33471,3936
+Dumbe,KwaZulu-Natal,-28.55670,30.31098,3182
+Durnacol,KwaZulu-Natal,-28.04485,30.02031,3082
+Elandskraal,KwaZulu-Natal,-28.48095,30.52877,3017
+Elysium,KwaZulu-Natal,-30.47676,30.62859,4185
+Emalangeni,KwaZulu-Natal,-29.64005,30.69503,4209
+Emona,KwaZulu-Natal,-29.54964,31.08859,4399
+Enhlalakahle,KwaZulu-Natal,-29.07594,30.60289,3500
+Esikhawini,KwaZulu-Natal,-28.87030,31.90627,3887
+Ezakheni,KwaZulu-Natal,-28.60172,29.92164,3381
+Folweni,KwaZulu-Natal,-29.99689,30.81760,4136
+Gamalakhe,KwaZulu-Natal,-30.80638,30.32884,4249
+Geluksburg,KwaZulu-Natal,-28.51905,29.35334,3377
+Gingindlovu,KwaZulu-Natal,-29.02416,31.58143,3800
+Glencoe,KwaZulu-Natal,-28.17508,30.13195,2930
+Greytown,KwaZulu-Natal,-29.05580,30.58736,3250
+Harding,KwaZulu-Natal,-30.57658,29.88719,4680
+Hattingspruit,KwaZulu-Natal,-28.07940,30.12723,3081
+Hibberdene,KwaZulu-Natal,-30.57206,30.56427,4220
+Hlobane,KwaZulu-Natal,-27.70995,30.99093,3145
+Hluhluwe,KwaZulu-Natal,-28.02418,32.28151,3960
+Ibisi,KwaZulu-Natal,-30.41185,29.88954,3304
+Ifafa Beach,KwaZulu-Natal,-30.46318,30.65345,4185
+Inchanga,KwaZulu-Natal,-29.74115,30.67808,3670
+Ingwavuma,KwaZulu-Natal,-27.13506,31.99372,3968
+Ixopo,KwaZulu-Natal,-30.15184,30.06102,3276
+Jagersrust,KwaZulu-Natal,-28.59891,29.11827,3354
+Kelso,KwaZulu-Natal,-30.36070,30.70741,4183
+Kingsburgh,KwaZulu-Natal,-30.09638,30.83781,4126
+Klaarwater,KwaZulu-Natal,-29.90211,30.84157,3609
+Kranskop,KwaZulu-Natal,-28.96816,30.86159,3268
+KwaMbonambi,KwaZulu-Natal,-28.60077,32.08219,3915
+KwaNdengezi,KwaZulu-Natal,-29.85813,30.76109,3607
+KwaSandanezwe,KwaZulu-Natal,-29.88183,29.99718,3237
+Kwadabeka,KwaZulu-Natal,-29.77161,30.90485,3612
+La Mercy,KwaZulu-Natal,-29.63502,31.08919,4405
+Lamontville,KwaZulu-Natal,-29.94290,30.93351,4027
+Lidgetton,KwaZulu-Natal,-29.44246,30.09918,3270
+Louwsburg,KwaZulu-Natal,-27.57521,31.27387,3150
+Luganda,KwaZulu-Natal,-29.88681,30.79640,3609
+Lushaba,KwaZulu-Natal,-28.54012,30.96824,3855
+Madadeni,KwaZulu-Natal,-27.75145,30.06858,2951
+Madlala,KwaZulu-Natal,-30.59766,30.50526,4240
+Mahlabatini,KwaZulu-Natal,-28.22792,31.45720,3865
+Malenge,KwaZulu-Natal,-30.18798,29.58288,3267
+Mapumulo,KwaZulu-Natal,-29.10305,30.97037,4470
+Marburg,KwaZulu-Natal,-30.73027,30.41836,4252
+Marina Beach,KwaZulu-Natal,-30.93462,30.29905,4281
+Melmoth,KwaZulu-Natal,-28.57842,31.38822,3835
+Mkambati,KwaZulu-Natal,-31.28433,29.95292,4814
+Mkuze,KwaZulu-Natal,-27.61958,32.03228,3965
+Molweni,KwaZulu-Natal,-29.73036,30.86893,3653
+Mount Moreland,KwaZulu-Natal,-29.63595,31.06783,4345
+Mpembeni,KwaZulu-Natal,-28.11693,31.91522,3937
+Mpolweni,KwaZulu-Natal,-29.43046,30.46775,3225
+Mpophomeni,KwaZulu-Natal,-29.56797,30.17837,3291
+Mpumuza,KwaZulu-Natal,-29.60743,30.27706,3200
+Mpushini Park,KwaZulu-Natal,-28.89813,31.43916,3815
+Mtwalume,KwaZulu-Natal,-30.49233,30.62081,4186
+Munster,KwaZulu-Natal,-31.00337,30.25357,4278
+Ncwadi,KwaZulu-Natal,-29.77820,29.97024,3226
+Ndikwe,KwaZulu-Natal,-28.58679,30.88251,3859
+Ndlangubo,KwaZulu-Natal,-28.76844,31.68439,3880
+New Germany,KwaZulu-Natal,-29.79774,30.87470,3620
+New Hanover,KwaZulu-Natal,-29.35706,30.52005,3230
+Newlands East,KwaZulu-Natal,-29.77461,30.98470,4037
+Newlands West,KwaZulu-Natal,-29.78332,30.95121,4037
+Ngome,KwaZulu-Natal,-27.83981,31.40016,3111
+Nondweni,KwaZulu-Natal,-28.18633,30.80154,3137
+Nqutu,KwaZulu-Natal,-28.22121,30.66785,3135
+Nseleni,KwaZulu-Natal,-28.66595,32.02034,3882
+Nxamalala,KwaZulu-Natal,-28.84175,30.44014,3200
+Nyuswa,KwaZulu-Natal,-30.70611,29.45222,3660
+Orient Hills,KwaZulu-Natal,-29.99828,30.91794,4133
+Osizweni,KwaZulu-Natal,-27.77939,30.15838,2952
+Oslo Beach,KwaZulu-Natal,-30.76327,30.43517,4240
+Othame,KwaZulu-Natal,-28.73694,30.55795,3010
+Park Rynie,KwaZulu-Natal,-30.31812,30.73106,4182
+Paulpietersburg,KwaZulu-Natal,-27.42421,30.81195,3180
+Pomeroy,KwaZulu-Natal,-28.55786,30.42738,3020
+Pongola,KwaZulu-Natal,-27.38484,31.61752,3170
+Port Edward,KwaZulu-Natal,-31.02559,30.21683,4295
+Pumula,KwaZulu-Natal,-30.64031,30.52714,4235
+Queensburgh,KwaZulu-Natal,-29.87885,30.89411,4070
+Redcliffe,KwaZulu-Natal,-29.64086,31.01401,4345
+Richmond,KwaZulu-Natal,-29.87454,30.27217,3780
+Roseneath,KwaZulu-Natal,-30.18803,30.74017,4171
+Rosetta,KwaZulu-Natal,-29.30824,29.97333,3301
+Salt Rock,KwaZulu-Natal,-29.49488,31.24008,4391
+Sangcwaba,KwaZulu-Natal,-30.19017,30.40317,4206
+Sea Park,KwaZulu-Natal,-30.69532,30.48351,4241
+Sezela,KwaZulu-Natal,-30.40604,30.67439,4215
+Shakaskraal,KwaZulu-Natal,-29.44661,31.21715,4430
+Sobantu,KwaZulu-Natal,-29.59699,30.42094,3210
+Southbroom,KwaZulu-Natal,-30.92983,30.29385,4277
+Southport,KwaZulu-Natal,-30.67936,30.49812,4230
+Sundumbili,KwaZulu-Natal,-29.13112,31.38240,4491
+Sunwich Port,KwaZulu-Natal,-30.66484,30.50823,4230
+Thubalethu,KwaZulu-Natal,-28.56616,31.38813,3850
+Tongaat,KwaZulu-Natal,-29.57615,31.09437,4400
+Trafalgar,KwaZulu-Natal,-30.95626,30.29023,4275
+Trust Feed,KwaZulu-Natal,-29.39771,30.54011,3233
+Tugela Mouth,KwaZulu-Natal,-29.21889,31.50302,4492
+Ulundi,KwaZulu-Natal,-28.29497,31.42473,3838
+Umbumbulu,KwaZulu-Natal,-29.98390,30.70272,4105
+Umgababa,KwaZulu-Natal,-30.14192,30.81926,4126
+Umlazi,KwaZulu-Natal,-29.96783,30.86659,4031
+Umtentweni,KwaZulu-Natal,-30.71784,30.45808,4235
+Umzimkulu,KwaZulu-Natal,-30.26583,29.92765,3297
+Umzinto,KwaZulu-Natal,-30.30368,30.66142,4200
+Umzumbe,KwaZulu-Natal,-30.62360,30.53615,4225
+Utrecht,KwaZulu-Natal,-27.66423,30.30309,2980
+Uvongo,KwaZulu-Natal,-30.83383,30.38012,4270
+Van Reenen,KwaZulu-Natal,-28.37574,29.37962,3372
+Verulam,KwaZulu-Natal,-29.64923,31.03987,4340
+Wartburg,KwaZulu-Natal,-29.43223,30.57167,3233
+Wasbank,KwaZulu-Natal,-28.31260,30.10248,2920
+Weenen,KwaZulu-Natal,-28.84761,30.08200,3325
+Westbrook,KwaZulu-Natal,-29.59176,31.16426,4406
+Weza,KwaZulu-Natal,-30.59215,29.74412,4685
+Winterskloof,KwaZulu-Natal,-29.58303,30.28643,3245
+Zwelethu,KwaZulu-Natal,-29.96003,30.91970,3680
+eMondlo,KwaZulu-Natal,-27.98092,30.72284,3105
+eSibongile,KwaZulu-Natal,-28.18472,30.22631,3000
+Alldays,Limpopo,-22.68239,29.10097,0909
+Amandelbult,Limpopo,-24.82094,27.27761,0362
+Bakenberg,Limpopo,-23.86396,28.75132,0611
+Bochum,Limpopo,-23.27637,29.11722,0790
+Dendron,Limpopo,-23.36687,29.31816,0715
+Dikgale,Limpopo,-23.50293,29.35604,0721
+Dzanani,Limpopo,-22.87808,30.14543,0955
+Ga-Mashashane,Limpopo,-23.94106,29.11402,0746
+Gravelotte,Limpopo,-23.95131,30.61215,0895
+Groblersdal,Limpopo,-25.16837,29.39581,0470
+Khakhu,Limpopo,-22.83897,30.23760,0974
+Khomanani,Limpopo,-23.26266,30.38047,0933
+Kutama,Limpopo,-23.06764,29.63884,0940
+Lebogang,Limpopo,-24.90300,28.37520,2610
+Lebowakgomo,Limpopo,-24.30436,29.48306,0737
+Letaba,Limpopo,-23.97653,31.79737,0870
+Letsitele,Limpopo,-23.88664,30.38738,0885
+Mahwelereng,Limpopo,-24.13514,28.99071,0626
+Maja,Limpopo,-24.16772,29.53439,0719
+Makuleke,Limpopo,-22.86422,30.91505,1007
+Manenzhe,Limpopo,-22.46892,30.68176,0967
+Mankweng,Limpopo,-23.89005,29.70389,0727
+Marapong,Limpopo,-23.65525,27.62133,0556
+Masakona,Limpopo,-23.27615,30.24351,0941
+Masemola,Limpopo,-24.55050,29.60815,1060
+Mashamba,Limpopo,-23.21704,30.26272,0942
+Mashau,Limpopo,-23.14729,30.19092,0943
+Masia,Limpopo,-23.21723,30.32891,0944
+Mathabatha,Limpopo,-24.22088,29.82187,0733
+Mavambe,Limpopo,-23.00347,30.63218,0998
+Mhinga,Limpopo,-22.77686,30.89465,0976
+Modimolle (Nylstroom),Limpopo,-24.70361,28.38779,0510
+Modjadji,Limpopo,-23.61868,30.33707,0837
+Modjadjiskloof,Limpopo,-23.66499,30.16213,0835
+Mookgophong (Naboomspruit),Limpopo,-24.51751,28.70490,0560
+Mphambo,Limpopo,-23.08970,30.66891,0999
+Mudabula,Limpopo,-23.11092,30.55020,0997
+Mudimeli,Limpopo,-22.80335,29.95151,0991
+Mulenzhe,Limpopo,-22.99807,30.55590,0947
+Mulima,Limpopo,-23.30669,30.04122,0817
+Nebo,Limpopo,-24.89908,29.76008,1059
+Nkomo,Limpopo,-23.40894,30.77800,0840
+Nkuri,Limpopo,-23.25600,30.53711,0858
+Northam,Limpopo,-24.96143,27.25891,0360
+Onverwacht,Limpopo,-23.68553,27.67465,0557
+Penge,Limpopo,-24.37591,30.28929,1160
+Potgietersrus,Limpopo,-24.17672,28.98926,0600
+Rebone,Limpopo,-23.42865,28.60225,0617
+Regorogile,Limpopo,-24.57896,27.38006,0387
+Roedtan,Limpopo,-24.59901,29.07787,0580
+Rust De Winter,Limpopo,-25.19920,28.61106,0406
+Sekgakgapeng,Limpopo,-24.17161,28.96883,0651
+Sekgopo,Limpopo,-23.61275,29.99949,0802
+Seshego,Limpopo,-23.84617,29.38888,0742
+Settlers,Limpopo,-24.95053,28.52745,0430
+Sinthumule,Limpopo,-23.10176,29.76611,0921
+Siyabuswa,Limpopo,-25.11847,29.05818,0472
+Soekmekaar,Limpopo,-23.49479,29.93201,0810
+Steelpoort,Limpopo,-24.80203,30.14777,1133
+Taaiboschgroet,Limpopo,-22.84639,28.90590,0718
+Thabazimbi,Limpopo,-24.58986,27.38960,0380
+Tholongwe,Limpopo,-23.96499,29.68723,0734
+Tshimbupfe,Limpopo,-23.17647,30.48174,0983
+Turfloop,Limpopo,-23.88547,29.73597,0727
+Vuwani,Limpopo,-23.13792,30.42194,0952
+Acornhoek,Mpumalanga,-24.60886,31.05809,1360
+Amersfoort,Mpumalanga,-27.01502,29.83339,2490
+Belfast,Mpumalanga,-25.68145,30.02213,1100
+Botleng,Mpumalanga,-26.10332,28.68448,2210
+Breyten,Mpumalanga,-26.30555,29.97067,2330
+Bushbuckridge,Mpumalanga,-24.84739,31.05021,1280
+Camden,Mpumalanga,-26.60123,30.08115,2355
+Carolina,Mpumalanga,-26.07370,30.10046,1185
+Charl Cilliers,Mpumalanga,-26.66188,29.18436,2301
+Davel,Mpumalanga,-26.45138,29.66193,2320
+Delmas,Mpumalanga,-26.17527,28.59023,2210
+Devon,Mpumalanga,-26.35640,28.78015,2260
+Dirkiesdorp,Mpumalanga,-27.17332,30.40143,2386
+Eendrag,Mpumalanga,-26.37783,28.87883,2266
+Eloff,Mpumalanga,-26.16819,28.60177,2211
+Embalenhle,Mpumalanga,-26.54983,29.07018,2285
+Evander,Mpumalanga,-26.47297,29.08804,2280
+Greylingstad,Mpumalanga,-26.74828,28.75650,2415
+Gutshwa,Mpumalanga,-25.26636,31.20076,1247
+Hectorspruit,Mpumalanga,-25.44059,31.67867,1330
+Hendrina,Mpumalanga,-26.14701,29.72365,1095
+Hoyi,Mpumalanga,-25.81555,31.84757,1348
+KaBokweni,Mpumalanga,-25.34165,31.12448,1245
+Kinross,Mpumalanga,-26.41981,29.09254,2270
+KwaZamokuhle,Mpumalanga,-26.13429,29.72466,1098
+KwaZanele,Mpumalanga,-26.31351,29.97969,2330
+Leslie,Mpumalanga,-26.36811,28.91818,2265
+Lothair,Mpumalanga,-26.39740,30.42228,2370
+Manyeleti,Mpumalanga,-24.60613,31.46337,1362
+Marloth Park,Mpumalanga,-25.36571,31.76855,1321
+Mashishing,Mpumalanga,-25.08951,30.41554,1123
+Mataffin,Mpumalanga,-25.45450,30.93934,1205
+Morgenzon,Mpumalanga,-26.73677,29.60682,2315
+Mpuluzi,Mpumalanga,-26.34701,30.77599,2335
+Msogwaba,Mpumalanga,-25.42847,31.15616,1215
+Nelspruit,Mpumalanga,-25.48322,30.97738,1200
+Ngodwana,Mpumalanga,-25.56963,30.67532,1209
+Nsikazi,Mpumalanga,-25.27888,31.23247,1240
+Ohrigstad,Mpumalanga,-24.74721,30.56424,1122
+Perdekop,Mpumalanga,-27.16429,29.62396,2465
+Sakhile,Mpumalanga,-26.97470,29.20034,2431
+Sheepmoor,Mpumalanga,-26.71809,30.29625,2352
+Simile,Mpumalanga,-25.08026,30.78060,1260
+Siyathuthuka,Mpumalanga,-25.67767,29.99145,1102
+Sundra,Mpumalanga,-26.19735,28.53892,2200
+Trichardt,Mpumalanga,-26.48923,29.22189,2300
+Vukuzakhe,Mpumalanga,-27.36644,29.90399,2470
+Wesselton,Mpumalanga,-26.49973,29.96651,2353
+eMgwenya,Mpumalanga,-25.64666,30.32725,1195
+eMjindini,Mpumalanga,-25.76369,31.01167,1309
+eMzinoni,Mpumalanga,-26.49860,29.42371,2309
+eSizameleni,Mpumalanga,-27.35119,30.15722,2480
+eZamokuhle,Mpumalanga,-26.99990,29.84549,2490
+Agisanang,North West,-26.56139,25.81753,2760
+Amalia,North West,-27.24350,25.03352,2786
+Atamelang,North West,-26.50324,25.36348,2732
+Bafokeng,North West,-25.59753,27.14563,2711
+Bakolobeng,North West,-26.47189,25.53892,2781
+Boikhutso,North West,-26.18159,26.12705,2740
+Boitekong,North West,-25.63946,27.26664,0308
+Borolelo,North West,-25.63036,26.67643,2835
+Boskop,North West,-26.56080,27.11175,2528
+Coligny,North West,-26.33207,26.30371,2725
+Delareyville,North West,-26.68474,25.44940,2770
+Derby,North West,-25.93859,27.01072,0347
+Dominionville,North West,-26.89988,26.39002,2578
+Hartebeesfontein,North West,-26.76699,26.42141,0250
+Huhudi,North West,-26.97711,24.74126,8629
+Itekeng,North West,-26.36252,25.90466,2762
+Jouberton,North West,-26.89297,26.58365,2574
+Kgakala,North West,-27.21759,26.26554,2640
+Khuma,North West,-26.85583,26.84899,2562
+Koster,North West,-25.85567,26.88714,0348
+Lebaleng,North West,-27.32618,25.97021,2650
+Leeudoringstad,North West,-27.22673,26.24097,2640
+Louwna,North West,-26.90212,24.14576,8610
+Madikwe,North West,-25.35560,26.52987,2840
+Majaneng,North West,-26.47337,25.29603,0402
+Makwassie,North West,-27.31224,25.98169,2650
+Mmabatho,North West,-25.83870,25.58506,2735
+Mogwase,North West,-25.27449,27.23940,0314
+Mohadin,North West,-26.71696,27.02816,2531
+Monakato,North West,-25.35269,27.26990,0331
+Mooinooi,North West,-25.75174,27.55523,0325
+Morokweng,North West,-26.12778,23.76913,8614
+Ntsweletsoku,North West,-25.43260,25.94330,2891
+Orkney,North West,-26.96361,26.61728,2620
+Oskraal,North West,-25.50353,27.87076,0204
+Oukasie,North West,-25.60445,27.79041,0250
+Piet Plessis,North West,-26.16277,24.40608,8621
+Pomfret,North West,-25.82439,23.52313,8619
+Promosa,North West,-26.69976,27.02962,2530
+Pudimoe,North West,-27.39769,24.71472,8581
+Ramokokastad,North West,-25.15760,27.42377,0195
+Reagile,North West,-25.85032,26.88095,0348
+Rooigrond,North West,-25.92302,25.79770,2743
+Sannieshof,North West,-26.53109,25.80653,2760
+Slurry,North West,-25.81597,25.83757,2895
+Sonop,North West,-25.64672,27.68976,0258
+Stella,North West,-26.55213,24.85418,8650
+Stilfontein,North West,-26.84289,26.76321,2550
+Swartruggens,North West,-25.64816,26.68415,2835
+Tigane,North West,-26.73952,26.41516,2600
+Tlhabane,North West,-25.64015,27.20912,0309
+Tlhabologang,North West,-26.32919,26.29910,2725
+Tshing,North West,-26.31842,26.79656,2710
+Tswelelang,North West,-27.22783,25.97838,2630
+Vierfontein,North West,-27.09651,26.77302,2615
+Witpoort,North West,-27.17398,26.11793,2632
+Wolmaransstad,North West,-27.19564,25.97238,2630
+Aggeneys,Northern Cape,-29.22975,18.84583,8893
+Askham,Northern Cape,-26.98174,20.78050,8814
+Banksdrif,Northern Cape,-27.74614,24.80079,8576
+Barkly West,Northern Cape,-28.53108,24.49618,8375
+Beeshoek,Northern Cape,-28.22773,22.96493,8423
+Bloemsmond,Northern Cape,-28.63324,21.07420,8810
+Boegoeberg,Northern Cape,-28.95128,22.15898,8943
+Breipaal,Northern Cape,-29.04158,23.75934,8730
+Britstown,Northern Cape,-30.59212,23.48503,8782
+Bulletrap,Northern Cape,-29.46381,17.76349,8260
+Campbell,Northern Cape,-28.79405,23.69979,8306
+Carolusberg,Northern Cape,-29.63470,17.94923,8247
+Christiana,Northern Cape,-27.88451,25.11878,2680
+Concordia,Northern Cape,-29.36330,17.93922,8271
+Delportshoop,Northern Cape,-28.41514,24.30031,8377
+Dingleton,Northern Cape,-27.78337,22.97736,8445
+Douglas,Northern Cape,-29.05292,23.74411,8730
+Eksteenfontein,Northern Cape,-28.82426,17.25557,8284
+Galeshewe,Northern Cape,-28.72472,24.71198,8330
+Ganspan,Northern Cape,-27.97202,24.76217,8552
+Garies,Northern Cape,-30.57550,17.99012,8220
+Griekwastad,Northern Cape,-28.84876,23.22091,8365
+Groblershoop,Northern Cape,-28.89574,21.98648,8850
+Grootdrink,Northern Cape,-28.56198,21.75255,8822
+Hanover,Northern Cape,-31.06798,24.44369,7005
+Holpan,Northern Cape,-28.35940,24.64081,8505
+Hondeklip Bay,Northern Cape,-30.32776,17.29167,8222
+Hopetown,Northern Cape,-29.62040,24.08703,8750
+Hotazel,Northern Cape,-27.19635,22.83302,8490
+Jan Kempdorp,Northern Cape,-27.91657,24.80336,8550
+Kamieskroon,Northern Cape,-30.21689,17.92311,8241
+Kanoneiland,Northern Cape,-28.65954,21.08073,8806
+Karos,Northern Cape,-28.42397,21.60811,8819
+Kathu,Northern Cape,-27.77292,22.98623,8446
+Keimoes,Northern Cape,-28.69663,20.96622,8860
+Kenhardt,Northern Cape,-29.35980,21.15383,8900
+Klein Nourivier,Northern Cape,-30.21526,18.13724,8252
+Kleinzee,Northern Cape,-29.68056,17.06548,8282
+Kliprand,Northern Cape,-30.59639,18.68746,8205
+Koingnaas,Northern Cape,-30.19629,17.28269,8249
+Komaggas,Northern Cape,-29.79943,17.47658,8242
+Kuboes,Northern Cape,-28.44887,16.99066,8292
+Kutlwano,Northern Cape,-28.32152,24.69607,8510
+Kwazamuxolo,Northern Cape,-31.19389,24.95426,5950
+Leerkrans,Northern Cape,-28.40697,21.52227,8818
+Lekkersing,Northern Cape,-29.00276,17.09586,8283
+Lime Acres,Northern Cape,-28.34512,23.48840,8410
+Loeriesfontein,Northern Cape,-30.93494,19.40225,8185
+Loubos,Northern Cape,-26.70978,20.11108,8811
+Louisvale,Northern Cape,-28.57398,21.19645,8809
+Loxton,Northern Cape,-31.47794,22.34552,6985
+Marchand,Northern Cape,-28.73119,20.50061,8873
+Motswedimosa,Northern Cape,-29.02515,24.58598,8701
+Motsweding,Northern Cape,-27.68589,24.65612,8576
+Mziwabantu,Northern Cape,-30.58029,23.49350,8782
+Nababeep,Northern Cape,-29.59459,17.77763,8265
+Nieuwoudtville,Northern Cape,-31.38053,19.09923,8180
+Norvalspont,Northern Cape,-30.62960,25.45278,9797
+Noupoort,Northern Cape,-31.18483,24.94529,5950
+Olifantshoek,Northern Cape,-27.94189,22.73599,8450
+Onseepkans,Northern Cape,-28.75593,19.27916,8892
+Orania,Northern Cape,-29.82241,24.40103,8752
+Pampierstad,Northern Cape,-27.78294,24.68642,8566
+Paulshoek,Northern Cape,-30.36747,18.25352,8221
+Pella,Northern Cape,-29.03369,19.15270,8891
+Philandersbron,Northern Cape,-26.80834,20.09129,8811
+Reivilo,Northern Cape,-27.56537,24.17678,8595
+Roodepan,Northern Cape,-28.66493,24.71510,8309
+Soebatsfontein,Northern Cape,-30.11884,17.58950,8257
+Steinkopf,Northern Cape,-29.26365,17.72743,8244
+Straussburg,Northern Cape,-28.43525,21.33073,8816
+Strydenburg,Northern Cape,-29.94312,23.66699,8765
+Tidimalo,Northern Cape,-28.42493,24.30810,8377
+Ulco,Northern Cape,-28.32365,24.21763,8390
+Utlwanang,Northern Cape,-27.89300,25.12235,2784
+Van Zylsrus,Northern Cape,-26.87814,22.04973,8467
+Vioolsdrif,Northern Cape,-28.77575,17.62286,8246
+Vosburg,Northern Cape,-30.57152,22.87665,8780
+Williston,Northern Cape,-31.34267,20.91773,8920
+Windsorton,Northern Cape,-28.33517,24.68788,8510
+Abbotsdale,Western Cape,-33.49241,18.66875,7300
+Ashton,Western Cape,-33.83263,20.04685,6715
+Avondale,Western Cape,-33.89394,18.59553,7500
+Baardskeerdersbos,Western Cape,-34.58696,19.56642,7271
+Beaconvale,Western Cape,-33.91576,18.58606,7500
+Bitterfontein,Western Cape,-31.04228,18.25300,8200
+Blue Downs,Western Cape,-33.99118,18.67771,7105
+Botrivier,Western Cape,-34.22674,19.19700,7185
+Brandwacht,Western Cape,-34.04997,22.05429,6507
+Buffeljagsrivier,Western Cape,-34.04790,20.52120,6742
+Churchill Estate,Western Cape,-33.89850,18.57402,7500
+De Doorns,Western Cape,-33.47412,19.66233,6875
+De Duin,Western Cape,-33.88514,18.56833,7500
+Die Eiland,Western Cape,-34.05282,22.23645,6525
+Doringbaai,Western Cape,-31.82001,18.23627,8151
+Dysselsdorp,Western Cape,-33.59025,22.40334,6628
+Ebenhaeser,Western Cape,-31.65461,18.22666,8149
+Eendekuil,Western Cape,-32.68719,18.87969,7335
+Eerste River,Western Cape,-34.00545,18.73178,7103
+Elands Bay,Western Cape,-32.31859,18.33259,8110
+Elsie's River,Western Cape,-33.92277,18.56554,7480
+Fairfield Estate,Western Cape,-33.89988,18.58881,7500
+Fisantekraal,Western Cape,-33.78412,18.71442,7552
+Fisherhaven,Western Cape,-34.36332,19.12581,7200
+Franskraalstrand,Western Cape,-34.60532,19.39656,7220
+Friemersheim,Western Cape,-33.95685,22.13468,6526
+Genadendal,Western Cape,-34.04123,19.55756,7234
+Glenlily,Western Cape,-33.90311,18.57476,7500
+Goedverwacht,Western Cape,-32.86232,18.68253,7323
+Gouda,Western Cape,-33.29729,19.03519,6821
+Graafwater,Western Cape,-32.15535,18.60284,8120
+Haarlem,Western Cape,-33.73592,23.33101,6467
+Hawston,Western Cape,-34.38468,19.13157,7202
+Herbertsdale,Western Cape,-34.01706,21.76392,6505
+Hopefield,Western Cape,-33.04396,18.32111,7355
+Imizamo Yethu,Western Cape,-34.02823,18.35832,7806
+Kalbaskraal,Western Cape,-33.57482,18.64510,7302
+Karatara,Western Cape,-33.91289,22.83787,6580
+Klaarstroom,Western Cape,-33.33277,22.53245,6932
+Klawer,Western Cape,-31.77761,18.62270,8145
+Klein Brak River,Western Cape,-34.08466,22.14082,6503
+Koekenaap,Western Cape,-31.52666,18.28580,8146
+Koelenhof,Western Cape,-33.87355,18.82087,7605
+Koringberg,Western Cape,-33.01732,18.67263,7312
+Kurland,Western Cape,-33.94704,23.49055,6600
+Kylemore,Western Cape,-33.91962,18.94827,7608
+L'Agulhas,Western Cape,-34.82077,20.00489,7287
+Lambert's Bay,Western Cape,-32.09972,18.30243,8130
+Langebaanweg,Western Cape,-32.97357,18.14662,7375
+Leeu-Gamka,Western Cape,-32.76722,21.96665,6950
+Leipoldtville,Western Cape,-32.22202,18.48062,8122
+Lepelsfontein,Western Cape,-31.04514,17.84331,8207
+Lutzville,Western Cape,-31.55429,18.34352,8165
+Lwandle,Western Cape,-34.12060,18.86169,7143
+Lynedoch,Western Cape,-33.98247,18.76857,7603
+Mamre,Western Cape,-33.51328,18.46899,7347
+Masiphumelele,Western Cape,-34.13007,18.37404,7975
+Matjiesfontein,Western Cape,-33.23034,20.57630,6901
+Mbekweni,Western Cape,-33.68159,18.98672,7626
+Merweville,Western Cape,-32.66935,21.50710,6940
+Mfuleni,Western Cape,-34.01305,18.66983,7100
+Moorreesburg,Western Cape,-33.14662,18.66209,7310
+Napier,Western Cape,-34.47348,19.88921,7270
+Nelspoort,Western Cape,-32.09432,23.01168,6973
+Nyanga,Western Cape,-33.99341,18.57815,7755
+Onrusrivier,Western Cape,-34.41068,19.17436,7201
+Oostersee,Western Cape,-33.89894,18.60158,7500
+Panorama,Western Cape,-33.87991,18.57168,7506
+Parow East,Western Cape,-33.90428,18.59544,7501
+Parow North,Western Cape,-33.88874,18.57483,7500
+Parow Valley,Western Cape,-33.91316,18.58921,7503
+Pearly Beach,Western Cape,-34.66168,19.49122,7221
+Plattekloof,Western Cape,-33.87219,18.58414,7500
+Pniel,Western Cape,-33.89113,18.95724,7681
+Porterville,Western Cape,-33.01505,18.99004,6810
+Prince Alfred Hamlet,Western Cape,-33.28406,19.32379,6840
+Pringle Bay,Western Cape,-34.34810,18.82978,7196
+Raithby,Western Cape,-34.02808,18.79888,7130
+Rawsonville,Western Cape,-33.68211,19.31247,6845
+Redelinghuys,Western Cape,-32.47938,18.53341,8105
+Rheenendal,Western Cape,-33.94818,22.93251,6576
+Riebeek West,Western Cape,-33.35130,18.86716,7306
+Riverlands,Western Cape,-33.52668,18.59313,7353
+Riviersonderend,Western Cape,-34.14934,19.91474,7250
+Robben Island,Western Cape,-33.80475,18.36633,7400
+Salt River,Western Cape,-33.92870,18.45780,7925
+Saron,Western Cape,-33.18493,19.00311,6812
+St Helena Bay,Western Cape,-32.75152,17.98777,7390
+Stanford,Western Cape,-34.44288,19.45080,7210
+Strandfontein,Western Cape,-31.75546,18.22780,7788
+Suurbraak,Western Cape,-34.03771,20.63993,6743
+Uniondale,Western Cape,-33.65889,23.12001,6460
+Vanrhynsdorp,Western Cape,-31.60949,18.73969,8170
+Villiersdorp,Western Cape,-33.98909,19.28459,6848
+Welgelegen,Western Cape,-33.87537,18.56756,7500
+Wittedrif,Western Cape,-34.01123,23.33080,6603
+Wittewater,Western Cape,-32.91515,18.70134,7322
+Yzerfontein,Western Cape,-33.34997,18.15066,7351
+Zoar,Western Cape,-33.49768,21.43848,6656
