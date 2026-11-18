@@ -114,7 +114,19 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 /* tiers */
 .tiers{background:linear-gradient(170deg,var(--purple),var(--navy) 75%);overflow:hidden}
 .tiers:before{content:"";position:absolute;inset:0;background:radial-gradient(600px 300px at 90% 0,rgba(0,255,133,.2),transparent 70%)}
-.cardtop{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:48px;align-items:center}.rcard{width:290px;height:auto;display:block;border-radius:30px;transform:rotate(3deg);box-shadow:0 30px 70px rgba(0,0,0,.5),0 0 60px rgba(0,255,133,.18)}
+.rladder{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:14px;margin-top:40px;align-items:end;padding-top:96px}
+.rlc{margin:0;transform:translateY(calc(var(--i,0)*-15px));min-width:0}
+.rlc svg{display:block;width:100%;height:auto;overflow:visible;filter:drop-shadow(0 10px 18px rgba(0,0,0,.4))}
+.rlc figcaption{margin-top:12px;text-align:center;font:800 12px/1.2 Outfit,sans-serif;letter-spacing:.06em;color:#fff}
+.rlc figcaption span{display:block;font-size:18px;margin-bottom:2px;color:var(--gold)}
+.rlc figcaption small{display:block;font:500 11px Inter,sans-serif;color:var(--mut);margin-top:2px;letter-spacing:0}
+.rlc[data-i="0"]{--i:0}
+.rlc[data-i="1"]{--i:1}
+.rlc[data-i="2"]{--i:2}
+.rlc[data-i="3"]{--i:3}
+.rlc[data-i="4"]{--i:4}
+.rlc[data-i="5"]{--i:5}
+.rlc[data-i="6"]{--i:6}
 .ladder{display:grid;grid-template-columns:repeat(7,1fr);gap:12px;margin-top:44px;align-items:end}
 .t{border-radius:18px;padding:16px 8px 14px;text-align:center;font:900 13px Outfit,sans-serif;letter-spacing:.06em;transition:transform .2s;box-shadow:0 12px 24px rgba(0,0,0,.3)}
 .t:hover{transform:translateY(-8px) scale(1.05)}
@@ -122,9 +134,8 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 .t1{height:110px;background:#E6AE7C;color:#3B2410}.t2{height:132px;background:#F2B08E;color:#3F1C0D}
 .t3{height:154px;background:#F4F6F8;color:#22303C}.t4{height:176px;background:#FCE58F;color:#3A2A05}
 .t5{height:198px;background:#D9F3F1;color:#0E3030}.t6{height:220px;background:linear-gradient(#4D7CE0,#0A2A6B);color:#fff}
-.t7{height:242px;background:linear-gradient(#6A3FD0,#2A2F6B);color:#FFD54F}
 .t span{display:block;font-size:22px}
-.note{margin-top:26px;color:var(--mut);font-size:15px}
+.note{margin-top:44px;color:var(--mut);font-size:15px}
 
 /* steps */
 .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;margin-top:44px}
@@ -191,7 +202,7 @@ footer a{text-decoration:none}footer a:hover{color:#fff}
   .stage{height:620px}
   .links a:not(.btn){display:none}
   .ladder{grid-template-columns:repeat(7,minmax(74px,1fr));overflow-x:auto;padding-bottom:10px}
-  .cardtop{grid-template-columns:1fr;gap:28px}.rcard{margin:0 auto;width:min(260px,100%)}
+  .rladder{grid-template-columns:repeat(7,150px);overflow-x:auto;padding-bottom:14px;scroll-snap-type:x proximity}.rlc{scroll-snap-align:start}
   section{padding:68px 0}
   .shield{width:120px;height:152px;right:0;top:30px}
   .sticker{left:4px;bottom:-6px;font-size:13px}
@@ -359,24 +370,230 @@ footer a{text-decoration:none}footer a:hover{color:#fff}
 
 <section class="tiers" id="card">
   <div class="wrap" style="position:relative">
-    <div class="cardtop">
-      <div>
-        <span class="eyebrow rv">Runner card</span>
-        <h2 class="rv">From <span class="grad">Novice</span> to Elite.<br>It takes years.</h2>
-        <p class="lead rv">Your runner card has a rating from 0 to 1000. It grows with every finished race, every new town, every country, every medal, and every time you beat your own earlier times. Slower runners climb just as fast as quicker ones, because improving counts.</p>
-      </div>
-      <img class="rcard rv" src="runner-card.webp" width="638" height="1136" alt="A My Running Journal runner card: a rating of 587, Veteran category, with a profile photo, races, kilometres, towns and best times.">
+    <span class="eyebrow rv">Runner card</span>
+    <h2 class="rv">From <span class="grad">Novice</span> to Elite.<br>It takes years.</h2>
+    <p class="lead rv">Your runner card has a rating from 0 to 1000. It grows with every finished race, every new town, every country, every medal, and every time you beat your own earlier times. Slower runners climb just as fast as quicker ones, because improving counts.</p>
+    <div class="rladder rv" aria-label="The seven card categories, with sample runners">
+<figure class="rlc" data-i="0"><svg class="rc" viewBox="-10 -10 320 448.6" role="img" aria-label="Sample runner card, tier Novice: Thandi Mokoena, rating 42.">
+<defs>
+<linearGradient id="c0f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6AE7C"/><stop offset="1" stop-color="#8A5A2B"/></linearGradient>
+<linearGradient id="c0r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6AE7C"/><stop offset=".22" stop-color="#5A3A1B"/><stop offset=".4" stop-color="#fff"/><stop offset=".62" stop-color="#8A5A2B"/><stop offset=".82" stop-color="#5A3A1B"/><stop offset="1" stop-color="#E6AE7C"/></linearGradient>
+<linearGradient id="c0s" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<radialGradient id="c0g" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#5A3A1B"/><stop offset="1" stop-color="#3B2410"/></radialGradient>
+<clipPath id="c0c"><path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z"/></clipPath>
+<pattern id="c0p" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="4" height="10" fill="#fff" opacity=".06"/></pattern>
+</defs>
+<g font-family="Outfit,Inter,Arial,sans-serif">
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="#5A3A1B" opacity=".0"/>
+<g clip-path="url(#c0c)">
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c0f)"/><rect x="-10" y="-10" width="320" height="450" fill="url(#c0p)"/>
+<path d="M64,243 Q64,250 71,250 Q64,250 64,257 Q64,250 57,250 Q64,250 64,243Z" fill="#fff" opacity="0.55"/><path d="M270,190 Q270,196 276,196 Q270,196 270,202 Q270,196 264,196 Q270,196 270,190Z" fill="#fff" opacity="0.55"/><path d="M36,325 Q36,330 41,330 Q36,330 36,335 Q36,330 31,330 Q36,330 36,325Z" fill="#fff" opacity="0.45"/><path d="M258,55 Q258,60 263,60 Q258,60 258,65 Q258,60 253,60 Q258,60 258,55Z" fill="#fff" opacity="0.5"/>
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c0s)"/>
+</g>
+<text x="24" y="84" font-size="50" font-weight="900" fill="#3B2410">42</text>
+<text x="24" y="108" font-size="18" font-weight="700" fill="#3B2410">5K</text>
+<rect x="24" y="116" width="30" height="2" fill="#5A3A1B"/>
+<g transform="translate(24,126)"><rect width="38" height="26" rx="3" fill="#E03C31"/><rect y="13" width="38" height="13" rx="0" fill="#001489"/><path d="M0,0 L17,13 L0,26Z" fill="#FFB612"/><path d="M0,3.5 L12.5,13 L0,22.5Z" fill="#000"/><path d="M0,0 L17,13 L38,13 M0,26 L17,13" fill="none" stroke="#fff" stroke-width="7" opacity="0"/><path d="M0,5 L14,13 L0,21 M14,13 L38,13" fill="none" stroke="#007A4D" stroke-width="5"/><rect width="38" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.25)"/></g>
+<text x="24" y="178" font-size="12" font-weight="700" fill="#3B2410">F · 34</text>
+<text x="24" y="196" font-size="10" font-weight="800" letter-spacing="1.5" fill="#3B2410">NOVICE</text>
+<circle cx="192" cy="114" r="86" fill="#5A3A1B" fill-opacity=".25" stroke="#5A3A1B" stroke-width="3"/>
+<text x="192" y="140" text-anchor="middle" font-size="76" font-weight="800" fill="#3B2410" opacity=".85">TM</text>
+<text x="150" y="238" text-anchor="middle" font-size="26.0" font-weight="900" letter-spacing="1" fill="#3B2410">THANDI MOKOENA</text>
+<text x="150" y="258" text-anchor="middle" font-size="11.0" font-weight="600" fill="#3B2410">Harbour Joggers  •  Cape Town</text>
+<text x="75" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3B2410">3</text><text x="75" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3B2410">RACES</text><text x="150" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3B2410">21</text><text x="150" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3B2410">KM</text><text x="225" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3B2410">2</text><text x="225" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3B2410">TOWNS</text><text x="48" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3B2410">5K</text><text x="48" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3B2410">31:20</text><text x="116" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3B2410">10K</text><text x="116" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3B2410">--</text><text x="184" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3B2410">21K</text><text x="184" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3B2410">--</text><text x="252" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3B2410">42K</text><text x="252" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3B2410">--</text>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="url(#c0r)" stroke-width="12"/>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="#3B2410" stroke-opacity=".75" stroke-width="1.5"/>
+<path d="M0,25.4 Q0,0 25.4,0 L256.6,0 Q282,0 282,25.4 L282,328.5 Q282,381.9 141.0,410.6 Q0,381.9 0,328.5 Z" transform="translate(9,9)" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>
+<circle cx="15" cy="15" r="6" fill="url(#c0g)" stroke="#3B2410" stroke-opacity=".8" stroke-width="1.5"/><circle cx="285" cy="15" r="6" fill="url(#c0g)" stroke="#3B2410" stroke-opacity=".8" stroke-width="1.5"/><circle cx="150" cy="424" r="6" fill="url(#c0g)" stroke="#3B2410" stroke-opacity=".8" stroke-width="1.5"/>
+</g></svg><figcaption><span>1</span>NOVICE<small>0+</small></figcaption></figure><figure class="rlc" data-i="1"><svg class="rc" viewBox="-10 -10 320 448.6" role="img" aria-label="Sample runner card, tier Rookie: Pieter Van Wyk, rating 118.">
+<defs>
+<linearGradient id="c1f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2B08E"/><stop offset="1" stop-color="#B35A36"/></linearGradient>
+<linearGradient id="c1r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2B08E"/><stop offset=".22" stop-color="#7A3A1D"/><stop offset=".4" stop-color="#fff"/><stop offset=".62" stop-color="#B35A36"/><stop offset=".82" stop-color="#7A3A1D"/><stop offset="1" stop-color="#F2B08E"/></linearGradient>
+<linearGradient id="c1s" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<radialGradient id="c1g" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#7A3A1D"/><stop offset="1" stop-color="#3F1C0D"/></radialGradient>
+<clipPath id="c1c"><path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z"/></clipPath>
+<pattern id="c1p" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="4" height="10" fill="#fff" opacity=".06"/></pattern>
+</defs>
+<g font-family="Outfit,Inter,Arial,sans-serif">
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="#7A3A1D" opacity=".0"/>
+<g clip-path="url(#c1c)">
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c1f)"/><rect x="-10" y="-10" width="320" height="450" fill="url(#c1p)"/>
+<path d="M64,243 Q64,250 71,250 Q64,250 64,257 Q64,250 57,250 Q64,250 64,243Z" fill="#fff" opacity="0.55"/><path d="M270,190 Q270,196 276,196 Q270,196 270,202 Q270,196 264,196 Q270,196 270,190Z" fill="#fff" opacity="0.55"/><path d="M36,325 Q36,330 41,330 Q36,330 36,335 Q36,330 31,330 Q36,330 36,325Z" fill="#fff" opacity="0.45"/><path d="M258,55 Q258,60 263,60 Q258,60 258,65 Q258,60 253,60 Q258,60 258,55Z" fill="#fff" opacity="0.5"/>
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c1s)"/>
+</g>
+<text x="24" y="84" font-size="50" font-weight="900" fill="#3F1C0D">118</text>
+<text x="24" y="108" font-size="18" font-weight="700" fill="#3F1C0D">10K</text>
+<rect x="24" y="116" width="30" height="2" fill="#7A3A1D"/>
+<g transform="translate(24,126)"><rect width="38" height="26" rx="3" fill="#E03C31"/><rect y="13" width="38" height="13" rx="0" fill="#001489"/><path d="M0,0 L17,13 L0,26Z" fill="#FFB612"/><path d="M0,3.5 L12.5,13 L0,22.5Z" fill="#000"/><path d="M0,0 L17,13 L38,13 M0,26 L17,13" fill="none" stroke="#fff" stroke-width="7" opacity="0"/><path d="M0,5 L14,13 L0,21 M14,13 L38,13" fill="none" stroke="#007A4D" stroke-width="5"/><rect width="38" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.25)"/></g>
+<text x="24" y="178" font-size="12" font-weight="700" fill="#3F1C0D">M · 41</text>
+<text x="24" y="196" font-size="10" font-weight="800" letter-spacing="1.5" fill="#3F1C0D">ROOKIE</text>
+<circle cx="192" cy="114" r="86" fill="#7A3A1D" fill-opacity=".25" stroke="#7A3A1D" stroke-width="3"/>
+<text x="192" y="140" text-anchor="middle" font-size="76" font-weight="800" fill="#3F1C0D" opacity=".85">PW</text>
+<text x="150" y="238" text-anchor="middle" font-size="26.0" font-weight="900" letter-spacing="1" fill="#3F1C0D">PIETER VAN WYK</text>
+<text x="150" y="258" text-anchor="middle" font-size="11.0" font-weight="600" fill="#3F1C0D">Karoo Striders  •  Paarl</text>
+<text x="75" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3F1C0D">9</text><text x="75" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3F1C0D">RACES</text><text x="150" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3F1C0D">96</text><text x="150" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3F1C0D">KM</text><text x="225" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3F1C0D">5</text><text x="225" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3F1C0D">TOWNS</text><text x="48" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3F1C0D">5K</text><text x="48" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3F1C0D">27:45</text><text x="116" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3F1C0D">10K</text><text x="116" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3F1C0D">58:10</text><text x="184" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3F1C0D">21K</text><text x="184" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3F1C0D">--</text><text x="252" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3F1C0D">42K</text><text x="252" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3F1C0D">--</text>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="url(#c1r)" stroke-width="12"/>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="#3F1C0D" stroke-opacity=".75" stroke-width="1.5"/>
+<path d="M0,25.4 Q0,0 25.4,0 L256.6,0 Q282,0 282,25.4 L282,328.5 Q282,381.9 141.0,410.6 Q0,381.9 0,328.5 Z" transform="translate(9,9)" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>
+<circle cx="15" cy="15" r="6" fill="url(#c1g)" stroke="#3F1C0D" stroke-opacity=".8" stroke-width="1.5"/><circle cx="285" cy="15" r="6" fill="url(#c1g)" stroke="#3F1C0D" stroke-opacity=".8" stroke-width="1.5"/><circle cx="150" cy="424" r="6" fill="url(#c1g)" stroke="#3F1C0D" stroke-opacity=".8" stroke-width="1.5"/>
+</g></svg><figcaption><span>2</span>ROOKIE<small>80+</small></figcaption></figure><figure class="rlc" data-i="2"><svg class="rc" viewBox="-10 -10 320 448.6" role="img" aria-label="Sample runner card, tier Club Runner: Aisha Patel, rating 236.">
+<defs>
+<linearGradient id="c2f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4F6F8"/><stop offset="1" stop-color="#9AA5B1"/></linearGradient>
+<linearGradient id="c2r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4F6F8"/><stop offset=".22" stop-color="#55616E"/><stop offset=".4" stop-color="#fff"/><stop offset=".62" stop-color="#9AA5B1"/><stop offset=".82" stop-color="#55616E"/><stop offset="1" stop-color="#F4F6F8"/></linearGradient>
+<linearGradient id="c2s" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<radialGradient id="c2g" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#55616E"/><stop offset="1" stop-color="#22303C"/></radialGradient>
+<clipPath id="c2c"><path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z"/></clipPath>
+<pattern id="c2p" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="4" height="10" fill="#fff" opacity=".06"/></pattern>
+</defs>
+<g font-family="Outfit,Inter,Arial,sans-serif">
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="#55616E" opacity=".0"/>
+<g clip-path="url(#c2c)">
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c2f)"/><rect x="-10" y="-10" width="320" height="450" fill="url(#c2p)"/>
+<path d="M64,243 Q64,250 71,250 Q64,250 64,257 Q64,250 57,250 Q64,250 64,243Z" fill="#fff" opacity="0.55"/><path d="M270,190 Q270,196 276,196 Q270,196 270,202 Q270,196 264,196 Q270,196 270,190Z" fill="#fff" opacity="0.55"/><path d="M36,325 Q36,330 41,330 Q36,330 36,335 Q36,330 31,330 Q36,330 36,325Z" fill="#fff" opacity="0.45"/><path d="M258,55 Q258,60 263,60 Q258,60 258,65 Q258,60 253,60 Q258,60 258,55Z" fill="#fff" opacity="0.5"/>
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c2s)"/>
+</g>
+<text x="24" y="84" font-size="50" font-weight="900" fill="#22303C">236</text>
+<text x="24" y="108" font-size="18" font-weight="700" fill="#22303C">10K</text>
+<rect x="24" y="116" width="30" height="2" fill="#55616E"/>
+<g transform="translate(24,126)"><rect width="38" height="26" rx="3" fill="#E03C31"/><rect y="13" width="38" height="13" rx="0" fill="#001489"/><path d="M0,0 L17,13 L0,26Z" fill="#FFB612"/><path d="M0,3.5 L12.5,13 L0,22.5Z" fill="#000"/><path d="M0,0 L17,13 L38,13 M0,26 L17,13" fill="none" stroke="#fff" stroke-width="7" opacity="0"/><path d="M0,5 L14,13 L0,21 M14,13 L38,13" fill="none" stroke="#007A4D" stroke-width="5"/><rect width="38" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.25)"/></g>
+<text x="24" y="178" font-size="12" font-weight="700" fill="#22303C">F · 29</text>
+<text x="24" y="196" font-size="10" font-weight="800" letter-spacing="1.5" fill="#22303C">CLUB RUNNER</text>
+<circle cx="192" cy="114" r="86" fill="#55616E" fill-opacity=".25" stroke="#55616E" stroke-width="3"/>
+<text x="192" y="140" text-anchor="middle" font-size="76" font-weight="800" fill="#22303C" opacity=".85">AP</text>
+<text x="150" y="238" text-anchor="middle" font-size="26.0" font-weight="900" letter-spacing="1" fill="#22303C">AISHA PATEL</text>
+<text x="150" y="258" text-anchor="middle" font-size="11.0" font-weight="600" fill="#22303C">Sunrise Road Runners  •  Durban</text>
+<text x="75" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#22303C">22</text><text x="75" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#22303C">RACES</text><text x="150" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#22303C">268</text><text x="150" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#22303C">KM</text><text x="225" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#22303C">9</text><text x="225" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#22303C">TOWNS</text><text x="48" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#22303C">5K</text><text x="48" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#22303C">24:10</text><text x="116" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#22303C">10K</text><text x="116" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#22303C">51:30</text><text x="184" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#22303C">21K</text><text x="184" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#22303C">1:55:40</text><text x="252" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#22303C">42K</text><text x="252" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#22303C">--</text>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="url(#c2r)" stroke-width="12"/>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="#22303C" stroke-opacity=".75" stroke-width="1.5"/>
+<path d="M0,25.4 Q0,0 25.4,0 L256.6,0 Q282,0 282,25.4 L282,328.5 Q282,381.9 141.0,410.6 Q0,381.9 0,328.5 Z" transform="translate(9,9)" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>
+<circle cx="15" cy="15" r="6" fill="url(#c2g)" stroke="#22303C" stroke-opacity=".8" stroke-width="1.5"/><circle cx="285" cy="15" r="6" fill="url(#c2g)" stroke="#22303C" stroke-opacity=".8" stroke-width="1.5"/><circle cx="150" cy="424" r="6" fill="url(#c2g)" stroke="#22303C" stroke-opacity=".8" stroke-width="1.5"/>
+</g></svg><figcaption><span>3</span>CLUB RUNNER<small>180+</small></figcaption></figure><figure class="rlc" data-i="3"><svg class="rc" viewBox="-10 -10 320 448.6" role="img" aria-label="Sample runner card, tier Competitor: Sipho Dlamini, rating 372.">
+<defs>
+<linearGradient id="c3f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCE58F"/><stop offset="1" stop-color="#C9962B"/></linearGradient>
+<linearGradient id="c3r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCE58F"/><stop offset=".22" stop-color="#8A650F"/><stop offset=".4" stop-color="#fff"/><stop offset=".62" stop-color="#C9962B"/><stop offset=".82" stop-color="#8A650F"/><stop offset="1" stop-color="#FCE58F"/></linearGradient>
+<linearGradient id="c3s" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<radialGradient id="c3g" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#8A650F"/><stop offset="1" stop-color="#3A2A05"/></radialGradient>
+<clipPath id="c3c"><path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z"/></clipPath>
+<pattern id="c3p" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="4" height="10" fill="#fff" opacity=".06"/></pattern>
+</defs>
+<g font-family="Outfit,Inter,Arial,sans-serif">
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="#8A650F" opacity=".0"/>
+<g clip-path="url(#c3c)">
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c3f)"/><rect x="-10" y="-10" width="320" height="450" fill="url(#c3p)"/>
+<path d="M64,243 Q64,250 71,250 Q64,250 64,257 Q64,250 57,250 Q64,250 64,243Z" fill="#fff" opacity="0.55"/><path d="M270,190 Q270,196 276,196 Q270,196 270,202 Q270,196 264,196 Q270,196 270,190Z" fill="#fff" opacity="0.55"/><path d="M36,325 Q36,330 41,330 Q36,330 36,335 Q36,330 31,330 Q36,330 36,325Z" fill="#fff" opacity="0.45"/><path d="M258,55 Q258,60 263,60 Q258,60 258,65 Q258,60 253,60 Q258,60 258,55Z" fill="#fff" opacity="0.5"/>
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c3s)"/>
+</g>
+<text x="24" y="84" font-size="50" font-weight="900" fill="#3A2A05">372</text>
+<text x="24" y="108" font-size="18" font-weight="700" fill="#3A2A05">21K</text>
+<rect x="24" y="116" width="30" height="2" fill="#8A650F"/>
+<g transform="translate(24,126)"><rect width="38" height="26" rx="3" fill="#E03C31"/><rect y="13" width="38" height="13" rx="0" fill="#001489"/><path d="M0,0 L17,13 L0,26Z" fill="#FFB612"/><path d="M0,3.5 L12.5,13 L0,22.5Z" fill="#000"/><path d="M0,0 L17,13 L38,13 M0,26 L17,13" fill="none" stroke="#fff" stroke-width="7" opacity="0"/><path d="M0,5 L14,13 L0,21 M14,13 L38,13" fill="none" stroke="#007A4D" stroke-width="5"/><rect width="38" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.25)"/></g>
+<text x="24" y="178" font-size="12" font-weight="700" fill="#3A2A05">M · 36</text>
+<text x="24" y="196" font-size="10" font-weight="800" letter-spacing="1.5" fill="#3A2A05">COMPETITOR</text>
+<circle cx="192" cy="114" r="86" fill="#8A650F" fill-opacity=".25" stroke="#8A650F" stroke-width="3"/>
+<text x="192" y="140" text-anchor="middle" font-size="76" font-weight="800" fill="#3A2A05" opacity=".85">SD</text>
+<text x="150" y="238" text-anchor="middle" font-size="26.0" font-weight="900" letter-spacing="1" fill="#3A2A05">SIPHO DLAMINI</text>
+<text x="150" y="258" text-anchor="middle" font-size="11.0" font-weight="600" fill="#3A2A05">Winelands AC  •  Stellenbosch</text>
+<text x="75" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3A2A05">38</text><text x="75" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3A2A05">RACES</text><text x="150" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3A2A05">512</text><text x="150" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3A2A05">KM</text><text x="225" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#3A2A05">15</text><text x="225" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#3A2A05">TOWNS</text><text x="48" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3A2A05">5K</text><text x="48" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2A05">21:30</text><text x="116" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3A2A05">10K</text><text x="116" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2A05">45:05</text><text x="184" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3A2A05">21K</text><text x="184" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2A05">1:40:12</text><text x="252" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#3A2A05">42K</text><text x="252" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#3A2A05">--</text>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="url(#c3r)" stroke-width="12"/>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="#3A2A05" stroke-opacity=".75" stroke-width="1.5"/>
+<path d="M0,25.4 Q0,0 25.4,0 L256.6,0 Q282,0 282,25.4 L282,328.5 Q282,381.9 141.0,410.6 Q0,381.9 0,328.5 Z" transform="translate(9,9)" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>
+<circle cx="15" cy="15" r="6" fill="url(#c3g)" stroke="#3A2A05" stroke-opacity=".8" stroke-width="1.5"/><circle cx="285" cy="15" r="6" fill="url(#c3g)" stroke="#3A2A05" stroke-opacity=".8" stroke-width="1.5"/><circle cx="150" cy="424" r="6" fill="url(#c3g)" stroke="#3A2A05" stroke-opacity=".8" stroke-width="1.5"/>
+</g></svg><figcaption><span>4</span>COMPETITOR<small>300+</small></figcaption></figure><figure class="rlc" data-i="4"><svg class="rc" viewBox="-10 -10 320 448.6" role="img" aria-label="Sample runner card, tier Veteran: Elize Botha, rating 512.">
+<defs>
+<linearGradient id="c4f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D9F3F1"/><stop offset="1" stop-color="#4F9C9C"/></linearGradient>
+<linearGradient id="c4r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D9F3F1"/><stop offset=".22" stop-color="#1F6B6B"/><stop offset=".4" stop-color="#fff"/><stop offset=".62" stop-color="#4F9C9C"/><stop offset=".82" stop-color="#1F6B6B"/><stop offset="1" stop-color="#D9F3F1"/></linearGradient>
+<linearGradient id="c4s" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<radialGradient id="c4g" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#1F6B6B"/><stop offset="1" stop-color="#0E3030"/></radialGradient>
+<clipPath id="c4c"><path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z"/></clipPath>
+<pattern id="c4p" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="4" height="10" fill="#fff" opacity=".06"/></pattern>
+</defs>
+<g font-family="Outfit,Inter,Arial,sans-serif">
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="#1F6B6B" opacity=".0"/>
+<g clip-path="url(#c4c)">
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c4f)"/><rect x="-10" y="-10" width="320" height="450" fill="url(#c4p)"/>
+<path d="M64,243 Q64,250 71,250 Q64,250 64,257 Q64,250 57,250 Q64,250 64,243Z" fill="#fff" opacity="0.55"/><path d="M270,190 Q270,196 276,196 Q270,196 270,202 Q270,196 264,196 Q270,196 270,190Z" fill="#fff" opacity="0.55"/><path d="M36,325 Q36,330 41,330 Q36,330 36,335 Q36,330 31,330 Q36,330 36,325Z" fill="#fff" opacity="0.45"/><path d="M258,55 Q258,60 263,60 Q258,60 258,65 Q258,60 253,60 Q258,60 258,55Z" fill="#fff" opacity="0.5"/>
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c4s)"/>
+</g>
+<text x="24" y="84" font-size="50" font-weight="900" fill="#0E3030">512</text>
+<text x="24" y="108" font-size="18" font-weight="700" fill="#0E3030">21K</text>
+<rect x="24" y="116" width="30" height="2" fill="#1F6B6B"/>
+<g transform="translate(24,126)"><rect width="38" height="26" rx="3" fill="#E03C31"/><rect y="13" width="38" height="13" rx="0" fill="#001489"/><path d="M0,0 L17,13 L0,26Z" fill="#FFB612"/><path d="M0,3.5 L12.5,13 L0,22.5Z" fill="#000"/><path d="M0,0 L17,13 L38,13 M0,26 L17,13" fill="none" stroke="#fff" stroke-width="7" opacity="0"/><path d="M0,5 L14,13 L0,21 M14,13 L38,13" fill="none" stroke="#007A4D" stroke-width="5"/><rect width="38" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.25)"/></g>
+<text x="24" y="178" font-size="12" font-weight="700" fill="#0E3030">F · 52</text>
+<text x="24" y="196" font-size="10" font-weight="800" letter-spacing="1.5" fill="#0E3030">VETERAN</text>
+<circle cx="192" cy="114" r="86" fill="#1F6B6B" fill-opacity=".25" stroke="#1F6B6B" stroke-width="3"/>
+<text x="192" y="140" text-anchor="middle" font-size="76" font-weight="800" fill="#0E3030" opacity=".85">EB</text>
+<text x="150" y="238" text-anchor="middle" font-size="26.0" font-weight="900" letter-spacing="1" fill="#0E3030">ELIZE BOTHA</text>
+<text x="150" y="258" text-anchor="middle" font-size="11.0" font-weight="600" fill="#0E3030">Berg River Harriers  •  Worcester</text>
+<text x="75" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#0E3030">61</text><text x="75" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#0E3030">RACES</text><text x="150" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#0E3030">904</text><text x="150" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#0E3030">KM</text><text x="225" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#0E3030">24</text><text x="225" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#0E3030">TOWNS</text><text x="48" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#0E3030">5K</text><text x="48" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#0E3030">19:45</text><text x="116" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#0E3030">10K</text><text x="116" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#0E3030">41:20</text><text x="184" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#0E3030">21K</text><text x="184" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#0E3030">1:32:48</text><text x="252" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#0E3030">42K</text><text x="252" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#0E3030">3:25:10</text>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="url(#c4r)" stroke-width="12"/>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="#0E3030" stroke-opacity=".75" stroke-width="1.5"/>
+<path d="M0,25.4 Q0,0 25.4,0 L256.6,0 Q282,0 282,25.4 L282,328.5 Q282,381.9 141.0,410.6 Q0,381.9 0,328.5 Z" transform="translate(9,9)" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>
+<circle cx="15" cy="15" r="6" fill="url(#c4g)" stroke="#0E3030" stroke-opacity=".8" stroke-width="1.5"/><circle cx="285" cy="15" r="6" fill="url(#c4g)" stroke="#0E3030" stroke-opacity=".8" stroke-width="1.5"/><circle cx="150" cy="424" r="6" fill="url(#c4g)" stroke="#0E3030" stroke-opacity=".8" stroke-width="1.5"/>
+</g></svg><figcaption><span>5</span>VETERAN<small>450+</small></figcaption></figure><figure class="rlc" data-i="5"><svg class="rc" viewBox="-10 -10 320 448.6" role="img" aria-label="Sample runner card, tier Master: Mark Jacobs, rating 701.">
+<defs>
+<linearGradient id="c5f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4D7CE0"/><stop offset="1" stop-color="#0A2A6B"/></linearGradient>
+<linearGradient id="c5r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4D7CE0"/><stop offset=".22" stop-color="#7FE3FF"/><stop offset=".4" stop-color="#fff"/><stop offset=".62" stop-color="#0A2A6B"/><stop offset=".82" stop-color="#7FE3FF"/><stop offset="1" stop-color="#4D7CE0"/></linearGradient>
+<linearGradient id="c5s" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<radialGradient id="c5g" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#7FE3FF"/><stop offset="1" stop-color="#FFFFFF"/></radialGradient>
+<clipPath id="c5c"><path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z"/></clipPath>
+<pattern id="c5p" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="4" height="10" fill="#fff" opacity=".06"/></pattern>
+</defs>
+<g font-family="Outfit,Inter,Arial,sans-serif">
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="#7FE3FF" opacity=".0"/>
+<g clip-path="url(#c5c)">
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c5f)"/><rect x="-10" y="-10" width="320" height="450" fill="url(#c5p)"/>
+<path d="M64,243 Q64,250 71,250 Q64,250 64,257 Q64,250 57,250 Q64,250 64,243Z" fill="#fff" opacity="0.55"/><path d="M270,190 Q270,196 276,196 Q270,196 270,202 Q270,196 264,196 Q270,196 270,190Z" fill="#fff" opacity="0.55"/><path d="M36,325 Q36,330 41,330 Q36,330 36,335 Q36,330 31,330 Q36,330 36,325Z" fill="#fff" opacity="0.45"/><path d="M258,55 Q258,60 263,60 Q258,60 258,65 Q258,60 253,60 Q258,60 258,55Z" fill="#fff" opacity="0.5"/>
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c5s)"/>
+</g>
+<text x="24" y="84" font-size="50" font-weight="900" fill="#FFFFFF">701</text>
+<text x="24" y="108" font-size="18" font-weight="700" fill="#FFFFFF">42K</text>
+<rect x="24" y="116" width="30" height="2" fill="#7FE3FF"/>
+<g transform="translate(24,126)"><rect width="38" height="26" rx="3" fill="#E03C31"/><rect y="13" width="38" height="13" rx="0" fill="#001489"/><path d="M0,0 L17,13 L0,26Z" fill="#FFB612"/><path d="M0,3.5 L12.5,13 L0,22.5Z" fill="#000"/><path d="M0,0 L17,13 L38,13 M0,26 L17,13" fill="none" stroke="#fff" stroke-width="7" opacity="0"/><path d="M0,5 L14,13 L0,21 M14,13 L38,13" fill="none" stroke="#007A4D" stroke-width="5"/><rect width="38" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.25)"/></g>
+<text x="24" y="178" font-size="12" font-weight="700" fill="#FFFFFF">M · 47</text>
+<text x="24" y="196" font-size="10" font-weight="800" letter-spacing="1.5" fill="#FFFFFF">MASTER</text>
+<circle cx="192" cy="114" r="86" fill="#7FE3FF" fill-opacity=".25" stroke="#7FE3FF" stroke-width="3"/>
+<text x="192" y="140" text-anchor="middle" font-size="76" font-weight="800" fill="#FFFFFF" opacity=".85">MJ</text>
+<text x="150" y="238" text-anchor="middle" font-size="26.0" font-weight="900" letter-spacing="1" fill="#FFFFFF">MARK JACOBS</text>
+<text x="150" y="258" text-anchor="middle" font-size="11.0" font-weight="600" fill="#FFFFFF">Southern Suburbs RC  •  Cape Town</text>
+<text x="75" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">94</text><text x="75" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#FFFFFF">RACES</text><text x="150" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">1,470</text><text x="150" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#FFFFFF">KM</text><text x="225" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">33</text><text x="225" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#FFFFFF">TOWNS</text><text x="48" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">5K</text><text x="48" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">18:20</text><text x="116" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">10K</text><text x="116" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">38:40</text><text x="184" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">21K</text><text x="184" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">1:24:30</text><text x="252" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">42K</text><text x="252" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">3:02:15</text>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="url(#c5r)" stroke-width="12"/>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="#FFFFFF" stroke-opacity=".75" stroke-width="1.5"/>
+<path d="M0,25.4 Q0,0 25.4,0 L256.6,0 Q282,0 282,25.4 L282,328.5 Q282,381.9 141.0,410.6 Q0,381.9 0,328.5 Z" transform="translate(9,9)" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>
+<circle cx="15" cy="15" r="6" fill="url(#c5g)" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="1.5"/><circle cx="285" cy="15" r="6" fill="url(#c5g)" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="1.5"/><circle cx="150" cy="424" r="6" fill="url(#c5g)" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="1.5"/>
+</g></svg><figcaption><span>6</span>MASTER<small>650+</small></figcaption></figure><figure class="rlc" data-i="6"><svg class="rc" viewBox="-10 -10 320 448.6" role="img" aria-label="Sample runner card, tier Elite: Nomsa Khumalo, rating 893.">
+<defs>
+<linearGradient id="c6f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A2F6B"/><stop offset="1" stop-color="#6A3FD0"/></linearGradient>
+<linearGradient id="c6r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2A2F6B"/><stop offset=".22" stop-color="#FFD54F"/><stop offset=".4" stop-color="#fff"/><stop offset=".62" stop-color="#6A3FD0"/><stop offset=".82" stop-color="#FFD54F"/><stop offset="1" stop-color="#2A2F6B"/></linearGradient>
+<linearGradient id="c6s" x1="0" y1="0" x2="1" y2="1"><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".45" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<radialGradient id="c6g" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="#FFD54F"/><stop offset="1" stop-color="#FFFFFF"/></radialGradient>
+<clipPath id="c6c"><path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z"/></clipPath>
+<pattern id="c6p" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="4" height="10" fill="#fff" opacity=".06"/></pattern>
+</defs>
+<g font-family="Outfit,Inter,Arial,sans-serif">
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="#FFD54F" opacity=".0"/>
+<g clip-path="url(#c6c)">
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c6f)"/><rect x="-10" y="-10" width="320" height="450" fill="url(#c6p)"/>
+<path d="M64,243 Q64,250 71,250 Q64,250 64,257 Q64,250 57,250 Q64,250 64,243Z" fill="#fff" opacity="0.55"/><path d="M270,190 Q270,196 276,196 Q270,196 270,202 Q270,196 264,196 Q270,196 270,190Z" fill="#fff" opacity="0.55"/><path d="M36,325 Q36,330 41,330 Q36,330 36,335 Q36,330 31,330 Q36,330 36,325Z" fill="#fff" opacity="0.45"/><path d="M258,55 Q258,60 263,60 Q258,60 258,65 Q258,60 253,60 Q258,60 258,55Z" fill="#fff" opacity="0.5"/>
+<rect x="-10" y="-10" width="320" height="450" fill="url(#c6s)"/>
+</g>
+<text x="24" y="84" font-size="50" font-weight="900" fill="#FFFFFF">893</text>
+<text x="24" y="108" font-size="18" font-weight="700" fill="#FFFFFF">42K</text>
+<rect x="24" y="116" width="30" height="2" fill="#FFD54F"/>
+<g transform="translate(24,126)"><rect width="38" height="26" rx="3" fill="#E03C31"/><rect y="13" width="38" height="13" rx="0" fill="#001489"/><path d="M0,0 L17,13 L0,26Z" fill="#FFB612"/><path d="M0,3.5 L12.5,13 L0,22.5Z" fill="#000"/><path d="M0,0 L17,13 L38,13 M0,26 L17,13" fill="none" stroke="#fff" stroke-width="7" opacity="0"/><path d="M0,5 L14,13 L0,21 M14,13 L38,13" fill="none" stroke="#007A4D" stroke-width="5"/><rect width="38" height="26" rx="3" fill="none" stroke="rgba(0,0,0,.25)"/></g>
+<text x="24" y="178" font-size="12" font-weight="700" fill="#FFFFFF">F · 31</text>
+<text x="24" y="196" font-size="10" font-weight="800" letter-spacing="1.5" fill="#FFFFFF">ELITE</text>
+<circle cx="192" cy="114" r="86" fill="#FFD54F" fill-opacity=".25" stroke="#FFD54F" stroke-width="3"/>
+<text x="192" y="140" text-anchor="middle" font-size="76" font-weight="800" fill="#FFFFFF" opacity=".85">NK</text>
+<text x="150" y="238" text-anchor="middle" font-size="26.0" font-weight="900" letter-spacing="1" fill="#FFFFFF">NOMSA KHUMALO</text>
+<text x="150" y="258" text-anchor="middle" font-size="11.0" font-weight="600" fill="#FFFFFF">Garden Route Elite  •  Knysna</text>
+<text x="75" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">142</text><text x="75" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#FFFFFF">RACES</text><text x="150" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">2,380</text><text x="150" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#FFFFFF">KM</text><text x="225" y="290" text-anchor="middle" font-size="22" font-weight="800" fill="#FFFFFF">47</text><text x="225" y="304" text-anchor="middle" font-size="9" font-weight="700" letter-spacing="1" fill="#FFFFFF">TOWNS</text><text x="48" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">5K</text><text x="48" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">15:55</text><text x="116" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">10K</text><text x="116" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">33:20</text><text x="184" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">21K</text><text x="184" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">1:12:05</text><text x="252" y="344" text-anchor="middle" font-size="10" font-weight="700" fill="#FFFFFF">42K</text><text x="252" y="361" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">2:36:40</text>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="url(#c6r)" stroke-width="12"/>
+<path d="M0,27.0 Q0,0 27.0,0 L273.0,0 Q300,0 300,27.0 L300,342.9 Q300,398.6 150.0,428.6 Q0,398.6 0,342.9 Z" fill="none" stroke="#FFFFFF" stroke-opacity=".75" stroke-width="1.5"/>
+<path d="M0,25.4 Q0,0 25.4,0 L256.6,0 Q282,0 282,25.4 L282,328.5 Q282,381.9 141.0,410.6 Q0,381.9 0,328.5 Z" transform="translate(9,9)" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="1.6"/>
+<circle cx="15" cy="15" r="6" fill="url(#c6g)" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="1.5"/><circle cx="285" cy="15" r="6" fill="url(#c6g)" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="1.5"/><circle cx="150" cy="424" r="6" fill="url(#c6g)" stroke="#FFFFFF" stroke-opacity=".8" stroke-width="1.5"/>
+</g></svg><figcaption><span>7</span>ELITE<small>850+</small></figcaption></figure>
     </div>
-    <div class="ladder rv">
-      <div class="t t1"><span>1</span>NOVICE<small>0+</small></div>
-      <div class="t t2"><span>2</span>ROOKIE<small>80+</small></div>
-      <div class="t t3"><span>3</span>CLUB RUNNER<small>180+</small></div>
-      <div class="t t4"><span>4</span>COMPETITOR<small>300+</small></div>
-      <div class="t t5"><span>5</span>VETERAN<small>450+</small></div>
-      <div class="t t6"><span>6</span>MASTER<small>650+</small></div>
-      <div class="t t7"><span>7</span>ELITE<small>850+</small></div>
-    </div>
-    <p class="note rv">Moving up a category? The app throws a little confetti. Share your card as an image whenever you are proud of it.</p>
+    <p class="note rv">Sample cards with made-up runners. Moving up a category? The app throws a little confetti. Share your card as an image whenever you are proud of it.</p>
   </div>
 </section>
 
