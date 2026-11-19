@@ -133,7 +133,7 @@ Tick these off in order. Plain subscription, club code (`club15`) and friend cod
 ### Website
 - [ ] Everything in `website/` uploaded to `public_html`: pages, `fonts/`, `.htaccess`, `.well-known/security.txt`, `sitemap.xml`.
 - [ ] Checked in a private window: fonts, medal section, FAQ, privacy, terms, delete-account.
-- [x] Real Play link added to the website (buttons and Get section). Swap the text button for the official "Get it on Google Play" badge when you have the artwork.
+- [x] Real Play link added to the website (buttons and Get section). Official badge now in place.
 
 ### Marketing
 - [ ] Social handles reserved; teaser posts using the coming-soon flyers (no Play link until live).
