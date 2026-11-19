@@ -133,13 +133,13 @@ Tick these off in order. Plain subscription, club code (`club15`) and friend cod
 ### Website
 - [ ] Everything in `website/` uploaded to `public_html`: pages, `fonts/`, `.htaccess`, `.well-known/security.txt`, `sitemap.xml`.
 - [ ] Checked in a private window: fonts, medal section, FAQ, privacy, terms, delete-account.
-- [ ] Add the official "Get it on Google Play" badge and the real Play link once the listing is public.
+- [x] Real Play link added to the website (buttons and Get section). Swap the text button for the official "Get it on Google Play" badge when you have the artwork.
 
 ### Marketing
 - [ ] Social handles reserved; teaser posts using the coming-soon flyers (no Play link until live).
 - [ ] Runner on the flyer's sample card has agreed to the photo being used, or the card is replaced.
 - [ ] Club intro email sent with the flyer; club codes ready for replies.
-- [ ] On launch day: swap to the "available now" flyers with the Google badge, and update the social bios.
+- [x] "Available now" flyers made (no coming-soon wording). Update the social bios with https://myrunningjournal.co.za and the Play link.
 
 ### After launch
 - [ ] Check Sentry and the Supabase logs after the first installs.
