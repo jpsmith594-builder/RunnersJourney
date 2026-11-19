@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../medals/medal_repository.dart';
+
 /// Account-level actions.
 class AccountRepository {
   final SupabaseClient _db = Supabase.instance.client;
@@ -14,14 +16,17 @@ class AccountRepository {
     // Files first: the database cannot remove them. Best effort, so a storage
     // hiccup never stops someone from deleting their account.
     try {
-      final rows = await _db.from('race_photos').select('storage_path');
+      final rows = await _db.from('race_photos').select('storage_path').eq('user_id', uid);
       final paths = [for (final r in rows as List) r['storage_path'] as String];
       for (var i = 0; i < paths.length; i += 100) {
         await _db.storage
             .from('race-photos')
             .remove(paths.sublist(i, math.min(i + 100, paths.length)));
       }
-      final medalRows = await _db.from('medal_photos').select('storage_path');
+      final medalRows = await _db
+          .from('medal_photos')
+          .select('storage_path')
+          .eq('user_id', uid);
       final medalPaths = [
         for (final r in medalRows as List) r['storage_path'] as String
       ];
@@ -40,6 +45,7 @@ class AccountRepository {
       }
     } catch (_) {}
 
+    MedalRepository.clearCache();
     await _db.rpc('delete_my_account');
     try {
       await _db.auth.signOut();

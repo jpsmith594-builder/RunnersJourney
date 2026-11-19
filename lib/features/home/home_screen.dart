@@ -19,6 +19,7 @@ import '../goals/goal_strip.dart';
 import '../goals/goals_screen.dart';
 import '../growth/invite_screen.dart';
 import '../medals/medal_wall_screen.dart';
+import '../medals/medal_repository.dart';
 import '../stats/badges_screen.dart';
 import '../stats/charts_screen.dart';
 import '../stats/year_review_screen.dart';
@@ -285,6 +286,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _openPaywall();
                 case 'signout':
                   subscription.reset();
+                  MedalRepository.clearCache();
                   Supabase.instance.client.auth.signOut();
               }
             },

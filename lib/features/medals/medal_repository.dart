@@ -12,20 +12,31 @@ class MedalRepository {
   static const _urlSeconds = 3600;
 
   // Signed links last an hour, so keep the list for a little less than that.
-  static ({DateTime at, List<Medal> medals})? _cache;
+  // Keyed by runner, so a second account on the same phone never sees the
+  // first account's medals.
+  static ({String uid, DateTime at, List<Medal> medals})? _cache;
 
   final SupabaseClient _db = Supabase.instance.client;
 
   Future<List<Medal>> list({bool refresh = false}) async {
+    // Friends are allowed to read each other's medals, so always ask for the
+    // signed-in runner's own rows only.
+    final uid = _db.auth.currentUser?.id;
+    if (uid == null) return const [];
     final hit = _cache;
     if (!refresh &&
         hit != null &&
+        hit.uid == uid &&
         DateTime.now().difference(hit.at) < const Duration(minutes: 45)) {
       return hit.medals;
     }
-    final rows = await _db.from('medal_photos').select().order('created_at');
+    final rows = await _db
+        .from('medal_photos')
+        .select()
+        .eq('user_id', uid)
+        .order('created_at');
     final medals = await _medalsFrom(rows as List);
-    _cache = (at: DateTime.now(), medals: medals);
+    _cache = (uid: uid, at: DateTime.now(), medals: medals);
     return medals;
   }
 
@@ -165,6 +176,9 @@ class MedalRepository {
     }
     _cache = null;
   }
+
+  /// Forgets the saved wall (call on sign-out).
+  static void clearCache() => _cache = null;
 
   Future<void> delete(Medal medal) async {
     await _db.storage.from(_bucket).remove([medal.storagePath]);
